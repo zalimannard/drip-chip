@@ -1,6 +1,5 @@
 package ru.zalimannard.dripchip.account;
 
-import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
@@ -21,4 +20,5 @@ public class AccountController {
     public AccountDto get(@PathVariable @Min(1) int id) {
         return accountService.read(id);
     }
+
 }

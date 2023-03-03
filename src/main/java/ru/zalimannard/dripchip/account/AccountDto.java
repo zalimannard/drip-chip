@@ -5,6 +5,7 @@ import lombok.Data;
 
 @Data
 public class AccountDto {
+
     @JsonProperty("id")
     private Integer id;
 
