@@ -14,3 +14,4 @@ application:
     search: /search
     accounts: /accounts
     animals: /animals
+    locations: /locations
