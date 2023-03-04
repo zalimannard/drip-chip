@@ -7,7 +7,7 @@ spring:
     password: ${POSTGRES_PASSWORD}
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: create
 
 application:
   endpoint:
@@ -16,3 +16,4 @@ application:
     accounts: /accounts
     animals: /animals
     locations: /locations
+    registration: /registration
