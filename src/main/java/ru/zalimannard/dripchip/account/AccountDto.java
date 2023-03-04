@@ -21,11 +21,13 @@ public class AccountDto {
     private String lastName;
 
     @JsonProperty("email")
+    @NotBlank
     @Email
     private String email;
 
     @JsonProperty("password")
     @JsonInclude(JsonInclude.Include.NON_NULL)
+    @NotBlank
     private String password;
 
 }

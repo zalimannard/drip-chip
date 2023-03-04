@@ -19,7 +19,7 @@ public class Account {
     @Column(name = "lastName")
     private String lastName;
 
-    @Column(name = "email")
+    @Column(name = "email", unique = true)
     private String email;
 
     @Column(name = "password")
