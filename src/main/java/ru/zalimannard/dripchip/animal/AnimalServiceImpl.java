@@ -42,4 +42,9 @@ public class AnimalServiceImpl implements AnimalService {
         }
     }
 
+    @Override
+    public List<AnimalDto> search(AnimalDto filter, int from, int size) {
+        return new ArrayList<>();
+    }
+
 }
