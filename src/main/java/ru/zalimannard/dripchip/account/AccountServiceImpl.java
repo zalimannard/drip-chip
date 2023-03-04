@@ -4,6 +4,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.mapstruct.factory.Mappers;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Example;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 import ru.zalimannard.dripchip.exception.ConflictException;
@@ -19,10 +21,12 @@ public class AccountServiceImpl implements AccountService {
 
     private final AccountRepository accountRepository;
     private final AccountMapper accountMapper = Mappers.getMapper(AccountMapper.class);
+    private final PasswordEncoder encoder;
 
     @Override
     public AccountDto create(@Valid AccountDto accountDto) {
         Account accountRequest = accountMapper.toEntity(accountDto);
+        accountRequest.setPassword(encoder.encode((accountRequest.getEmail() + ":" + accountRequest.getPassword())));
         try {
             Account accountResponse = accountRepository.save(accountRequest);
             return accountMapper.toDto(accountResponse);
@@ -40,7 +44,9 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public List<AccountDto> search(AccountDto filter, int from, int size) {
-        return new ArrayList<>();
+        Account exampleAccount = accountMapper.toEntity(filter);
+        List<Account> accountList = new ArrayList<>(accountRepository.findAll(Example.of(exampleAccount)));
+        return accountMapper.toDtoList(accountList);
     }
 
 }
