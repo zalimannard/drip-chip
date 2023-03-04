@@ -33,19 +33,9 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public AccountDto read(int id) {
-        if (id > 3) {
-            Account account = accountRepository.findById(id)
-                    .orElseThrow(() -> new NotFoundException("Account", "id", String.valueOf(id)));
-            return accountMapper.toDto(account);
-        } else {
-            // TODO: Delete when registration is implemented
-            AccountDto accountDto = new AccountDto();
-            accountDto.setId(id);
-            accountDto.setFirstName("firstName");
-            accountDto.setLastName("lastName");
-            accountDto.setEmail("email@mail.ru");
-            return accountDto;
-        }
+        Account account = accountRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Account", "id", String.valueOf(id)));
+        return accountMapper.toDto(account);
     }
 
     @Override
