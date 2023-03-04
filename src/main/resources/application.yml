@@ -11,4 +11,5 @@ spring:
 
 application:
   endpoint:
+    search: /search
     accounts: /accounts
