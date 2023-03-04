@@ -5,6 +5,9 @@ import org.mapstruct.factory.Mappers;
 import org.springframework.stereotype.Service;
 import ru.zalimannard.dripchip.exception.NotFoundException;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class AccountServiceImpl implements AccountService {
@@ -27,6 +30,11 @@ public class AccountServiceImpl implements AccountService {
             accountDto.setEmail("email@mail.ru");
             return accountDto;
         }
+    }
+
+    @Override
+    public List<AccountDto> search(AccountDto filter, int from, int size) {
+        return new ArrayList<>();
     }
 
 }
