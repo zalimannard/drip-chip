@@ -16,3 +16,4 @@ application:
     accounts: /accounts
     animals: /animals
     locations: /locations
+    registration: /registration
