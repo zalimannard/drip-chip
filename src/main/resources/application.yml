@@ -12,6 +12,7 @@ spring:
 application:
   endpoint:
     search: /search
+    types: /types
     accounts: /accounts
     animals: /animals
     locations: /locations
