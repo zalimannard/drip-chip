@@ -6,6 +6,7 @@ import org.mapstruct.factory.Mappers;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
+import ru.zalimannard.dripchip.animal.type.AnimalType;
 import ru.zalimannard.dripchip.exception.ConflictException;
 import ru.zalimannard.dripchip.exception.NotFoundException;
 
@@ -38,11 +39,15 @@ public class LocationServiceImpl implements LocationService {
     @Override
     public LocationDto update(long id, @Valid LocationDto locationDto) {
         if (locationRepository.existsById(id)) {
-            Location locationRequest = locationMapper.toEntity(locationDto);
-            locationRequest.setId(id);
+            try {
+                Location locationRequest = locationMapper.toEntity(locationDto);
+                locationRequest.setId(id);
 
-            Location locationResponse = locationRepository.save(locationRequest);
-            return locationMapper.toDto(locationResponse);
+                Location locationResponse = locationRepository.save(locationRequest);
+                return locationMapper.toDto(locationResponse);
+            } catch (DataIntegrityViolationException e) {
+                throw new ConflictException("Conflict in adding to the database");
+            }
         } else {
             throw new NotFoundException("Location", "id", String.valueOf(id));
         }
