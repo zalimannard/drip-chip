@@ -2,11 +2,9 @@ package ru.zalimannard.dripchip.animal.type;
 
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("${application.endpoint.animals}")
@@ -19,6 +17,18 @@ public class AnimalTypeController {
     @GetMapping("${application.endpoint.types}/{id}")
     public AnimalTypeDto get(@PathVariable @Min(1) long id) {
         return animalTypeService.read(id);
+    }
+
+    @PostMapping("${application.endpoint.types}")
+    @ResponseStatus(HttpStatus.CREATED)
+    public AnimalTypeDto post(@RequestBody AnimalTypeDto animalTypeDto) {
+        return animalTypeService.create(animalTypeDto);
+    }
+
+    @DeleteMapping("${application.endpoint.types}/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public void delete(@PathVariable @Min(1) long id) {
+        animalTypeService.delete(id);
     }
 
 }

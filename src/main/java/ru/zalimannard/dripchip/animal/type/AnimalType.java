@@ -13,7 +13,7 @@ public class AnimalType {
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "type")
+    @Column(name = "type", unique = true)
     private String type;
 
 }
