@@ -6,7 +6,6 @@ import org.mapstruct.factory.Mappers;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
-import ru.zalimannard.dripchip.animal.type.AnimalType;
 import ru.zalimannard.dripchip.exception.ConflictException;
 import ru.zalimannard.dripchip.exception.NotFoundException;
 
@@ -20,8 +19,8 @@ public class LocationServiceImpl implements LocationService {
 
     @Override
     public LocationDto create(@Valid LocationDto locationDto) {
-        Location locationRequest = locationMapper.toEntity(locationDto);
         try {
+            Location locationRequest = locationMapper.toEntity(locationDto);
             Location locationResponse = locationRepository.save(locationRequest);
             return locationMapper.toDto(locationResponse);
         } catch (DataIntegrityViolationException e) {

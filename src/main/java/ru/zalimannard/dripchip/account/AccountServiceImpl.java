@@ -24,9 +24,9 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public AccountDto create(@Valid AccountDto accountDto) {
-        Account accountRequest = accountMapper.toEntity(accountDto);
-        accountRequest.setPassword(encoder.encode((accountRequest.getEmail() + ":" + accountRequest.getPassword())));
         try {
+            Account accountRequest = accountMapper.toEntity(accountDto);
+            accountRequest.setPassword(encoder.encode((accountRequest.getEmail() + ":" + accountRequest.getPassword())));
             Account accountResponse = accountRepository.save(accountRequest);
             return accountMapper.toDto(accountResponse);
         } catch (DataIntegrityViolationException e) {

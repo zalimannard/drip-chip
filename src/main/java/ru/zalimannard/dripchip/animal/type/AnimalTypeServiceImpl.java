@@ -19,8 +19,8 @@ public class AnimalTypeServiceImpl implements AnimalTypeService {
 
     @Override
     public AnimalTypeDto create(@Valid AnimalTypeDto animalTypeDto) {
-        AnimalType animalTypeRequest = animalTypeMapper.toEntity(animalTypeDto);
         try {
+            AnimalType animalTypeRequest = animalTypeMapper.toEntity(animalTypeDto);
             AnimalType animalTypeResponse = animalTypeRepository.save(animalTypeRequest);
             return animalTypeMapper.toDto(animalTypeResponse);
         } catch (DataIntegrityViolationException e) {
