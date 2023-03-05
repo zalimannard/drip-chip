@@ -30,7 +30,7 @@ public class AccountServiceImpl implements AccountService {
             Account accountResponse = accountRepository.save(accountRequest);
             return accountMapper.toDto(accountResponse);
         } catch (DataIntegrityViolationException e) {
-            throw new ConflictException();
+            throw new ConflictException(e.getMessage());
         }
     }
 

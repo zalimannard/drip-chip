@@ -20,10 +20,10 @@ public class WebSecurityConfig {
         http
                 .userDetailsService(userDetailsService)
                 .csrf().disable()
-                .authorizeHttpRequests((authz) -> authz
-                        .requestMatchers("/registration").permitAll()
+                .authorizeHttpRequests((auth) -> auth
+                        .requestMatchers(HttpMethod.POST, "/registration").permitAll()
                         .requestMatchers(HttpMethod.GET).permitAll()
-                        .anyRequest().permitAll()
+                        .anyRequest().authenticated()
                 )
                 .httpBasic(Customizer.withDefaults())
                 .sessionManagement().disable();
