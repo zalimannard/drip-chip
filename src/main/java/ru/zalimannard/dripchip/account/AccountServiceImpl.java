@@ -44,8 +44,10 @@ public class AccountServiceImpl implements AccountService {
     public List<AccountDto> search(AccountDto filter, int from, int size) {
         Account exampleAccount = accountMapper.toEntity(filter);
 
-        List<Account> accountList = accountRepository.findAllByEmailLikeIgnoreCaseOrderById(
-                "%" + exampleAccount.getEmail() + "%");
+        List<Account> accountList = accountRepository.findAllByFirstNameLikeIgnoreCaseAndLastNameLikeIgnoreCaseAndEmailLikeIgnoreCaseOrderById(
+                "%" + (exampleAccount.getFirstName() == null ? "" : exampleAccount.getFirstName()) + "%",
+                "%" + (exampleAccount.getLastName() == null ? "" : exampleAccount.getLastName()) + "%",
+                "%" + (exampleAccount.getEmail() == null ? "" : exampleAccount.getEmail()) + "%");
         List<Account> responseAccountList = accountList
                 .stream().skip(from)
                 .limit(size).toList();

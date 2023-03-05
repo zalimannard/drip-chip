@@ -12,6 +12,7 @@ public interface AccountRepository extends JpaRepository<Account, Integer> {
 
     Account findByPassword(String password);
 
-    List<Account> findAllByEmailLikeIgnoreCaseOrderById(String email);
+    List<Account> findAllByFirstNameLikeIgnoreCaseAndLastNameLikeIgnoreCaseAndEmailLikeIgnoreCaseOrderById
+            (String firstName, String lastName, String email);
 
 }
