@@ -36,6 +36,19 @@ public class LocationServiceImpl implements LocationService {
     }
 
     @Override
+    public LocationDto update(long id, @Valid LocationDto locationDto) {
+        if (locationRepository.existsById(id)) {
+            Location locationRequest = locationMapper.toEntity(locationDto);
+            locationRequest.setId(id);
+
+            Location locationResponse = locationRepository.save(locationRequest);
+            return locationMapper.toDto(locationResponse);
+        } else {
+            throw new NotFoundException("Location", "id", String.valueOf(id));
+        }
+    }
+
+    @Override
     public void delete(long id) {
         if (locationRepository.existsById(id)) {
             locationRepository.deleteById(id);

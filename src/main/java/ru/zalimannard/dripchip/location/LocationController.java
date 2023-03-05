@@ -25,6 +25,12 @@ public class LocationController {
         return locationService.create(locationDto);
     }
 
+    @PutMapping("{id}")
+    public LocationDto put(@PathVariable @Min(1) long id,
+                           @RequestBody LocationDto locationDto) {
+        return locationService.update(id, locationDto);
+    }
+
     @DeleteMapping("{id}")
     @ResponseStatus(HttpStatus.OK)
     public void delete(@PathVariable @Min(1) long id) {

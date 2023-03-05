@@ -8,6 +8,8 @@ public interface LocationService {
 
     LocationDto read(long id);
 
+    LocationDto update(long id, @Valid LocationDto locationDto);
+
     void delete(long id);
 
 }
