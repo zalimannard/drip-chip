@@ -8,6 +8,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 import ru.zalimannard.dripchip.exception.ConflictException;
+import ru.zalimannard.dripchip.exception.ForbiddenException;
 import ru.zalimannard.dripchip.exception.NotFoundException;
 
 import java.util.List;
@@ -53,6 +54,29 @@ public class AccountServiceImpl implements AccountService {
                 .limit(size).toList();
 
         return accountMapper.toDtoList(responseAccountList);
+    }
+
+    @Override
+    public AccountDto update(int id, @Valid AccountDto accountDto) {
+        if (accountRepository.existsById(id)) {
+            Account accountRequest = accountMapper.toEntity(accountDto);
+            accountRequest.setId(id);
+            accountRequest.setPassword(encoder.encode((accountRequest.getEmail() + ":" + accountRequest.getPassword())));
+
+            Account accountResponse = accountRepository.save(accountRequest);
+            return accountMapper.toDto(accountResponse);
+        } else {
+            throw new ForbiddenException();
+        }
+    }
+
+    @Override
+    public void delete(int id) {
+        if (accountRepository.existsById(id)) {
+            accountRepository.deleteById(id);
+        } else {
+            throw new ForbiddenException();
+        }
     }
 
 }

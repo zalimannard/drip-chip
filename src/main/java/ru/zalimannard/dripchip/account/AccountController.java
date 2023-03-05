@@ -28,4 +28,15 @@ public class AccountController {
         return accountService.search(filter, from, size);
     }
 
+    @PutMapping("{id}")
+    public AccountDto put(@PathVariable @Min(1) int id,
+                          @RequestBody AccountDto accountDto) {
+        return accountService.update(id, accountDto);
+    }
+
+    @DeleteMapping("{id}")
+    public void delete(@PathVariable @Min(1) int id) {
+        accountService.delete(id);
+    }
+
 }

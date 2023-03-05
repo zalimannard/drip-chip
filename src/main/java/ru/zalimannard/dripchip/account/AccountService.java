@@ -12,4 +12,8 @@ public interface AccountService {
 
     List<AccountDto> search(AccountDto filter, int from, int size);
 
+    AccountDto update(int id, @Valid AccountDto accountDto);
+
+    void delete(int id);
+
 }
