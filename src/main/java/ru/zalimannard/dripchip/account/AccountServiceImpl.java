@@ -4,14 +4,12 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.mapstruct.factory.Mappers;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.data.domain.Example;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 import ru.zalimannard.dripchip.exception.ConflictException;
 import ru.zalimannard.dripchip.exception.NotFoundException;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -45,8 +43,14 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public List<AccountDto> search(AccountDto filter, int from, int size) {
         Account exampleAccount = accountMapper.toEntity(filter);
-        List<Account> accountList = new ArrayList<>(accountRepository.findAll(Example.of(exampleAccount)));
-        return accountMapper.toDtoList(accountList);
+
+        List<Account> accountList = accountRepository.findAllByEmailLikeIgnoreCaseOrderById(
+                "%" + exampleAccount.getEmail() + "%");
+        List<Account> responseAccountList = accountList
+                .stream().skip(from)
+                .limit(size).toList();
+
+        return accountMapper.toDtoList(responseAccountList);
     }
 
 }
