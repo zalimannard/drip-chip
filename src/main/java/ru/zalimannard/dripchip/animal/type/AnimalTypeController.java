@@ -25,6 +25,12 @@ public class AnimalTypeController {
         return animalTypeService.create(animalTypeDto);
     }
 
+    @PutMapping("${application.endpoint.types}/{id}")
+    public AnimalTypeDto put(@PathVariable @Min(1) long id,
+                             @RequestBody AnimalTypeDto animalTypeDto) {
+        return animalTypeService.update(id, animalTypeDto);
+    }
+
     @DeleteMapping("${application.endpoint.types}/{id}")
     @ResponseStatus(HttpStatus.OK)
     public void delete(@PathVariable @Min(1) long id) {

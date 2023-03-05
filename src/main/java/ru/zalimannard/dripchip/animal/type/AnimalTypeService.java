@@ -8,6 +8,8 @@ public interface AnimalTypeService {
 
     AnimalTypeDto read(long id);
 
+    AnimalTypeDto update(long id, @Valid AnimalTypeDto animalTypeDto);
+
     void delete(long id);
 
 }

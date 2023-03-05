@@ -36,6 +36,23 @@ public class AnimalTypeServiceImpl implements AnimalTypeService {
     }
 
     @Override
+    public AnimalTypeDto update(long id, AnimalTypeDto animalTypeDto) {
+        if (animalTypeRepository.existsById(id)) {
+            try {
+                AnimalType animalTypeRequest = animalTypeMapper.toEntity(animalTypeDto);
+                animalTypeRequest.setId(id);
+
+                AnimalType animalTypeResponse = animalTypeRepository.save(animalTypeRequest);
+                return animalTypeMapper.toDto(animalTypeResponse);
+            } catch (DataIntegrityViolationException e) {
+                throw new ConflictException("Conflict in adding to the database");
+            }
+        } else {
+            throw new NotFoundException("AnimalType", "id", String.valueOf(id));
+        }
+    }
+
+    @Override
     public void delete(long id) {
         if (animalTypeRepository.existsById(id)) {
             animalTypeRepository.deleteById(id);
