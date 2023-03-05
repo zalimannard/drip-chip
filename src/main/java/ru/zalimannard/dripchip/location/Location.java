@@ -4,7 +4,9 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 @Entity
-@Table(name = "locations")
+@Table(name = "locations",
+        uniqueConstraints = {@UniqueConstraint(columnNames = {"latitude", "latitude"})
+        })
 @Data
 public class Location {
 
