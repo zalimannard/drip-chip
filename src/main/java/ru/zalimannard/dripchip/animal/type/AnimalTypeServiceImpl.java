@@ -1,6 +1,7 @@
 package ru.zalimannard.dripchip.animal.type;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.mapstruct.factory.Mappers;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -8,6 +9,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 import ru.zalimannard.dripchip.exception.ConflictException;
 import ru.zalimannard.dripchip.exception.NotFoundException;
+
+import java.util.List;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -29,10 +33,19 @@ public class AnimalTypeServiceImpl implements AnimalTypeService {
     }
 
     @Override
-    public AnimalTypeDto read(long id) {
+    public AnimalTypeDto read(@Min(1) long id) {
         AnimalType animalType = animalTypeRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("AnimalType", "id", String.valueOf(id)));
         return animalTypeMapper.toDto(animalType);
+    }
+
+    @Override
+    public List<AnimalType> getAllById(Set<Long> ids) {
+        List<AnimalType> animalTypes = animalTypeRepository.findAllById(ids);
+        if (animalTypes.size() != ids.size()) {
+            throw new NotFoundException("Animal type", "id", "some from request");
+        }
+        return animalTypes;
     }
 
     @Override

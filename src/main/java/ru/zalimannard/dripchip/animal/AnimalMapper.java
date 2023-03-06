@@ -4,14 +4,11 @@ import org.mapstruct.*;
 import ru.zalimannard.dripchip.account.Account;
 import ru.zalimannard.dripchip.account.AccountRepository;
 import ru.zalimannard.dripchip.animal.type.AnimalType;
-import ru.zalimannard.dripchip.animal.type.AnimalTypeRepository;
 import ru.zalimannard.dripchip.exception.NotFoundException;
 import ru.zalimannard.dripchip.location.Location;
 import ru.zalimannard.dripchip.location.LocationRepository;
 
 import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
 
 @Mapper
 public interface AnimalMapper {
@@ -20,7 +17,6 @@ public interface AnimalMapper {
     @Mapping(target = "chipper", ignore = true)
     @Mapping(target = "chippingLocation", ignore = true)
     Animal toEntity(AnimalDto dto,
-                    @Context AnimalTypeRepository animalTypeRepository,
                     @Context AccountRepository accountRepository,
                     @Context LocationRepository locationRepository);
 
@@ -32,25 +28,15 @@ public interface AnimalMapper {
 
     @AfterMapping
     default void toEntity(@MappingTarget Animal entity, AnimalDto dto,
-                          @Context AnimalTypeRepository animalTypeRepository,
                           @Context AccountRepository accountRepository,
                           @Context LocationRepository locationRepository) {
-        Set<AnimalType> animalTypes = new HashSet<>(animalTypeRepository.findAllById(dto.getAnimalTypeIds()));
-        entity.setAnimalTypes(animalTypes);
+        Account chipper = accountRepository.findById(dto.getChipperId())
+                .orElseThrow(() -> new NotFoundException("Account", "id", String.valueOf(dto.getChipperId())));
+        Location location = locationRepository.findById(dto.getChippingLocationId())
+                .orElseThrow(() -> new NotFoundException("Location", "id", String.valueOf(dto.getChippingLocationId())));
 
-        Optional<Account> chipper = accountRepository.findById(dto.getChipperId());
-        if (chipper.isPresent()) {
-            entity.setChipper(chipper.get());
-        } else {
-            throw new NotFoundException("Account", "id", String.valueOf(dto.getChipperId()));
-        }
-
-        Optional<Location> location = locationRepository.findById(dto.getChippingLocationId());
-        if (location.isPresent()) {
-            entity.setChippingLocation(location.get());
-        } else {
-            throw new NotFoundException("Location", "id", String.valueOf(dto.getChippingLocationId()));
-        }
+        entity.setChipper(chipper);
+        entity.setChippingLocation(location);
     }
 
     @AfterMapping

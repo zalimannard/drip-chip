@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 import ru.zalimannard.dripchip.account.AccountRepository;
 import ru.zalimannard.dripchip.animal.lifestatus.AnimalLifeStatus;
-import ru.zalimannard.dripchip.animal.type.AnimalTypeRepository;
+import ru.zalimannard.dripchip.animal.type.AnimalTypeService;
 import ru.zalimannard.dripchip.exception.ConflictException;
 import ru.zalimannard.dripchip.exception.NotFoundException;
 import ru.zalimannard.dripchip.location.LocationRepository;
@@ -16,6 +16,7 @@ import ru.zalimannard.dripchip.location.LocationRepository;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 @Service
@@ -24,18 +25,18 @@ import java.util.List;
 public class AnimalServiceImpl implements AnimalService {
 
     private final AnimalRepository animalRepository;
-    private final AnimalTypeRepository animalTypeRepository;
     private final AccountRepository accountRepository;
     private final LocationRepository locationRepository;
     private final AnimalMapper animalMapper = Mappers.getMapper(AnimalMapper.class);
+    private final AnimalTypeService animalTypeService;
 
     @Override
     public AnimalDto create(@Valid AnimalDto animalDto) {
         try {
-            Animal animalRequest = animalMapper.toEntity(animalDto,
-                    animalTypeRepository, accountRepository, locationRepository);
+            Animal animalRequest = animalMapper.toEntity(animalDto, accountRepository, locationRepository);
             animalRequest.setLifeStatus(AnimalLifeStatus.ALIVE);
             animalRequest.setChippingDateTime(Timestamp.from(Instant.now()));
+            animalRequest.setAnimalTypes(new HashSet<>(animalTypeService.getAllById(animalDto.getAnimalTypeIds())));
 
             Animal animalResponse = animalRepository.save(animalRequest);
             return animalMapper.toDto(animalResponse);

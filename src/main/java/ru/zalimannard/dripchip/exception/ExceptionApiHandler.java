@@ -29,4 +29,11 @@ public class ExceptionApiHandler {
                 .body(new ExceptionMessage(exception.getMessage()));
     }
 
+    @ExceptionHandler(BadRequestException.class)
+    public ResponseEntity<ExceptionMessage> badRequestException(BadRequestException exception) {
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(new ExceptionMessage(exception.getMessage()));
+    }
+
 }

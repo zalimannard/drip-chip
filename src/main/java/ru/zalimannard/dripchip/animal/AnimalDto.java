@@ -1,10 +1,7 @@
 package ru.zalimannard.dripchip.animal;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.*;
 import lombok.Data;
 import ru.zalimannard.dripchip.animal.gender.AnimalGender;
 import ru.zalimannard.dripchip.animal.lifestatus.AnimalLifeStatus;
@@ -21,7 +18,7 @@ public class AnimalDto {
 
     @JsonProperty("animalTypes")
     @NotEmpty
-    private Set<Long> animalTypeIds;
+    private Set<@Min(1) Long> animalTypeIds;
 
     @JsonProperty("weight")
     @NotNull
@@ -43,9 +40,11 @@ public class AnimalDto {
     private AnimalGender gender;
 
     @JsonProperty("lifeStatus")
+    @Null
     private AnimalLifeStatus lifeStatus;
 
     @JsonProperty("chippingDateTime")
+    @Null
     private Timestamp chippingDateTime;
 
     @JsonProperty("chipperId")
@@ -59,6 +58,7 @@ public class AnimalDto {
     private Long chippingLocationId;
 
     @JsonProperty("visitedLocations")
+    @Null
     private List<Long> visitedLocations;
 
     @JsonProperty("deathDateTime")
