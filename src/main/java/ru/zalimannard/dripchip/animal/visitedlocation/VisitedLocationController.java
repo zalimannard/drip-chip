@@ -5,6 +5,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("${application.endpoint.animals}/{animalId}")
 @Validated
@@ -12,6 +14,11 @@ import org.springframework.web.bind.annotation.*;
 public class VisitedLocationController {
 
     private final VisitedLocationService visitedLocationService;
+
+    @GetMapping("${application.endpoint.locations}")
+    public List<VisitedLocationDto> getAll(@PathVariable long animalId) {
+        return visitedLocationService.readAll(animalId);
+    }
 
     @PostMapping("${application.endpoint.locations}/{locationId}")
     @ResponseStatus(HttpStatus.CREATED)

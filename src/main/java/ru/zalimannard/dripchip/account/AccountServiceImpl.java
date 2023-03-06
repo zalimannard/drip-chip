@@ -9,6 +9,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
+import ru.zalimannard.dripchip.exception.BadRequestException;
 import ru.zalimannard.dripchip.exception.ConflictException;
 import ru.zalimannard.dripchip.exception.ForbiddenException;
 import ru.zalimannard.dripchip.exception.NotFoundException;
@@ -75,7 +76,11 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public void delete(@Positive int id) {
         if (accountRepository.existsById(id)) {
-            accountRepository.deleteById(id);
+            try {
+                accountRepository.deleteById(id);
+            } catch (DataIntegrityViolationException e) {
+                throw new BadRequestException("It is impossible to delete Account");
+            }
         } else {
             throw new ForbiddenException();
         }

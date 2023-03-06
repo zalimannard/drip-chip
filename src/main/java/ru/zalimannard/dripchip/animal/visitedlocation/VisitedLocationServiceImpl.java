@@ -13,6 +13,7 @@ import ru.zalimannard.dripchip.location.LocationRepository;
 
 import java.sql.Timestamp;
 import java.time.Instant;
+import java.util.List;
 
 @Service
 @Validated
@@ -38,6 +39,12 @@ public class VisitedLocationServiceImpl implements VisitedLocationService {
 
         VisitedLocation visitedLocationResponse = visitedLocationRepository.save(visitedLocationRequest);
         return visitedLocationMapper.toDto(visitedLocationResponse);
+    }
+
+    @Override
+    public List<VisitedLocationDto> readAll(@Positive long animalId) {
+        List<VisitedLocation> visitedLocations = visitedLocationRepository.findAllByAnimalId(animalId);
+        return visitedLocationMapper.toDtoList(visitedLocations);
     }
 
 }

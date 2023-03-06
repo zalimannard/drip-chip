@@ -7,6 +7,8 @@ import ru.zalimannard.dripchip.exception.NotFoundException;
 import ru.zalimannard.dripchip.location.Location;
 import ru.zalimannard.dripchip.location.LocationRepository;
 
+import java.util.List;
+
 @Mapper
 public interface VisitedLocationMapper {
 
@@ -17,6 +19,10 @@ public interface VisitedLocationMapper {
     @Mapping(target = "animalId", ignore = true)
     @Mapping(target = "locationId", ignore = true)
     VisitedLocationDto toDto(VisitedLocation entity);
+
+    List<VisitedLocation> toEntityList(List<VisitedLocationDto> dto);
+
+    List<VisitedLocationDto> toDtoList(List<VisitedLocation> entity);
 
     @AfterMapping
     default void toEntity(@MappingTarget VisitedLocation entity, VisitedLocationDto dto,
