@@ -21,7 +21,7 @@ public class WebSecurityConfig {
                 .userDetailsService(userDetailsService)
                 .csrf().disable()
                 .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers(HttpMethod.POST, "/registration").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/registration").anonymous()
                         .requestMatchers(HttpMethod.GET).permitAll()
                         .anyRequest().authenticated()
                 )
