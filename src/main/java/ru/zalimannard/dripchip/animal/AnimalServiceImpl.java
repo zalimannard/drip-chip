@@ -1,6 +1,8 @@
 package ru.zalimannard.dripchip.animal;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
 import lombok.RequiredArgsConstructor;
 import org.mapstruct.factory.Mappers;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -46,14 +48,14 @@ public class AnimalServiceImpl implements AnimalService {
     }
 
     @Override
-    public AnimalDto read(long id) {
+    public AnimalDto read(@Positive long id) {
         Animal animal = animalRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Animal", "id", String.valueOf(id)));
         return animalMapper.toDto(animal);
     }
 
     @Override
-    public List<AnimalDto> search(AnimalDto filter, int from, int size) {
+    public List<AnimalDto> search(AnimalDto filter, @PositiveOrZero int from, @Positive int size) {
         return new ArrayList<>();
     }
 

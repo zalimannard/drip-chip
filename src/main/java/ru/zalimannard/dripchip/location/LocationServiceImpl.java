@@ -1,6 +1,7 @@
 package ru.zalimannard.dripchip.location;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import org.mapstruct.factory.Mappers;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -29,14 +30,14 @@ public class LocationServiceImpl implements LocationService {
     }
 
     @Override
-    public LocationDto read(long id) {
+    public LocationDto read(@Positive long id) {
         Location location = locationRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Location", "id", String.valueOf(id)));
         return locationMapper.toDto(location);
     }
 
     @Override
-    public LocationDto update(long id, @Valid LocationDto locationDto) {
+    public LocationDto update(@Positive long id, @Valid LocationDto locationDto) {
         if (locationRepository.existsById(id)) {
             try {
                 Location locationRequest = locationMapper.toEntity(locationDto);
@@ -53,7 +54,7 @@ public class LocationServiceImpl implements LocationService {
     }
 
     @Override
-    public void delete(long id) {
+    public void delete(@Positive long id) {
         if (locationRepository.existsById(id)) {
             locationRepository.deleteById(id);
         } else {

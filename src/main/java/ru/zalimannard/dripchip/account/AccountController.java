@@ -1,8 +1,6 @@
 package ru.zalimannard.dripchip.account;
 
-import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.querydsl.binding.QuerydslPredicate;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,25 +15,25 @@ public class AccountController {
     private final AccountService accountService;
 
     @GetMapping("{id}")
-    public AccountDto get(@PathVariable @Min(1) int id) {
+    public AccountDto get(@PathVariable int id) {
         return accountService.read(id);
     }
 
     @GetMapping("${application.endpoint.search}")
-    public List<AccountDto> search(@QuerydslPredicate AccountDto filter,
-                                   @RequestParam(defaultValue = "0") @Min(0) int from,
-                                   @RequestParam(defaultValue = "10") @Min(1) int size) {
+    public List<AccountDto> search(AccountDto filter,
+                                   @RequestParam(defaultValue = "0") int from,
+                                   @RequestParam(defaultValue = "10") int size) {
         return accountService.search(filter, from, size);
     }
 
     @PutMapping("{id}")
-    public AccountDto put(@PathVariable @Min(1) int id,
+    public AccountDto put(@PathVariable int id,
                           @RequestBody AccountDto accountDto) {
         return accountService.update(id, accountDto);
     }
 
     @DeleteMapping("{id}")
-    public void delete(@PathVariable @Min(1) int id) {
+    public void delete(@PathVariable int id) {
         accountService.delete(id);
     }
 

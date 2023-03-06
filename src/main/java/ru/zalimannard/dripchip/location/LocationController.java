@@ -1,6 +1,5 @@
 package ru.zalimannard.dripchip.location;
 
-import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
@@ -15,7 +14,7 @@ public class LocationController {
     private final LocationService locationService;
 
     @GetMapping("{id}")
-    public LocationDto get(@PathVariable @Min(1) long id) {
+    public LocationDto get(@PathVariable long id) {
         return locationService.read(id);
     }
 
@@ -26,14 +25,14 @@ public class LocationController {
     }
 
     @PutMapping("{id}")
-    public LocationDto put(@PathVariable @Min(1) long id,
+    public LocationDto put(@PathVariable long id,
                            @RequestBody LocationDto locationDto) {
         return locationService.update(id, locationDto);
     }
 
     @DeleteMapping("{id}")
     @ResponseStatus(HttpStatus.OK)
-    public void delete(@PathVariable @Min(1) long id) {
+    public void delete(@PathVariable long id) {
         locationService.delete(id);
     }
 

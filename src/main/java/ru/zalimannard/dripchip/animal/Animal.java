@@ -54,12 +54,4 @@ public class Animal {
     @Column(name = "deathDateTime")
     private Timestamp deathDateTime;
 
-    public void addAnimalType(AnimalType animalType) {
-        animalTypes.add(animalType);
-    }
-
-    public void removeAnimalType(AnimalType animalType) {
-        animalTypes.remove(animalType);
-    }
-
 }

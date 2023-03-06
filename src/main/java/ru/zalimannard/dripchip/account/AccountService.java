@@ -1,6 +1,8 @@
 package ru.zalimannard.dripchip.account;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
 
 import java.util.List;
 
@@ -8,12 +10,12 @@ public interface AccountService {
 
     AccountDto create(@Valid AccountDto accountDto);
 
-    AccountDto read(int id);
+    AccountDto read(@Positive int id);
 
-    List<AccountDto> search(AccountDto filter, int from, int size);
+    List<AccountDto> search(AccountDto filter, @PositiveOrZero int from, @Positive int size);
 
-    AccountDto update(int id, @Valid AccountDto accountDto);
+    AccountDto update(@Positive int id, @Valid AccountDto accountDto);
 
-    void delete(int id);
+    void delete(@Positive int id);
 
 }

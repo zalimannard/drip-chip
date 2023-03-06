@@ -1,5 +1,6 @@
 package ru.zalimannard.dripchip.animal.visitedlocation;
 
+import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import org.mapstruct.factory.Mappers;
 import org.springframework.stereotype.Service;
@@ -24,7 +25,7 @@ public class VisitedLocationServiceImpl implements VisitedLocationService {
     private final VisitedLocationMapper visitedLocationMapper = Mappers.getMapper(VisitedLocationMapper.class);
 
     @Override
-    public VisitedLocationDto create(long animalId, long locationId) {
+    public VisitedLocationDto create(@Positive long animalId, @Positive long locationId) {
         Animal animal = animalRepository.findById(animalId)
                 .orElseThrow(() -> new NotFoundException("Animal", "id", String.valueOf(animalId)));
         Location location = locationRepository.findById(locationId)

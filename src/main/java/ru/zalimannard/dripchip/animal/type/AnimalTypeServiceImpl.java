@@ -1,7 +1,7 @@
 package ru.zalimannard.dripchip.animal.type;
 
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import org.mapstruct.factory.Mappers;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -33,14 +33,14 @@ public class AnimalTypeServiceImpl implements AnimalTypeService {
     }
 
     @Override
-    public AnimalTypeDto read(@Min(1) long id) {
+    public AnimalTypeDto read(@Positive long id) {
         AnimalType animalType = animalTypeRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("AnimalType", "id", String.valueOf(id)));
         return animalTypeMapper.toDto(animalType);
     }
 
     @Override
-    public List<AnimalType> getAllById(Set<Long> ids) {
+    public List<AnimalType> getAllById(Set<@Positive Long> ids) {
         List<AnimalType> animalTypes = animalTypeRepository.findAllById(ids);
         if (animalTypes.size() != ids.size()) {
             throw new NotFoundException("Animal type", "id", "some from request");
@@ -49,7 +49,7 @@ public class AnimalTypeServiceImpl implements AnimalTypeService {
     }
 
     @Override
-    public AnimalTypeDto update(long id, AnimalTypeDto animalTypeDto) {
+    public AnimalTypeDto update(@Positive long id, @Valid AnimalTypeDto animalTypeDto) {
         if (animalTypeRepository.existsById(id)) {
             try {
                 AnimalType animalTypeRequest = animalTypeMapper.toEntity(animalTypeDto);
@@ -66,7 +66,7 @@ public class AnimalTypeServiceImpl implements AnimalTypeService {
     }
 
     @Override
-    public void delete(long id) {
+    public void delete(@Positive long id) {
         if (animalTypeRepository.existsById(id)) {
             animalTypeRepository.deleteById(id);
         } else {

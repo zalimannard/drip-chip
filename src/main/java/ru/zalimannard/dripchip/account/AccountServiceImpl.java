@@ -1,6 +1,8 @@
 package ru.zalimannard.dripchip.account;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
 import lombok.RequiredArgsConstructor;
 import org.mapstruct.factory.Mappers;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -35,14 +37,14 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public AccountDto read(int id) {
+    public AccountDto read(@Positive int id) {
         Account account = accountRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Account", "id", String.valueOf(id)));
         return accountMapper.toDto(account);
     }
 
     @Override
-    public List<AccountDto> search(AccountDto filter, int from, int size) {
+    public List<AccountDto> search(AccountDto filter, @PositiveOrZero int from, @Positive int size) {
         Account exampleAccount = accountMapper.toEntity(filter);
 
         List<Account> accountList = accountRepository.findAllByFirstNameLikeIgnoreCaseAndLastNameLikeIgnoreCaseAndEmailLikeIgnoreCaseOrderById(
@@ -57,7 +59,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public AccountDto update(int id, @Valid AccountDto accountDto) {
+    public AccountDto update(@Positive int id, @Valid AccountDto accountDto) {
         if (accountRepository.existsById(id)) {
             Account accountRequest = accountMapper.toEntity(accountDto);
             accountRequest.setId(id);
@@ -71,7 +73,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public void delete(int id) {
+    public void delete(@Positive int id) {
         if (accountRepository.existsById(id)) {
             accountRepository.deleteById(id);
         } else {

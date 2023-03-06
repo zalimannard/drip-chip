@@ -2,8 +2,8 @@ package ru.zalimannard.dripchip.animal.visitedlocation;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import lombok.Data;
 
 import java.sql.Timestamp;
@@ -20,12 +20,12 @@ public class VisitedLocationDto {
     @JsonProperty("animalId")
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @NotNull
-    @Min(1)
+    @Positive
     private Long animalId;
 
     @JsonProperty("locationPointId")
     @NotNull
-    @Min(1)
+    @Positive
     private Long locationId;
 
 }

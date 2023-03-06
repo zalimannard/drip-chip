@@ -1,15 +1,16 @@
 package ru.zalimannard.dripchip.location;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Positive;
 
 public interface LocationService {
 
     LocationDto create(@Valid LocationDto locationDto);
 
-    LocationDto read(long id);
+    LocationDto read(@Positive long id);
 
-    LocationDto update(long id, @Valid LocationDto locationDto);
+    LocationDto update(@Positive long id, @Valid LocationDto locationDto);
 
-    void delete(long id);
+    void delete(@Positive long id);
 
 }

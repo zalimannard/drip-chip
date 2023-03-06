@@ -25,8 +25,4 @@ public class Account {
     @Column(name = "password")
     private String password;
 
-    public Account() {
-
-    }
-
 }

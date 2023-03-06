@@ -1,7 +1,9 @@
 package ru.zalimannard.dripchip.animal.visitedlocation;
 
+import jakarta.validation.constraints.Positive;
+
 public interface VisitedLocationService {
 
-    VisitedLocationDto create(long animalId, long locationId);
+    VisitedLocationDto create(@Positive long animalId, @Positive long locationId);
 
 }

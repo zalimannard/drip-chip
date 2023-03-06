@@ -1,8 +1,6 @@
 package ru.zalimannard.dripchip.animal;
 
-import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.querydsl.binding.QuerydslPredicate;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -18,14 +16,14 @@ public class AnimalController {
     private final AnimalService animalService;
 
     @GetMapping("{id}")
-    public AnimalDto get(@PathVariable @Min(1) long id) {
+    public AnimalDto get(@PathVariable long id) {
         return animalService.read(id);
     }
 
     @GetMapping("${application.endpoint.search}")
-    public List<AnimalDto> search(@QuerydslPredicate AnimalDto filter,
-                                  @RequestParam(defaultValue = "0") @Min(0) int from,
-                                  @RequestParam(defaultValue = "10") @Min(1) int size) {
+    public List<AnimalDto> search(AnimalDto filter,
+                                  @RequestParam(defaultValue = "0") int from,
+                                  @RequestParam(defaultValue = "10") int size) {
         return animalService.search(filter, from, size);
     }
 
