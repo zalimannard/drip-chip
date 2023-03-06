@@ -2,10 +2,14 @@ package ru.zalimannard.dripchip.animal;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import ru.zalimannard.dripchip.account.Account;
 import ru.zalimannard.dripchip.animal.gender.AnimalGender;
 import ru.zalimannard.dripchip.animal.lifestatus.AnimalLifeStatus;
+import ru.zalimannard.dripchip.animal.type.AnimalType;
+import ru.zalimannard.dripchip.location.Location;
 
 import java.sql.Timestamp;
+import java.util.Set;
 
 @Entity
 @Table(name = "animals")
@@ -16,6 +20,10 @@ public class Animal {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
+
+    @ManyToMany
+    @Column(name = "animalTypes")
+    private Set<AnimalType> animalTypes;
 
     @Column(name = "weight")
     private Float weight;
@@ -35,13 +43,23 @@ public class Animal {
     @Column(name = "chippingDateTime")
     private Timestamp chippingDateTime;
 
-    @Column(name = "chipperId")
-    private Integer chipperId;
+    @ManyToOne
+    @JoinColumn(name = "chipperId")
+    private Account chipper;
 
-    @Column(name = "chippingLocationId")
-    private Long chippingLocationId;
+    @ManyToOne
+    @JoinColumn(name = "chippingLocationId")
+    private Location chippingLocation;
 
     @Column(name = "deathDateTime")
     private Timestamp deathDateTime;
+
+    public void addAnimalType(AnimalType animalType) {
+        animalTypes.add(animalType);
+    }
+
+    public void removeAnimalType(AnimalType animalType) {
+        animalTypes.remove(animalType);
+    }
 
 }
