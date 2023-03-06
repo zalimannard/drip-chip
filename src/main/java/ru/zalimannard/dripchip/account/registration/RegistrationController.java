@@ -1,9 +1,11 @@
-package ru.zalimannard.dripchip.account;
+package ru.zalimannard.dripchip.account.registration;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ru.zalimannard.dripchip.account.AccountDto;
+import ru.zalimannard.dripchip.account.AccountService;
 
 @RestController
 @RequestMapping("${application.endpoint.registration}")
