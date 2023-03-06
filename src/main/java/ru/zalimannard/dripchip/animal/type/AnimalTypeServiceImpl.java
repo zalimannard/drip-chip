@@ -36,7 +36,7 @@ public class AnimalTypeServiceImpl implements AnimalTypeService {
     @Override
     public AnimalTypeDto read(@Positive long id) {
         AnimalType animalType = animalTypeRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("AnimalType", "id", String.valueOf(id)));
+                .orElseThrow(() -> new NotFoundException("Animal type", "id", String.valueOf(id)));
         return animalTypeMapper.toDto(animalType);
     }
 
@@ -62,7 +62,7 @@ public class AnimalTypeServiceImpl implements AnimalTypeService {
                 throw new ConflictException("Conflict in adding to the database");
             }
         } else {
-            throw new NotFoundException("AnimalType", "id", String.valueOf(id));
+            throw new NotFoundException("Animal type", "id", String.valueOf(id));
         }
     }
 
@@ -75,7 +75,7 @@ public class AnimalTypeServiceImpl implements AnimalTypeService {
                 throw new BadRequestException("It is impossible to delete animal type");
             }
         } else {
-            throw new NotFoundException("AnimalType", "id", String.valueOf(id));
+            throw new NotFoundException("Animal type", "id", String.valueOf(id));
         }
     }
 
