@@ -14,4 +14,6 @@ public interface AnimalService {
 
     List<AnimalDto> search(AnimalDto filter, @PositiveOrZero int from, @Positive int size);
 
+    void delete(@Positive long id);
+
 }

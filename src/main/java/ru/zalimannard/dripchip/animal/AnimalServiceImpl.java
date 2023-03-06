@@ -11,6 +11,7 @@ import org.springframework.validation.annotation.Validated;
 import ru.zalimannard.dripchip.account.AccountRepository;
 import ru.zalimannard.dripchip.animal.lifestatus.AnimalLifeStatus;
 import ru.zalimannard.dripchip.animal.type.AnimalTypeService;
+import ru.zalimannard.dripchip.exception.BadRequestException;
 import ru.zalimannard.dripchip.exception.ConflictException;
 import ru.zalimannard.dripchip.exception.NotFoundException;
 import ru.zalimannard.dripchip.location.LocationRepository;
@@ -57,6 +58,19 @@ public class AnimalServiceImpl implements AnimalService {
     @Override
     public List<AnimalDto> search(AnimalDto filter, @PositiveOrZero int from, @Positive int size) {
         return new ArrayList<>();
+    }
+
+    @Override
+    public void delete(@Positive long id) {
+        if (animalRepository.existsById(id)) {
+            try {
+                animalRepository.deleteById(id);
+            } catch (DataIntegrityViolationException e) {
+                throw new BadRequestException("It is impossible to delete animal");
+            }
+        } else {
+            throw new NotFoundException("Animal", "id", String.valueOf(id));
+        }
     }
 
 }

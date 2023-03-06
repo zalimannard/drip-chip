@@ -7,6 +7,7 @@ import org.mapstruct.factory.Mappers;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
+import ru.zalimannard.dripchip.exception.BadRequestException;
 import ru.zalimannard.dripchip.exception.ConflictException;
 import ru.zalimannard.dripchip.exception.NotFoundException;
 
@@ -68,7 +69,11 @@ public class AnimalTypeServiceImpl implements AnimalTypeService {
     @Override
     public void delete(@Positive long id) {
         if (animalTypeRepository.existsById(id)) {
-            animalTypeRepository.deleteById(id);
+            try {
+                animalTypeRepository.deleteById(id);
+            } catch (DataIntegrityViolationException e) {
+                throw new BadRequestException("It is impossible to delete animal type");
+            }
         } else {
             throw new NotFoundException("AnimalType", "id", String.valueOf(id));
         }

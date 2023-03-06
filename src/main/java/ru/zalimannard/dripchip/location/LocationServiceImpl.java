@@ -7,6 +7,7 @@ import org.mapstruct.factory.Mappers;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
+import ru.zalimannard.dripchip.exception.BadRequestException;
 import ru.zalimannard.dripchip.exception.ConflictException;
 import ru.zalimannard.dripchip.exception.NotFoundException;
 
@@ -56,7 +57,11 @@ public class LocationServiceImpl implements LocationService {
     @Override
     public void delete(@Positive long id) {
         if (locationRepository.existsById(id)) {
-            locationRepository.deleteById(id);
+            try {
+                locationRepository.deleteById(id);
+            } catch (DataIntegrityViolationException e) {
+                throw new BadRequestException("It is impossible to delete Location");
+            }
         } else {
             throw new NotFoundException("Location", "id", String.valueOf(id));
         }

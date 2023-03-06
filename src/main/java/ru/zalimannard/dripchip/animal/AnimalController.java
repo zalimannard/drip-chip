@@ -33,4 +33,9 @@ public class AnimalController {
         return animalService.create(animalDto);
     }
 
+    @DeleteMapping("{id}")
+    public void delete(@PathVariable long id) {
+        animalService.delete(id);
+    }
+
 }
