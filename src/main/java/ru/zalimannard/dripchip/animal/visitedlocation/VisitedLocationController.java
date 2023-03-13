@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ru.zalimannard.dripchip.animal.AnimalDto;
+import ru.zalimannard.dripchip.animal.visitedlocation.update.VisitedLocationUpdateDto;
 
 import java.util.List;
 
@@ -27,4 +29,15 @@ public class VisitedLocationController {
         return visitedLocationService.create(animalId, locationId);
     }
 
+    @PutMapping("${application.endpoint.locations}")
+    public VisitedLocationDto put(@PathVariable long animalId,
+                                  @RequestBody VisitedLocationUpdateDto visitedLocationUpdateDto) {
+        return visitedLocationService.update(animalId, visitedLocationUpdateDto);
+    }
+
+    @DeleteMapping("${application.endpoint.locations}/{visitedLocationId}")
+    public void delete(@PathVariable long animalId,
+                       @PathVariable long visitedLocationId) {
+        visitedLocationService.delete(animalId, visitedLocationId);
+    }
 }

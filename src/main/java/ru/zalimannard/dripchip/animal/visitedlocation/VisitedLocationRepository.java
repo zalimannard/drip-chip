@@ -10,4 +10,6 @@ public interface VisitedLocationRepository extends JpaRepository<VisitedLocation
 
     List<VisitedLocation> findAllByAnimalId(long animalId);
 
+    List<VisitedLocation> findAllByAnimalIdOrderByDateTimeOfVisitLocationPoint(long animalId);
+
 }

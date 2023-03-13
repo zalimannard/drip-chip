@@ -8,12 +8,15 @@ import org.mapstruct.factory.Mappers;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
+import ru.zalimannard.dripchip.account.Account;
 import ru.zalimannard.dripchip.account.AccountRepository;
 import ru.zalimannard.dripchip.animal.lifestatus.AnimalLifeStatus;
 import ru.zalimannard.dripchip.animal.type.AnimalTypeService;
 import ru.zalimannard.dripchip.exception.BadRequestException;
 import ru.zalimannard.dripchip.exception.ConflictException;
+import ru.zalimannard.dripchip.exception.ForbiddenException;
 import ru.zalimannard.dripchip.exception.NotFoundException;
+import ru.zalimannard.dripchip.location.Location;
 import ru.zalimannard.dripchip.location.LocationRepository;
 
 import java.sql.Timestamp;
@@ -36,6 +39,9 @@ public class AnimalServiceImpl implements AnimalService {
     @Override
     public AnimalDto create(@Valid AnimalDto animalDto) {
         try {
+            if (animalDto.getAnimalTypeIds().size() == 0) {
+                throw new BadRequestException("The number of animal types must be greater than zero");
+            }
             Animal animalRequest = animalMapper.toEntity(animalDto, accountRepository, locationRepository);
             animalRequest.setLifeStatus(AnimalLifeStatus.ALIVE);
             animalRequest.setChippingDateTime(Timestamp.from(Instant.now()));
@@ -56,8 +62,45 @@ public class AnimalServiceImpl implements AnimalService {
     }
 
     @Override
-    public List<AnimalDto> search(AnimalDto filter, @PositiveOrZero int from, @Positive int size) {
-        return new ArrayList<>();
+    public List<AnimalDto> search(AnimalDto filter, Timestamp start, Timestamp end, @PositiveOrZero int from,
+                                  @Positive int size) {
+
+        Account accountStart = new Account();
+        accountStart.setId(1);
+        Account accountEnd = new Account();
+        accountEnd.setId(Integer.MAX_VALUE);
+        Location locationStart = new Location();
+        locationStart.setId(1L);
+        Location locationEnd = new Location();
+        locationEnd.setId(Long.MAX_VALUE);
+
+        List<Animal> animalList = new ArrayList<>();
+//                animalRepository.findAllByChippingDateTimeBetweenAndChipperBetweenAndChippingLocationBetweenAndLifeStatusLikeAndGenderLikeOrderById(
+//                        (start == null ? Timestamp.from(Instant.now().minusSeconds(10000)) : start),
+//                        (end == null ? Timestamp.from(Instant.now()) : end),
+//                        (accountStart),
+//                        (accountEnd),
+//                        (locationStart),
+//                        (locationEnd));
+
+        List<Animal> responseAnimalList = animalList
+                .stream().skip(from)
+                .limit(size).toList();
+
+        return animalMapper.toDtoList(responseAnimalList);
+    }
+
+    @Override
+    public AnimalDto update(@Positive long id, @Valid AnimalDto animalDto) {
+        if (animalRepository.existsById(id)) {
+            Animal animalRequest = animalMapper.toEntity(animalDto, accountRepository, locationRepository);
+            animalRequest.setId(id);
+
+            Animal accountResponse = animalRepository.save(animalRequest);
+            return animalMapper.toDto(accountResponse);
+        } else {
+            throw new ForbiddenException();
+        }
     }
 
     @Override

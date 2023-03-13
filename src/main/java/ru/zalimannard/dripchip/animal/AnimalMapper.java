@@ -4,11 +4,14 @@ import org.mapstruct.*;
 import ru.zalimannard.dripchip.account.Account;
 import ru.zalimannard.dripchip.account.AccountRepository;
 import ru.zalimannard.dripchip.animal.type.AnimalType;
+import ru.zalimannard.dripchip.animal.visitedlocation.VisitedLocation;
+import ru.zalimannard.dripchip.animal.visitedlocation.VisitedLocationDto;
 import ru.zalimannard.dripchip.exception.NotFoundException;
 import ru.zalimannard.dripchip.location.Location;
 import ru.zalimannard.dripchip.location.LocationRepository;
 
 import java.util.HashSet;
+import java.util.List;
 
 @Mapper
 public interface AnimalMapper {
@@ -26,6 +29,12 @@ public interface AnimalMapper {
     @Mapping(target = "chippingLocationId", ignore = true)
     AnimalDto toDto(Animal entity);
 
+    List<Animal> toEntityList(List<AnimalDto> dto,
+                              @Context AccountRepository accountRepository,
+                              @Context LocationRepository locationRepository);
+
+    List<AnimalDto> toDtoList(List<Animal> entity);
+
     @AfterMapping
     default void toEntity(@MappingTarget Animal entity, AnimalDto dto,
                           @Context AccountRepository accountRepository,
@@ -41,7 +50,6 @@ public interface AnimalMapper {
 
     @AfterMapping
     default void toDto(@MappingTarget AnimalDto dto, Animal entity) {
-        dto.setAnimalTypeIds(new HashSet<>());
         for (AnimalType animalType : entity.getAnimalTypes()) {
             dto.addAnimalTypeId(animalType.getId());
         }

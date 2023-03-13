@@ -9,6 +9,7 @@ import ru.zalimannard.dripchip.animal.type.AnimalType;
 import ru.zalimannard.dripchip.location.Location;
 
 import java.sql.Timestamp;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -23,7 +24,7 @@ public class Animal {
 
     @ManyToMany
     @Column(name = "animalTypes")
-    private Set<AnimalType> animalTypes;
+    private Set<AnimalType> animalTypes = new HashSet<>();
 
     @Column(name = "weight")
     private Float weight;

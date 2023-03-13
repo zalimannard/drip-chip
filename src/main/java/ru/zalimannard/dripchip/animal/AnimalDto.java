@@ -9,6 +9,8 @@ import ru.zalimannard.dripchip.animal.gender.AnimalGender;
 import ru.zalimannard.dripchip.animal.lifestatus.AnimalLifeStatus;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -19,8 +21,7 @@ public class AnimalDto {
     private Long id;
 
     @JsonProperty("animalTypes")
-    @NotEmpty
-    private Set<@Positive Long> animalTypeIds;
+    private Set<@Positive Long> animalTypeIds = new HashSet<>();
 
     @JsonProperty("weight")
     @NotNull
