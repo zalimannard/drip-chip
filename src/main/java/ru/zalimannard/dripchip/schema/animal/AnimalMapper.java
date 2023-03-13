@@ -9,14 +9,11 @@ import ru.zalimannard.dripchip.schema.account.Account;
 import ru.zalimannard.dripchip.schema.account.AccountDto;
 import ru.zalimannard.dripchip.schema.account.AccountMapper;
 import ru.zalimannard.dripchip.schema.account.AccountService;
-import ru.zalimannard.dripchip.schema.animal.type.AnimalType;
-import ru.zalimannard.dripchip.schema.animal.type.AnimalTypeDto;
-import ru.zalimannard.dripchip.schema.animal.type.AnimalTypeMapper;
-import ru.zalimannard.dripchip.schema.animal.type.AnimalTypeService;
+import ru.zalimannard.dripchip.schema.animal.ownedtype.type.AnimalType;
+import ru.zalimannard.dripchip.schema.animal.ownedtype.type.AnimalTypeDto;
+import ru.zalimannard.dripchip.schema.animal.ownedtype.type.AnimalTypeMapper;
+import ru.zalimannard.dripchip.schema.animal.ownedtype.type.AnimalTypeService;
 import ru.zalimannard.dripchip.schema.animal.visitedlocation.VisitedLocation;
-import ru.zalimannard.dripchip.schema.animal.visitedlocation.VisitedLocationDto;
-import ru.zalimannard.dripchip.schema.animal.visitedlocation.VisitedLocationMapper;
-import ru.zalimannard.dripchip.schema.animal.visitedlocation.VisitedLocationService;
 import ru.zalimannard.dripchip.schema.location.Location;
 import ru.zalimannard.dripchip.schema.location.LocationDto;
 import ru.zalimannard.dripchip.schema.location.LocationMapper;
@@ -25,7 +22,6 @@ import ru.zalimannard.dripchip.schema.location.LocationService;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Mapper(componentModel = "spring")
 public abstract class AnimalMapper {
@@ -83,9 +79,8 @@ public abstract class AnimalMapper {
 
     @AfterMapping
     protected void toDto(@MappingTarget AnimalDto dto, Animal entity) {
-        for (AnimalType animalType : entity.getAnimalTypes()) {
-            dto.addAnimalTypeId(animalType.getId());
-        }
+        entity.getAnimalTypes().forEach(animalType -> dto.addAnimalTypeId(animalType.getId()));
+
         List<VisitedLocation> visitedLocations = entity.getVisitedLocations();
         if (visitedLocations == null) {
             visitedLocations = new ArrayList<>();

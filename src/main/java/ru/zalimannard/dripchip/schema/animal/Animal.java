@@ -6,11 +6,14 @@ import lombok.EqualsAndHashCode;
 import ru.zalimannard.dripchip.schema.account.Account;
 import ru.zalimannard.dripchip.schema.animal.gender.AnimalGender;
 import ru.zalimannard.dripchip.schema.animal.lifestatus.AnimalLifeStatus;
-import ru.zalimannard.dripchip.schema.animal.type.AnimalType;
+import ru.zalimannard.dripchip.schema.animal.ownedtype.type.AnimalType;
 import ru.zalimannard.dripchip.schema.animal.visitedlocation.VisitedLocation;
 import ru.zalimannard.dripchip.schema.location.Location;
 
-import java.util.*;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "animals")

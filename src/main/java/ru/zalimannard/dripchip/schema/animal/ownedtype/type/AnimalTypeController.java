@@ -1,4 +1,4 @@
-package ru.zalimannard.dripchip.schema.animal.type;
+package ru.zalimannard.dripchip.schema.animal.ownedtype.type;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
