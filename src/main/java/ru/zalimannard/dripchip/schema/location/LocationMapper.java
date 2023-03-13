@@ -2,7 +2,7 @@ package ru.zalimannard.dripchip.schema.location;
 
 import org.mapstruct.Mapper;
 
-@Mapper
+@Mapper(componentModel = "spring")
 public interface LocationMapper {
 
     Location toEntity(LocationDto dto);

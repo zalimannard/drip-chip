@@ -3,67 +3,66 @@ package ru.zalimannard.dripchip.schema.location;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
-import org.mapstruct.factory.Mappers;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
-import org.springframework.validation.annotation.Validated;
 import ru.zalimannard.dripchip.exception.BadRequestException;
 import ru.zalimannard.dripchip.exception.ConflictException;
 import ru.zalimannard.dripchip.exception.NotFoundException;
 
 @Service
 @RequiredArgsConstructor
-@Validated
 public class LocationServiceImpl implements LocationService {
 
     private final LocationRepository locationRepository;
-    private final LocationMapper locationMapper = Mappers.getMapper(LocationMapper.class);
+    private final LocationMapper locationMapper;
 
     @Override
     public LocationDto create(@Valid LocationDto locationDto) {
-        try {
-            Location locationRequest = locationMapper.toEntity(locationDto);
-            Location locationResponse = locationRepository.save(locationRequest);
-            return locationMapper.toDto(locationResponse);
-        } catch (DataIntegrityViolationException e) {
-            throw new ConflictException("Conflict in adding to the database");
-        }
+        Location locationRequest = locationMapper.toEntity(locationDto);
+        locationRequest.setId(null);
+
+        Location locationResponse = saveToDatabase(locationRequest);
+        return locationMapper.toDto(locationResponse);
     }
 
     @Override
     public LocationDto read(@Positive long id) {
-        Location location = locationRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Location", "id", String.valueOf(id)));
+        checkExist(id);
+        Location location = locationRepository.findById(id).get();
         return locationMapper.toDto(location);
     }
 
     @Override
     public LocationDto update(@Positive long id, @Valid LocationDto locationDto) {
-        if (locationRepository.existsById(id)) {
-            try {
-                Location locationRequest = locationMapper.toEntity(locationDto);
-                locationRequest.setId(id);
+        checkExist(id);
+        Location locationRequest = locationMapper.toEntity(locationDto);
+        locationRequest.setId(id);
 
-                Location locationResponse = locationRepository.save(locationRequest);
-                return locationMapper.toDto(locationResponse);
-            } catch (DataIntegrityViolationException e) {
-                throw new ConflictException("Conflict in adding to the database");
-            }
-        } else {
-            throw new NotFoundException("Location", "id", String.valueOf(id));
-        }
+        Location locationResponse = saveToDatabase(locationRequest);
+        return locationMapper.toDto(locationResponse);
     }
 
     @Override
     public void delete(@Positive long id) {
-        if (locationRepository.existsById(id)) {
-            try {
-                locationRepository.deleteById(id);
-            } catch (DataIntegrityViolationException e) {
-                throw new BadRequestException("It is impossible to delete Location");
-            }
-        } else {
-            throw new NotFoundException("Location", "id", String.valueOf(id));
+        checkExist(id);
+        try {
+            locationRepository.deleteById(id);
+        } catch (DataIntegrityViolationException e) {
+            throw new BadRequestException("It is impossible to delete Location with id=" + id);
+        }
+    }
+
+    private void checkExist(long id) {
+        if (!locationRepository.existsById(id)) {
+            throw new NotFoundException("Location", String.valueOf(id));
+        }
+    }
+
+    private Location saveToDatabase(Location location) {
+        try {
+            return locationRepository.save(location);
+        } catch (DataIntegrityViolationException e) {
+            throw new ConflictException("Location");
         }
     }
 

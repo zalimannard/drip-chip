@@ -6,8 +6,13 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @ResponseStatus(HttpStatus.NOT_FOUND)
 public class NotFoundException extends RuntimeException {
 
-    public NotFoundException(String objectName, String fieldName, String value) {
-        super(objectName + " with " + fieldName + "=" + value + " not found");
+    public NotFoundException(String objectName, String id) {
+        super(objectName + " with id=" + id + " not found");
+    }
+
+    // TODO: Remove
+    public NotFoundException(String objectName, String id, String uselessVariable) {
+        super(objectName + " with id=" + id + " not found");
     }
 
 }

@@ -2,7 +2,9 @@ package ru.zalimannard.dripchip.schema.location;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
+import org.springframework.validation.annotation.Validated;
 
+@Validated
 public interface LocationService {
 
     LocationDto create(@Valid LocationDto locationDto);
