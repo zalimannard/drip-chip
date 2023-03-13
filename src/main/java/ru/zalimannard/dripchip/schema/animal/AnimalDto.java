@@ -3,17 +3,13 @@ package ru.zalimannard.dripchip.schema.animal;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.Data;
 import ru.zalimannard.dripchip.schema.animal.gender.AnimalGender;
 import ru.zalimannard.dripchip.schema.animal.lifestatus.AnimalLifeStatus;
 
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Data
 public class AnimalDto {
@@ -22,7 +18,6 @@ public class AnimalDto {
     private Long id;
 
     @JsonProperty("animalTypes")
-    @NotEmpty
     private Set<@Positive Long> animalTypeIds = new HashSet<>();
 
     @JsonProperty("weight")
@@ -62,7 +57,7 @@ public class AnimalDto {
     private Long chippingLocationId;
 
     @JsonProperty("visitedLocations")
-    private List<@Positive Long> visitedLocations;
+    private List<@Positive Long> visitedLocations = new ArrayList<>();
 
     @JsonProperty("deathDateTime")
     @Temporal(TemporalType.TIMESTAMP)

@@ -2,24 +2,26 @@ package ru.zalimannard.dripchip.schema.animal;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import ru.zalimannard.dripchip.schema.account.Account;
 import ru.zalimannard.dripchip.schema.animal.gender.AnimalGender;
 import ru.zalimannard.dripchip.schema.animal.lifestatus.AnimalLifeStatus;
 import ru.zalimannard.dripchip.schema.animal.type.AnimalType;
+import ru.zalimannard.dripchip.schema.animal.visitedlocation.VisitedLocation;
 import ru.zalimannard.dripchip.schema.location.Location;
 
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 @Table(name = "animals")
 @Data
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Animal {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
+    @EqualsAndHashCode.Include
     private Long id;
 
     @ManyToMany
@@ -56,5 +58,8 @@ public class Animal {
     @Column(name = "deathDateTime")
     @Temporal(TemporalType.TIMESTAMP)
     private Date deathDateTime;
+
+    @OneToMany(mappedBy = "animal")
+    private List<VisitedLocation> visitedLocations;
 
 }

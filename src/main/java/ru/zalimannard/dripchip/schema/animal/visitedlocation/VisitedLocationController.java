@@ -18,7 +18,7 @@ public class VisitedLocationController {
 
     @GetMapping("${application.endpoint.locations}")
     public List<VisitedLocationDto> getAll(@PathVariable long animalId) {
-        return visitedLocationService.readAll(animalId);
+        return visitedLocationService.readByAnimalId(animalId);
     }
 
     @PostMapping("${application.endpoint.locations}/{locationId}")

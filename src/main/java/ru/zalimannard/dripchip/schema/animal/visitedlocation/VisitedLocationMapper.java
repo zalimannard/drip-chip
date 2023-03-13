@@ -1,45 +1,56 @@
 package ru.zalimannard.dripchip.schema.animal.visitedlocation;
 
-import org.mapstruct.*;
-import ru.zalimannard.dripchip.exception.NotFoundException;
+import org.mapstruct.AfterMapping;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
+import org.springframework.beans.factory.annotation.Autowired;
 import ru.zalimannard.dripchip.schema.animal.Animal;
-import ru.zalimannard.dripchip.schema.animal.AnimalRepository;
+import ru.zalimannard.dripchip.schema.animal.AnimalDto;
+import ru.zalimannard.dripchip.schema.animal.AnimalMapper;
+import ru.zalimannard.dripchip.schema.animal.AnimalService;
 import ru.zalimannard.dripchip.schema.location.Location;
-import ru.zalimannard.dripchip.schema.location.LocationRepository;
+import ru.zalimannard.dripchip.schema.location.LocationDto;
+import ru.zalimannard.dripchip.schema.location.LocationMapper;
+import ru.zalimannard.dripchip.schema.location.LocationService;
 
 import java.util.List;
 
-@Mapper
-public interface VisitedLocationMapper {
+@Mapper(componentModel = "spring")
+public abstract class VisitedLocationMapper {
+
+    @Autowired
+    private AnimalService animalService;
+    @Autowired
+    private AnimalMapper animalMapper;
+    @Autowired
+    private LocationService locationService;
+    @Autowired
+    private LocationMapper locationMapper;
 
     @Mapping(target = "animal", ignore = true)
     @Mapping(target = "location", ignore = true)
-    VisitedLocation toEntity(VisitedLocationDto dto);
+    public abstract VisitedLocation toEntity(VisitedLocationDto dto);
 
-    @Mapping(target = "animalId", ignore = true)
-    @Mapping(target = "locationId", ignore = true)
-    VisitedLocationDto toDto(VisitedLocation entity);
+    @Mapping(target = "animalId", source = "entity.animal.id")
+    @Mapping(target = "locationId", source = "entity.location.id")
+    public abstract VisitedLocationDto toDto(VisitedLocation entity);
 
-    List<VisitedLocation> toEntityList(List<VisitedLocationDto> dto);
-
-    List<VisitedLocationDto> toDtoList(List<VisitedLocation> entity);
+    public abstract List<VisitedLocationDto> toDtoList(List<VisitedLocation> entity);
 
     @AfterMapping
-    default void toEntity(@MappingTarget VisitedLocation entity, VisitedLocationDto dto,
-                          @Context AnimalRepository animalRepository,
-                          @Context LocationRepository locationRepository) {
-        Animal animal = animalRepository.findById(dto.getAnimalId())
-                .orElseThrow(() -> new NotFoundException("Animal", "id", String.valueOf(dto.getAnimalId())));
-        Location location = locationRepository.findById(dto.getLocationId())
-                .orElseThrow(() -> new NotFoundException("Location", "id", String.valueOf(dto.getLocationId())));
+    protected void toEntity(@MappingTarget VisitedLocation entity, VisitedLocationDto dto) {
+        if (dto.getAnimalId() != null) {
+            AnimalDto animalDto = animalService.read(dto.getAnimalId());
+            Animal animal = animalMapper.toEntity(animalDto);
+            entity.setAnimal(animal);
+        }
 
-        entity.setAnimal(animal);
-        entity.setLocation(location);
-    }
-
-    @AfterMapping
-    default void toDto(@MappingTarget VisitedLocationDto dto, VisitedLocation entity) {
-        dto.setLocationId(entity.getLocation().getId());
+        if (dto.getLocationId() != null) {
+            LocationDto locationDto = locationService.read(dto.getLocationId());
+            Location location = locationMapper.toEntity(locationDto);
+            entity.setLocation(location);
+        }
     }
 
 }

@@ -13,13 +13,19 @@ import ru.zalimannard.dripchip.schema.animal.type.AnimalType;
 import ru.zalimannard.dripchip.schema.animal.type.AnimalTypeDto;
 import ru.zalimannard.dripchip.schema.animal.type.AnimalTypeMapper;
 import ru.zalimannard.dripchip.schema.animal.type.AnimalTypeService;
+import ru.zalimannard.dripchip.schema.animal.visitedlocation.VisitedLocation;
+import ru.zalimannard.dripchip.schema.animal.visitedlocation.VisitedLocationDto;
+import ru.zalimannard.dripchip.schema.animal.visitedlocation.VisitedLocationMapper;
+import ru.zalimannard.dripchip.schema.animal.visitedlocation.VisitedLocationService;
 import ru.zalimannard.dripchip.schema.location.Location;
 import ru.zalimannard.dripchip.schema.location.LocationDto;
 import ru.zalimannard.dripchip.schema.location.LocationMapper;
 import ru.zalimannard.dripchip.schema.location.LocationService;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Mapper(componentModel = "spring")
 public abstract class AnimalMapper {
@@ -38,8 +44,10 @@ public abstract class AnimalMapper {
     private LocationMapper locationMapper;
 
     @Mapping(target = "animalTypes", ignore = true)
+    @Mapping(target = "visitedLocations", ignore = true)
     @Mapping(target = "chipper", ignore = true)
     @Mapping(target = "chippingLocation", ignore = true)
+//    @Mapping(target = "visitedLocations", ignore = true)
     public abstract Animal toEntity(AnimalDto dto);
 
     @Mapping(target = "animalTypeIds", ignore = true)
@@ -78,6 +86,13 @@ public abstract class AnimalMapper {
         for (AnimalType animalType : entity.getAnimalTypes()) {
             dto.addAnimalTypeId(animalType.getId());
         }
+        List<VisitedLocation> visitedLocations = entity.getVisitedLocations();
+        if (visitedLocations == null) {
+            visitedLocations = new ArrayList<>();
+        }
+        List<Long> visitedLocationsIds = new ArrayList<>();
+        visitedLocations.forEach(visitedLocation -> visitedLocationsIds.add(visitedLocation.getId()));
+        dto.setVisitedLocations(visitedLocationsIds);
     }
 
 }

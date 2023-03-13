@@ -1,6 +1,5 @@
 package ru.zalimannard.dripchip.schema.animal.visitedlocation;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -17,8 +16,7 @@ public class VisitedLocationDto {
     @JsonProperty("dateTimeOfVisitLocationPoint")
     private Date dateTimeOfVisitLocationPoint;
 
-    @JsonProperty("animalId")
-    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @JsonProperty(value = "animalId", access = JsonProperty.Access.WRITE_ONLY)
     @NotNull
     @Positive
     private Long animalId;

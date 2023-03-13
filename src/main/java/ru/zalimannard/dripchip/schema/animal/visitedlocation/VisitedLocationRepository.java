@@ -8,8 +8,6 @@ import java.util.List;
 @Repository
 public interface VisitedLocationRepository extends JpaRepository<VisitedLocation, Long> {
 
-    List<VisitedLocation> findAllByAnimalId(long animalId);
-
     List<VisitedLocation> findAllByAnimalIdOrderByDateTimeOfVisitLocationPoint(long animalId);
 
 }

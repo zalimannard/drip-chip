@@ -13,6 +13,8 @@ import ru.zalimannard.dripchip.exception.ConflictException;
 import ru.zalimannard.dripchip.exception.NotFoundException;
 import ru.zalimannard.dripchip.page.OffsetBasedPage;
 import ru.zalimannard.dripchip.schema.animal.lifestatus.AnimalLifeStatus;
+import ru.zalimannard.dripchip.schema.animal.visitedlocation.VisitedLocation;
+import ru.zalimannard.dripchip.schema.location.Location;
 
 import java.time.Instant;
 import java.util.Date;
@@ -29,6 +31,9 @@ public class AnimalServiceImpl implements AnimalService {
     @Override
     public AnimalDto create(@Valid AnimalDto animalDto) {
         Animal animalRequest = animalMapper.toEntity(animalDto);
+        if (animalRequest.getAnimalTypes().isEmpty()) {
+            throw new BadRequestException("Animal types should not be empty");
+        }
         animalRequest.setId(null);
         animalRequest.setLifeStatus(AnimalLifeStatus.ALIVE);
         animalRequest.setChippingDateTime(Date.from(Instant.now()));
@@ -39,9 +44,13 @@ public class AnimalServiceImpl implements AnimalService {
 
     @Override
     public AnimalDto read(@Positive long id) {
-        checkExist(id);
-        Animal animal = animalRepository.findById(id).get();
+        Animal animal = readEntity(id);
         return animalMapper.toDto(animal);
+    }
+
+    private Animal readEntity(long id) {
+        checkExist(id);
+        return animalRepository.findById(id).get();
     }
 
     @Override
@@ -60,6 +69,18 @@ public class AnimalServiceImpl implements AnimalService {
         checkExist(id);
         Animal animalRequest = animalMapper.toEntity(animalDto);
         animalRequest.setId(id);
+
+        List<VisitedLocation> visitedLocations = readEntity(id).getVisitedLocations();
+        if (visitedLocations != null) {
+            if (visitedLocations.size() > 0) {
+                Location newChipherLocation = animalRequest.getChippingLocation();
+                Location firstVisitedLocation = visitedLocations.get(0).getLocation();
+                if (newChipherLocation.equals(firstVisitedLocation)) {
+                    throw new BadRequestException("The first visited location should not coincide with the chipping " +
+                            "location");
+                }
+            }
+        }
 
         Animal accountResponse = saveToDatabase(animalRequest);
         return animalMapper.toDto(accountResponse);
