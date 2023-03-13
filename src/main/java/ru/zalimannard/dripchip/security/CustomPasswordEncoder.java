@@ -3,8 +3,8 @@ package ru.zalimannard.dripchip.security;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
-import ru.zalimannard.dripchip.account.Account;
-import ru.zalimannard.dripchip.account.AccountRepository;
+import ru.zalimannard.dripchip.schema.account.Account;
+import ru.zalimannard.dripchip.schema.account.AccountRepository;
 
 import java.util.Base64;
 
