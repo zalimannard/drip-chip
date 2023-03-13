@@ -1,6 +1,5 @@
 package ru.zalimannard.dripchip.schema.account;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -25,8 +24,7 @@ public class AccountDto {
     @Email
     private String email;
 
-    @JsonProperty("password")
-    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @JsonProperty(value = "password", access = JsonProperty.Access.WRITE_ONLY)
     @NotBlank
     private String password;
 
