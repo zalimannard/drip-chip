@@ -15,6 +15,8 @@ import ru.zalimannard.dripchip.exception.NotFoundException;
 import ru.zalimannard.dripchip.schema.account.Account;
 import ru.zalimannard.dripchip.schema.account.AccountRepository;
 import ru.zalimannard.dripchip.schema.animal.lifestatus.AnimalLifeStatus;
+import ru.zalimannard.dripchip.schema.animal.type.AnimalTypeDto;
+import ru.zalimannard.dripchip.schema.animal.type.AnimalTypeMapper;
 import ru.zalimannard.dripchip.schema.animal.type.AnimalTypeService;
 import ru.zalimannard.dripchip.schema.location.Location;
 import ru.zalimannard.dripchip.schema.location.LocationRepository;
@@ -33,6 +35,7 @@ public class AnimalServiceImpl implements AnimalService {
     private final AnimalRepository animalRepository;
     private final AccountRepository accountRepository;
     private final LocationRepository locationRepository;
+    private final AnimalTypeMapper animalTypeMapper;
     private final AnimalMapper animalMapper = Mappers.getMapper(AnimalMapper.class);
     private final AnimalTypeService animalTypeService;
 
@@ -45,7 +48,8 @@ public class AnimalServiceImpl implements AnimalService {
             Animal animalRequest = animalMapper.toEntity(animalDto, accountRepository, locationRepository);
             animalRequest.setLifeStatus(AnimalLifeStatus.ALIVE);
             animalRequest.setChippingDateTime(Timestamp.from(Instant.now()));
-            animalRequest.setAnimalTypes(new HashSet<>(animalTypeService.getAllById(animalDto.getAnimalTypeIds())));
+            List<AnimalTypeDto> animalTypeDtos = animalTypeService.getAllById(animalDto.getAnimalTypeIds());
+            animalRequest.setAnimalTypes(new HashSet<>(animalTypeMapper.toEntityList(animalTypeDtos)));
 
             Animal animalResponse = animalRepository.save(animalRequest);
             return animalMapper.toDto(animalResponse);

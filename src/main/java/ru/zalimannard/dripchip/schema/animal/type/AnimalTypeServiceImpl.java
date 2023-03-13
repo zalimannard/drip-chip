@@ -3,10 +3,8 @@ package ru.zalimannard.dripchip.schema.animal.type;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
-import org.mapstruct.factory.Mappers;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
-import org.springframework.validation.annotation.Validated;
 import ru.zalimannard.dripchip.exception.BadRequestException;
 import ru.zalimannard.dripchip.exception.ConflictException;
 import ru.zalimannard.dripchip.exception.NotFoundException;
@@ -16,66 +14,67 @@ import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
-@Validated
 public class AnimalTypeServiceImpl implements AnimalTypeService {
 
     private final AnimalTypeRepository animalTypeRepository;
-    private final AnimalTypeMapper animalTypeMapper = Mappers.getMapper(AnimalTypeMapper.class);
+    private final AnimalTypeMapper animalTypeMapper;
 
     @Override
     public AnimalTypeDto create(@Valid AnimalTypeDto animalTypeDto) {
-        try {
-            AnimalType animalTypeRequest = animalTypeMapper.toEntity(animalTypeDto);
-            AnimalType animalTypeResponse = animalTypeRepository.save(animalTypeRequest);
-            return animalTypeMapper.toDto(animalTypeResponse);
-        } catch (DataIntegrityViolationException e) {
-            throw new ConflictException("Conflict in adding to the database");
-        }
+        AnimalType animalTypeRequest = animalTypeMapper.toEntity(animalTypeDto);
+        animalTypeRequest.setId(null);
+
+        AnimalType animalTypeResponse = saveToDatabase(animalTypeRequest);
+        return animalTypeMapper.toDto(animalTypeResponse);
     }
 
     @Override
     public AnimalTypeDto read(@Positive long id) {
-        AnimalType animalType = animalTypeRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Animal type", "id", String.valueOf(id)));
+        checkExist(id);
+        AnimalType animalType = animalTypeRepository.findById(id).get();
         return animalTypeMapper.toDto(animalType);
     }
 
     @Override
-    public List<AnimalType> getAllById(Set<@Positive Long> ids) {
+    public List<AnimalTypeDto> getAllById(Set<@Positive Long> ids) {
         List<AnimalType> animalTypes = animalTypeRepository.findAllById(ids);
         if (animalTypes.size() != ids.size()) {
-            throw new NotFoundException("Animal type", "id", "some from request");
+            throw new NotFoundException("Animal type", "with some of the ids");
         }
-        return animalTypes;
+        return animalTypeMapper.toDtoList(animalTypes);
     }
 
     @Override
     public AnimalTypeDto update(@Positive long id, @Valid AnimalTypeDto animalTypeDto) {
-        if (animalTypeRepository.existsById(id)) {
-            try {
-                AnimalType animalTypeRequest = animalTypeMapper.toEntity(animalTypeDto);
-                animalTypeRequest.setId(id);
+        checkExist(id);
+        AnimalType animalTypeRequest = animalTypeMapper.toEntity(animalTypeDto);
+        animalTypeRequest.setId(id);
 
-                AnimalType animalTypeResponse = animalTypeRepository.save(animalTypeRequest);
-                return animalTypeMapper.toDto(animalTypeResponse);
-            } catch (DataIntegrityViolationException e) {
-                throw new ConflictException("Conflict in adding to the database");
-            }
-        } else {
-            throw new NotFoundException("Animal type", "id", String.valueOf(id));
-        }
+        AnimalType animalTypeResponse = saveToDatabase(animalTypeRequest);
+        return animalTypeMapper.toDto(animalTypeResponse);
     }
 
     @Override
     public void delete(@Positive long id) {
-        if (animalTypeRepository.existsById(id)) {
-            try {
-                animalTypeRepository.deleteById(id);
-            } catch (DataIntegrityViolationException e) {
-                throw new BadRequestException("It is impossible to delete animal type");
-            }
-        } else {
-            throw new NotFoundException("Animal type", "id", String.valueOf(id));
+        checkExist(id);
+        try {
+            animalTypeRepository.deleteById(id);
+        } catch (DataIntegrityViolationException e) {
+            throw new BadRequestException("It is impossible to delete Animal type with id=" + id);
+        }
+    }
+
+    private void checkExist(long id) {
+        if (!animalTypeRepository.existsById(id)) {
+            throw new NotFoundException("Animal type", String.valueOf(id));
+        }
+    }
+
+    private AnimalType saveToDatabase(AnimalType animalType) {
+        try {
+            return animalTypeRepository.save(animalType);
+        } catch (DataIntegrityViolationException e) {
+            throw new ConflictException("Animal type");
         }
     }
 
