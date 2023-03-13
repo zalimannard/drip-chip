@@ -1,11 +1,12 @@
 package ru.zalimannard.dripchip.schema.animal;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.sql.Timestamp;
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -23,8 +24,8 @@ public class AnimalController {
 
     @GetMapping("${application.endpoint.search}")
     public List<AnimalDto> search(AnimalDto filter,
-                                  @RequestParam(required = false) Timestamp start,
-                                  @RequestParam(required = false) Timestamp end,
+                                  @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date start,
+                                  @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date end,
                                   @RequestParam(defaultValue = "0") int from,
                                   @RequestParam(defaultValue = "10") int size) {
         return animalService.search(filter, start, end, from, size);

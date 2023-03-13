@@ -20,8 +20,8 @@ import ru.zalimannard.dripchip.schema.location.LocationMapper;
 import ru.zalimannard.dripchip.schema.location.LocationRepository;
 import ru.zalimannard.dripchip.schema.location.LocationService;
 
-import java.sql.Timestamp;
 import java.time.Instant;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -41,7 +41,7 @@ public class VisitedLocationServiceImpl implements VisitedLocationService {
 
     @Override
     public VisitedLocationDto create(@Positive long animalId, @Positive long locationId) {
-        Animal animal = animalMapper.toEntity(animalService.read(animalId), accountRepository, locationRepository);
+        Animal animal = animalMapper.toEntity(animalService.read(animalId));
         Location location = locationMapper.toEntity(locationService.read(locationId));
 
         if (animal.getLifeStatus() == AnimalLifeStatus.DEAD) {
@@ -60,7 +60,7 @@ public class VisitedLocationServiceImpl implements VisitedLocationService {
         }
 
         VisitedLocation visitedLocationRequest = new VisitedLocation();
-        visitedLocationRequest.setDateTimeOfVisitLocationPoint(Timestamp.from(Instant.now()));
+        visitedLocationRequest.setDateTimeOfVisitLocationPoint(Date.from(Instant.now()));
         visitedLocationRequest.setAnimal(animal);
         visitedLocationRequest.setLocation(location);
 
@@ -79,7 +79,7 @@ public class VisitedLocationServiceImpl implements VisitedLocationService {
         long visitedLocationPointId = visitedLocationUpdateDto.getVisitedLocationPointId();
         long newLocationId = visitedLocationUpdateDto.getVisitedLocationPointId();
 
-        Animal animal = animalMapper.toEntity(animalService.read(animalId), accountRepository, locationRepository);
+        Animal animal = animalMapper.toEntity(animalService.read(animalId));
         Location newLocation = locationMapper.toEntity(locationService.read(newLocationId));
 
         // TODO: Change to read/id when it is written

@@ -1,59 +1,83 @@
 package ru.zalimannard.dripchip.schema.animal;
 
-import org.mapstruct.*;
-import ru.zalimannard.dripchip.exception.NotFoundException;
+import org.mapstruct.AfterMapping;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
+import org.springframework.beans.factory.annotation.Autowired;
 import ru.zalimannard.dripchip.schema.account.Account;
-import ru.zalimannard.dripchip.schema.account.AccountRepository;
+import ru.zalimannard.dripchip.schema.account.AccountDto;
+import ru.zalimannard.dripchip.schema.account.AccountMapper;
+import ru.zalimannard.dripchip.schema.account.AccountService;
 import ru.zalimannard.dripchip.schema.animal.type.AnimalType;
+import ru.zalimannard.dripchip.schema.animal.type.AnimalTypeDto;
+import ru.zalimannard.dripchip.schema.animal.type.AnimalTypeMapper;
+import ru.zalimannard.dripchip.schema.animal.type.AnimalTypeService;
 import ru.zalimannard.dripchip.schema.location.Location;
-import ru.zalimannard.dripchip.schema.location.LocationRepository;
+import ru.zalimannard.dripchip.schema.location.LocationDto;
+import ru.zalimannard.dripchip.schema.location.LocationMapper;
+import ru.zalimannard.dripchip.schema.location.LocationService;
 
+import java.util.HashSet;
 import java.util.List;
 
-@Mapper
-public interface AnimalMapper {
+@Mapper(componentModel = "spring")
+public abstract class AnimalMapper {
+
+    @Autowired
+    private AnimalTypeService animalTypeService;
+    @Autowired
+    private AnimalTypeMapper animalTypeMapper;
+    @Autowired
+    private AccountService accountService;
+    @Autowired
+    private AccountMapper accountMapper;
+    @Autowired
+    private LocationService locationService;
+    @Autowired
+    private LocationMapper locationMapper;
 
     @Mapping(target = "animalTypes", ignore = true)
     @Mapping(target = "chipper", ignore = true)
     @Mapping(target = "chippingLocation", ignore = true)
-    Animal toEntity(AnimalDto dto,
-                    @Context AccountRepository accountRepository,
-                    @Context LocationRepository locationRepository);
+    public abstract Animal toEntity(AnimalDto dto);
 
     @Mapping(target = "animalTypeIds", ignore = true)
     @Mapping(target = "visitedLocations", ignore = true)
-    @Mapping(target = "chipperId", ignore = true)
-    @Mapping(target = "chippingLocationId", ignore = true)
-    AnimalDto toDto(Animal entity);
+    @Mapping(target = "chipperId", source = "entity.chipper.id")
+    @Mapping(target = "chippingLocationId", source = "entity.chippingLocation.id")
+    public abstract AnimalDto toDto(Animal entity);
 
-    List<Animal> toEntityList(List<AnimalDto> dto,
-                              @Context AccountRepository accountRepository,
-                              @Context LocationRepository locationRepository);
+    public abstract List<Animal> toEntityList(List<AnimalDto> dto);
 
-    List<AnimalDto> toDtoList(List<Animal> entity);
+    public abstract List<AnimalDto> toDtoList(List<Animal> entity);
 
     @AfterMapping
-    default void toEntity(@MappingTarget Animal entity, AnimalDto dto,
-                          @Context AccountRepository accountRepository,
-                          @Context LocationRepository locationRepository) {
-        Account chipper = accountRepository.findById(dto.getChipperId())
-                .orElseThrow(() -> new NotFoundException("Account", "id", String.valueOf(dto.getChipperId())));
-        Location location = locationRepository.findById(dto.getChippingLocationId())
-                .orElseThrow(() -> new NotFoundException("Location", "id", String.valueOf(dto.getChippingLocationId())));
+    protected void toEntity(@MappingTarget Animal entity, AnimalDto dto) {
+        if (dto.getAnimalTypeIds() != null) {
+            List<AnimalTypeDto> animalTypesDto = animalTypeService.getAllById(dto.getAnimalTypeIds());
+            List<AnimalType> animalTypes = animalTypeMapper.toEntityList(animalTypesDto);
+            entity.setAnimalTypes(new HashSet<>(animalTypes));
+        }
 
-        entity.setChipper(chipper);
-        entity.setChippingLocation(location);
+        if (dto.getChipperId() != null) {
+            AccountDto chipperDto = accountService.read(dto.getChipperId());
+            Account chipper = accountMapper.toEntity(chipperDto);
+            entity.setChipper(chipper);
+        }
+
+        if (dto.getChippingLocationId() != null) {
+            LocationDto locationDto = locationService.read(dto.getChippingLocationId());
+            Location location = locationMapper.toEntity(locationDto);
+            entity.setChippingLocation(location);
+        }
     }
 
     @AfterMapping
-    default void toDto(@MappingTarget AnimalDto dto, Animal entity) {
+    protected void toDto(@MappingTarget AnimalDto dto, Animal entity) {
         for (AnimalType animalType : entity.getAnimalTypes()) {
             dto.addAnimalTypeId(animalType.getId());
         }
-
-        dto.setChipperId(entity.getChipper().getId());
-
-        dto.setChippingLocationId(entity.getChippingLocation().getId());
     }
 
 }

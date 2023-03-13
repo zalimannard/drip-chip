@@ -5,7 +5,7 @@ import lombok.Data;
 import ru.zalimannard.dripchip.schema.animal.Animal;
 import ru.zalimannard.dripchip.schema.location.Location;
 
-import java.sql.Timestamp;
+import java.util.Date;
 
 @Entity
 @Table(name = "visitedLocations")
@@ -18,7 +18,7 @@ public class VisitedLocation {
     private Long id;
 
     @Column(name = "dateTimeOfVisitLocationPoint")
-    private Timestamp dateTimeOfVisitLocationPoint;
+    private Date dateTimeOfVisitLocationPoint;
 
     @ManyToOne
     @JoinColumn(name = "animal")

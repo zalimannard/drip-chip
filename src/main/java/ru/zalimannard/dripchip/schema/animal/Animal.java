@@ -8,7 +8,7 @@ import ru.zalimannard.dripchip.schema.animal.lifestatus.AnimalLifeStatus;
 import ru.zalimannard.dripchip.schema.animal.type.AnimalType;
 import ru.zalimannard.dripchip.schema.location.Location;
 
-import java.sql.Timestamp;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -42,7 +42,8 @@ public class Animal {
     private AnimalLifeStatus lifeStatus;
 
     @Column(name = "chippingDateTime")
-    private Timestamp chippingDateTime;
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date chippingDateTime;
 
     @ManyToOne
     @JoinColumn(name = "chipperId")
@@ -53,6 +54,7 @@ public class Animal {
     private Location chippingLocation;
 
     @Column(name = "deathDateTime")
-    private Timestamp deathDateTime;
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date deathDateTime;
 
 }

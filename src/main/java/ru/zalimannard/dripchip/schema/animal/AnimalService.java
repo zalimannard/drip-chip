@@ -4,7 +4,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
 
-import java.sql.Timestamp;
+import java.util.Date;
 import java.util.List;
 
 public interface AnimalService {
@@ -13,7 +13,7 @@ public interface AnimalService {
 
     AnimalDto read(@Positive long id);
 
-    List<AnimalDto> search(AnimalDto filter, Timestamp start, Timestamp end, @PositiveOrZero int from,
+    List<AnimalDto> search(AnimalDto filter, Date start, Date end, @PositiveOrZero int from,
                            @Positive int size);
 
     AnimalDto update(@Positive long id, @Valid AnimalDto animalDto);
