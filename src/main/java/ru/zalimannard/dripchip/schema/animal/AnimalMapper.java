@@ -79,7 +79,7 @@ public abstract class AnimalMapper {
 
     @AfterMapping
     protected void toDto(@MappingTarget AnimalDto dto, Animal entity) {
-        entity.getAnimalTypes().forEach(animalType -> dto.addAnimalTypeId(animalType.getId()));
+        entity.getAnimalTypes().forEach(animalType -> dto.getAnimalTypeIds().add(animalType.getId()));
 
         List<VisitedLocation> visitedLocations = entity.getVisitedLocations();
         if (visitedLocations == null) {

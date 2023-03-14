@@ -66,14 +66,27 @@ public class AnimalServiceImpl implements AnimalService {
 
     @Override
     public AnimalDto update(@Positive long id, @Valid AnimalDto animalDto) {
-        checkExist(id);
+        AnimalDto animalFromDatabaseDto = read(id);
+        Animal animalFromDatabase = animalMapper.toEntity(animalFromDatabaseDto);
         Animal animalRequest = animalMapper.toEntity(animalDto);
-        animalRequest.setId(id);
+
+        if ((animalFromDatabase.getLifeStatus().equals(AnimalLifeStatus.ALIVE)) &&
+                (animalRequest.getLifeStatus().equals(AnimalLifeStatus.DEAD))) {
+            animalFromDatabase.setDeathDateTime(Date.from(Instant.now()));
+        }
+
+        animalFromDatabase.setWeight(animalRequest.getWeight());
+        animalFromDatabase.setLength(animalRequest.getLength());
+        animalFromDatabase.setHeight(animalRequest.getHeight());
+        animalFromDatabase.setGender(animalRequest.getGender());
+        animalFromDatabase.setLifeStatus(animalRequest.getLifeStatus());
+        animalFromDatabase.setChipper(animalRequest.getChipper());
+        animalFromDatabase.setChippingLocation(animalRequest.getChippingLocation());
 
         List<VisitedLocation> visitedLocations = readEntity(id).getVisitedLocations();
         if (visitedLocations != null) {
             if (visitedLocations.size() > 0) {
-                Location newChipherLocation = animalRequest.getChippingLocation();
+                Location newChipherLocation = animalFromDatabase.getChippingLocation();
                 Location firstVisitedLocation = visitedLocations.get(0).getLocation();
                 if (newChipherLocation.equals(firstVisitedLocation)) {
                     throw new BadRequestException("The first visited location should not coincide with the chipping " +

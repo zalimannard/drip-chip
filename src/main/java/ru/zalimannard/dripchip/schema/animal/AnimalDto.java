@@ -63,8 +63,4 @@ public class AnimalDto {
     @Temporal(TemporalType.TIMESTAMP)
     private Date deathDateTime;
 
-    public void addAnimalTypeId(long animalTypeId) {
-        animalTypeIds.add(animalTypeId);
-    }
-
 }
