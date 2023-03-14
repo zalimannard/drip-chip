@@ -15,6 +15,7 @@ import ru.zalimannard.dripchip.page.OffsetBasedPage;
 import ru.zalimannard.dripchip.schema.animal.lifestatus.AnimalLifeStatus;
 import ru.zalimannard.dripchip.schema.animal.visitedlocation.VisitedLocation;
 import ru.zalimannard.dripchip.schema.location.Location;
+import ru.zalimannard.dripchip.security.UserSecurity;
 
 import java.time.Instant;
 import java.util.Date;
@@ -27,6 +28,7 @@ public class AnimalServiceImpl implements AnimalService {
 
     private final AnimalRepository animalRepository;
     private final AnimalMapper animalMapper;
+    private final UserSecurity userSecurity;
 
     @Override
     public AnimalDto create(@Valid AnimalDto animalDto) {
