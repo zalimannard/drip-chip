@@ -43,7 +43,6 @@ public abstract class AnimalMapper {
     @Mapping(target = "visitedLocations", ignore = true)
     @Mapping(target = "chipper", ignore = true)
     @Mapping(target = "chippingLocation", ignore = true)
-//    @Mapping(target = "visitedLocations", ignore = true)
     public abstract Animal toEntity(AnimalDto dto);
 
     @Mapping(target = "animalTypeIds", ignore = true)
