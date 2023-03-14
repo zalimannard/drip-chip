@@ -44,12 +44,20 @@ public class AnimalOwnedTypeServiceImpl implements AnimalOwnedTypeService {
 
         long oldTypeId = animalOwnedTypeUpdateDto.getOldTypeId();
         checkAnimalHaveType(animal, oldTypeId);
+        AnimalTypeDto oldAnimalTypeDto = animalTypeService.read(oldTypeId);
+        AnimalType oldAnimalType = animalTypeMapper.toEntity(oldAnimalTypeDto);
 
-        long newTypeId = animalOwnedTypeUpdateDto.getOldTypeId();
-        AnimalTypeDto animalTypeDto = animalTypeService.read(newTypeId);
-        AnimalType animalType = animalTypeMapper.toEntity(animalTypeDto);
+        long newTypeId = animalOwnedTypeUpdateDto.getNewTypeId();
+        checkAnimalDontHaveType(animal, newTypeId);
+        AnimalTypeDto newAnimalTypeDto = animalTypeService.read(newTypeId);
+        AnimalType newAnimalType = animalTypeMapper.toEntity(newAnimalTypeDto);
 
-        return new AnimalDto();
+        animal.getAnimalTypes().remove(oldAnimalType);
+        animal.getAnimalTypes().add(newAnimalType);
+
+        Animal animalResponse = saveToDatabase(animal);
+
+        return animalMapper.toDto(animalResponse);
     }
 
     @Override
@@ -74,6 +82,14 @@ public class AnimalOwnedTypeServiceImpl implements AnimalOwnedTypeService {
         animalType.setId(typeId);
         if (!animal.getAnimalTypes().contains(animalType)) {
             throw new NotFoundException("Animal type", typeId + " at animal with id=" + animal.getId());
+        }
+    }
+
+    private void checkAnimalDontHaveType(Animal animal, long typeId) {
+        AnimalType animalType = new AnimalType();
+        animalType.setId(typeId);
+        if (animal.getAnimalTypes().contains(animalType)) {
+            throw new ConflictException("Animal type at Animal");
         }
     }
 
