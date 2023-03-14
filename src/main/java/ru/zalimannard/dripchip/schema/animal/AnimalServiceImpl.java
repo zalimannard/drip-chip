@@ -17,6 +17,7 @@ import ru.zalimannard.dripchip.schema.animal.visitedlocation.VisitedLocation;
 import ru.zalimannard.dripchip.schema.location.Location;
 
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.List;
 
@@ -36,7 +37,8 @@ public class AnimalServiceImpl implements AnimalService {
         }
         animalRequest.setId(null);
         animalRequest.setLifeStatus(AnimalLifeStatus.ALIVE);
-        animalRequest.setChippingDateTime(Date.from(Instant.now()));
+        Date now = Date.from(Instant.now().truncatedTo(ChronoUnit.SECONDS));
+        animalRequest.setChippingDateTime(now);
 
         Animal animalResponse = saveToDatabase(animalRequest);
         return animalMapper.toDto(animalResponse);
@@ -72,7 +74,8 @@ public class AnimalServiceImpl implements AnimalService {
 
         if ((animalFromDatabase.getLifeStatus().equals(AnimalLifeStatus.ALIVE)) &&
                 (animalRequest.getLifeStatus().equals(AnimalLifeStatus.DEAD))) {
-            animalFromDatabase.setDeathDateTime(Date.from(Instant.now()));
+            Date now = Date.from(Instant.now().truncatedTo(ChronoUnit.SECONDS));
+            animalFromDatabase.setDeathDateTime(now);
         }
 
         animalFromDatabase.setWeight(animalRequest.getWeight());
@@ -95,7 +98,7 @@ public class AnimalServiceImpl implements AnimalService {
             }
         }
 
-        Animal accountResponse = saveToDatabase(animalRequest);
+        Animal accountResponse = saveToDatabase(animalFromDatabase);
         return animalMapper.toDto(accountResponse);
     }
 
