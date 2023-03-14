@@ -8,6 +8,9 @@ spring:
   jpa:
     hibernate:
       ddl-auto: create
+  mvc:
+    format:
+      date-time: iso
 
 application:
   endpoint:

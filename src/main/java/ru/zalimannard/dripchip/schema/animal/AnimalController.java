@@ -24,11 +24,13 @@ public class AnimalController {
 
     @GetMapping("${application.endpoint.search}")
     public List<AnimalDto> search(AnimalDto filter,
-                                  @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date start,
-                                  @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date end,
+                                  @RequestParam(required = false) @DateTimeFormat(iso =
+                                          DateTimeFormat.ISO.DATE_TIME) Date startDateTime,
+                                  @RequestParam(required = false) @DateTimeFormat(iso =
+                                          DateTimeFormat.ISO.DATE_TIME) Date endDateTime,
                                   @RequestParam(defaultValue = "0") int from,
                                   @RequestParam(defaultValue = "10") int size) {
-        return animalService.search(filter, start, end, from, size);
+        return animalService.search(filter, startDateTime, endDateTime, from, size);
     }
 
     @PostMapping
