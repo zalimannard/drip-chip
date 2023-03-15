@@ -10,9 +10,4 @@ public class NotFoundException extends RuntimeException {
         super(objectName + " with id=" + id + " not found");
     }
 
-    // TODO: Remove
-    public NotFoundException(String objectName, String id, String uselessVariable) {
-        super(objectName + " with id=" + id + " not found");
-    }
-
 }
