@@ -10,7 +10,7 @@ import java.util.Date;
 @Data
 public class VisitedLocationDto {
 
-    @JsonProperty("id")
+    @JsonProperty(value = "id", access = JsonProperty.Access.READ_ONLY)
     private Long id;
 
     @JsonProperty("dateTimeOfVisitLocationPoint")

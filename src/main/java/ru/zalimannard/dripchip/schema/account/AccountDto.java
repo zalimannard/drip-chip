@@ -8,7 +8,7 @@ import lombok.Data;
 @Data
 public class AccountDto {
 
-    @JsonProperty("id")
+    @JsonProperty(value = "id", access = JsonProperty.Access.READ_ONLY)
     private Integer id;
 
     @JsonProperty("firstName")

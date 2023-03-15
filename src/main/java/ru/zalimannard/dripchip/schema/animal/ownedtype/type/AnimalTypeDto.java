@@ -7,7 +7,7 @@ import lombok.Data;
 @Data
 public class AnimalTypeDto {
 
-    @JsonProperty("id")
+    @JsonProperty(value = "id", access = JsonProperty.Access.READ_ONLY)
     private Long id;
 
     @JsonProperty("type")

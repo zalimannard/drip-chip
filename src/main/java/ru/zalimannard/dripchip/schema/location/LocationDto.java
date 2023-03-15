@@ -9,7 +9,7 @@ import lombok.Data;
 @Data
 public class LocationDto {
 
-    @JsonProperty("id")
+    @JsonProperty(value = "id", access = JsonProperty.Access.READ_ONLY)
     private Long id;
 
     @JsonProperty("latitude")
