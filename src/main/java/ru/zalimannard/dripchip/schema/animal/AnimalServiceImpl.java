@@ -12,7 +12,6 @@ import ru.zalimannard.dripchip.page.OffsetBasedPage;
 import ru.zalimannard.dripchip.schema.animal.lifestatus.AnimalLifeStatus;
 import ru.zalimannard.dripchip.schema.animal.visitedlocation.VisitedLocation;
 import ru.zalimannard.dripchip.schema.location.Location;
-import ru.zalimannard.dripchip.security.UserSecurity;
 
 import java.time.Instant;
 import java.util.Date;
@@ -25,7 +24,6 @@ public class AnimalServiceImpl implements AnimalService {
 
     private final AnimalRepository animalRepository;
     private final AnimalMapper animalMapper;
-    private final UserSecurity userSecurity;
 
     @Override
     public AnimalDto create(AnimalDto animalDto) {
@@ -33,7 +31,6 @@ public class AnimalServiceImpl implements AnimalService {
         if (animalRequest.getAnimalTypes().isEmpty()) {
             throw new BadRequestException("Animal types should not be empty");
         }
-        animalRequest.setId(null);
         animalRequest.setLifeStatus(AnimalLifeStatus.ALIVE);
         animalRequest.setChippingDateTime(Date.from(Instant.now()));
 

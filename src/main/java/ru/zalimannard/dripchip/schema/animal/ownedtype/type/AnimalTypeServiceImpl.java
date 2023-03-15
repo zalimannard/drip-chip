@@ -20,7 +20,6 @@ public class AnimalTypeServiceImpl implements AnimalTypeService {
     @Override
     public AnimalTypeDto create(AnimalTypeDto animalTypeDto) {
         AnimalType animalTypeRequest = animalTypeMapper.toEntity(animalTypeDto);
-        animalTypeRequest.setId(null);
 
         AnimalType animalTypeResponse = saveToDatabase(animalTypeRequest);
         return animalTypeMapper.toDto(animalTypeResponse);

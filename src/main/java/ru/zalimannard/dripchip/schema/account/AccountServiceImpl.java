@@ -27,7 +27,6 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public AccountDto create(AccountDto accountDto) {
         Account accountRequest = accountMapper.toEntity(accountDto);
-        accountRequest.setId(null);
         accountRequest.setPassword(encoder.encode((accountRequest.getEmail() + ":" + accountRequest.getPassword())));
 
         Account accountResponse = saveToDatabase(accountRequest);
