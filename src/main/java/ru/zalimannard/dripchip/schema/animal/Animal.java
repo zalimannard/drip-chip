@@ -28,7 +28,7 @@ public class Animal {
     private Long id;
 
     @ManyToMany
-    @Column(name = "animalTypes")
+    @Column(name = "animal_types")
     private Set<AnimalType> animalTypes = new HashSet<>();
 
     @Column(name = "weight")
@@ -43,22 +43,22 @@ public class Animal {
     @Column(name = "gender")
     private AnimalGender gender;
 
-    @Column(name = "lifeStatus")
+    @Column(name = "life_status")
     private AnimalLifeStatus lifeStatus;
 
-    @Column(name = "chippingDateTime")
+    @Column(name = "chipping_date_time")
     @Temporal(TemporalType.TIMESTAMP)
     private Date chippingDateTime;
 
     @ManyToOne
-    @JoinColumn(name = "chipperId")
+    @JoinColumn(name = "chipper_id")
     private Account chipper;
 
     @ManyToOne
-    @JoinColumn(name = "chippingLocationId")
+    @JoinColumn(name = "chippingLocation_id")
     private Location chippingLocation;
 
-    @Column(name = "deathDateTime")
+    @Column(name = "death_date_time")
     @Temporal(TemporalType.TIMESTAMP)
     private Date deathDateTime;
 

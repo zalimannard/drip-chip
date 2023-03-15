@@ -8,7 +8,7 @@ import ru.zalimannard.dripchip.schema.animal.Animal;
 import java.util.Set;
 
 @Entity
-@Table(name = "animalTypes")
+@Table(name = "animal_types")
 @Data
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class AnimalType {
