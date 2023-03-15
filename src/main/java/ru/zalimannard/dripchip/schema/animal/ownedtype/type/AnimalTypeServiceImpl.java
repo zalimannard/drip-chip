@@ -1,7 +1,5 @@
 package ru.zalimannard.dripchip.schema.animal.ownedtype.type;
 
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
@@ -20,7 +18,7 @@ public class AnimalTypeServiceImpl implements AnimalTypeService {
     private final AnimalTypeMapper animalTypeMapper;
 
     @Override
-    public AnimalTypeDto create(@Valid AnimalTypeDto animalTypeDto) {
+    public AnimalTypeDto create(AnimalTypeDto animalTypeDto) {
         AnimalType animalTypeRequest = animalTypeMapper.toEntity(animalTypeDto);
         animalTypeRequest.setId(null);
 
@@ -29,14 +27,14 @@ public class AnimalTypeServiceImpl implements AnimalTypeService {
     }
 
     @Override
-    public AnimalTypeDto read(@Positive long id) {
+    public AnimalTypeDto read(long id) {
         checkExist(id);
         AnimalType animalType = animalTypeRepository.findById(id).get();
         return animalTypeMapper.toDto(animalType);
     }
 
     @Override
-    public List<AnimalTypeDto> getAllById(Set<@Positive Long> ids) {
+    public List<AnimalTypeDto> getAllById(Set<Long> ids) {
         List<AnimalType> animalTypes = animalTypeRepository.findAllById(ids);
         if (animalTypes.size() != ids.size()) {
             throw new NotFoundException("Animal type", "with some of the ids");
@@ -45,7 +43,7 @@ public class AnimalTypeServiceImpl implements AnimalTypeService {
     }
 
     @Override
-    public AnimalTypeDto update(@Positive long id, @Valid AnimalTypeDto animalTypeDto) {
+    public AnimalTypeDto update(long id, AnimalTypeDto animalTypeDto) {
         checkExist(id);
         AnimalType animalTypeRequest = animalTypeMapper.toEntity(animalTypeDto);
         animalTypeRequest.setId(id);
@@ -55,7 +53,7 @@ public class AnimalTypeServiceImpl implements AnimalTypeService {
     }
 
     @Override
-    public void delete(@Positive long id) {
+    public void delete(long id) {
         checkExist(id);
         try {
             animalTypeRepository.deleteById(id);

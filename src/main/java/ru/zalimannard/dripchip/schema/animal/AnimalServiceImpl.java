@@ -1,8 +1,5 @@
 package ru.zalimannard.dripchip.schema.animal;
 
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.Positive;
-import jakarta.validation.constraints.PositiveOrZero;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Pageable;
@@ -31,7 +28,7 @@ public class AnimalServiceImpl implements AnimalService {
     private final UserSecurity userSecurity;
 
     @Override
-    public AnimalDto create(@Valid AnimalDto animalDto) {
+    public AnimalDto create(AnimalDto animalDto) {
         Animal animalRequest = animalMapper.toEntity(animalDto);
         if (animalRequest.getAnimalTypes().isEmpty()) {
             throw new BadRequestException("Animal types should not be empty");
@@ -45,7 +42,7 @@ public class AnimalServiceImpl implements AnimalService {
     }
 
     @Override
-    public AnimalDto read(@Positive long id) {
+    public AnimalDto read(long id) {
         Animal animal = readEntity(id);
         return animalMapper.toDto(animal);
     }
@@ -56,8 +53,8 @@ public class AnimalServiceImpl implements AnimalService {
     }
 
     @Override
-    public List<AnimalDto> search(AnimalDto filterDto, Date start, Date end, @PositiveOrZero int from,
-                                  @Positive int size) {
+    public List<AnimalDto> search(AnimalDto filterDto, Date start, Date end, int from,
+                                  int size) {
         Animal filter = animalMapper.toEntity(filterDto);
         Pageable pageable = new OffsetBasedPage(from, size);
         List<Animal> animalList = animalRepository.search(start, end, filter.getChipper(),
@@ -67,7 +64,7 @@ public class AnimalServiceImpl implements AnimalService {
     }
 
     @Override
-    public AnimalDto update(@Positive long id, @Valid AnimalDto animalDto) {
+    public AnimalDto update(long id, AnimalDto animalDto) {
         AnimalDto animalFromDatabaseDto = read(id);
         Animal animalFromDatabase = animalMapper.toEntity(animalFromDatabaseDto);
         Animal animalRequest = animalMapper.toEntity(animalDto);
@@ -102,7 +99,7 @@ public class AnimalServiceImpl implements AnimalService {
     }
 
     @Override
-    public void delete(@Positive long id) {
+    public void delete(long id) {
         checkExist(id);
         try {
             animalRepository.deleteById(id);

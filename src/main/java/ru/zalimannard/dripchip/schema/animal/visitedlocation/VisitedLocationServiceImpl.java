@@ -1,6 +1,5 @@
 package ru.zalimannard.dripchip.schema.animal.visitedlocation;
 
-import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
@@ -62,7 +61,7 @@ public class VisitedLocationServiceImpl implements VisitedLocationService {
     }
 
     @Override
-    public VisitedLocationDto read(@Positive long id) {
+    public VisitedLocationDto read(long id) {
         VisitedLocation visitedLocation = visitedLocationRepository.findById(id).orElseThrow(
                 () -> new NotFoundException("Visited location", String.valueOf(id)));
         return visitedLocationMapper.toDto(visitedLocation);

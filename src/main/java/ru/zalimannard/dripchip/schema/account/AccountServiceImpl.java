@@ -1,8 +1,5 @@
 package ru.zalimannard.dripchip.schema.account;
 
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.Positive;
-import jakarta.validation.constraints.PositiveOrZero;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Pageable;
@@ -28,7 +25,7 @@ public class AccountServiceImpl implements AccountService {
     private final UserSecurity userSecurity;
 
     @Override
-    public AccountDto create(@Valid AccountDto accountDto) {
+    public AccountDto create(AccountDto accountDto) {
         Account accountRequest = accountMapper.toEntity(accountDto);
         accountRequest.setId(null);
         accountRequest.setPassword(encoder.encode((accountRequest.getEmail() + ":" + accountRequest.getPassword())));
@@ -38,14 +35,14 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public AccountDto read(@Positive int id) {
+    public AccountDto read(int id) {
         checkExist(id);
         Account account = accountRepository.findById(id).get();
         return accountMapper.toDto(account);
     }
 
     @Override
-    public List<AccountDto> search(AccountDto filterDto, @PositiveOrZero int from, @Positive int size) {
+    public List<AccountDto> search(AccountDto filterDto, int from, int size) {
         Account filter = accountMapper.toEntity(filterDto);
         Pageable pageable = new OffsetBasedPage(from, size);
 
@@ -56,7 +53,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public AccountDto update(@Positive int id, @Valid AccountDto accountDto) {
+    public AccountDto update(int id, AccountDto accountDto) {
         try {
             checkExist(id);
         } catch (NotFoundException e) {
@@ -73,7 +70,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public void delete(@Positive int id) {
+    public void delete(int id) {
         try {
             checkExist(id);
         } catch (NotFoundException e) {

@@ -1,7 +1,5 @@
 package ru.zalimannard.dripchip.schema.location;
 
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
@@ -17,7 +15,7 @@ public class LocationServiceImpl implements LocationService {
     private final LocationMapper locationMapper;
 
     @Override
-    public LocationDto create(@Valid LocationDto locationDto) {
+    public LocationDto create(LocationDto locationDto) {
         Location locationRequest = locationMapper.toEntity(locationDto);
         locationRequest.setId(null);
 
@@ -26,14 +24,14 @@ public class LocationServiceImpl implements LocationService {
     }
 
     @Override
-    public LocationDto read(@Positive long id) {
+    public LocationDto read(long id) {
         checkExist(id);
         Location location = locationRepository.findById(id).get();
         return locationMapper.toDto(location);
     }
 
     @Override
-    public LocationDto update(@Positive long id, @Valid LocationDto locationDto) {
+    public LocationDto update(long id, LocationDto locationDto) {
         checkExist(id);
         Location locationRequest = locationMapper.toEntity(locationDto);
         locationRequest.setId(id);
@@ -43,7 +41,7 @@ public class LocationServiceImpl implements LocationService {
     }
 
     @Override
-    public void delete(@Positive long id) {
+    public void delete(long id) {
         checkExist(id);
         try {
             locationRepository.deleteById(id);
