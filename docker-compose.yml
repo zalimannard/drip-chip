@@ -6,3 +6,5 @@ services:
     image: webapi
     build:
       context: .
+    environment:
+      - DDL_BEHAVIOUR = create-drop

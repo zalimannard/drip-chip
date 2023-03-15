@@ -6,8 +6,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @ResponseStatus(HttpStatus.CONFLICT)
 public class ConflictException extends RuntimeException {
 
-    public ConflictException() {
-        super();
+    public ConflictException(String name) {
+        super("Conflict when working with " + name + " in the databaseConflict in adding ");
     }
 
 }
