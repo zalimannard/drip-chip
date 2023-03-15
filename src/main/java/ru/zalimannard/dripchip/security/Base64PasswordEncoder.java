@@ -10,7 +10,7 @@ import java.util.Base64;
 
 @Component
 @RequiredArgsConstructor
-public class CustomPasswordEncoder implements PasswordEncoder {
+public class Base64PasswordEncoder implements PasswordEncoder {
 
     private final AccountRepository accountRepository;
 
