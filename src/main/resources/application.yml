@@ -8,9 +8,6 @@ spring:
   jpa:
     hibernate:
       ddl-auto: ${DDL_BEHAVIOUR}
-  mvc:
-    format:
-      date-time: iso
 
 application:
   endpoint:
