@@ -2,14 +2,12 @@ package ru.zalimannard.dripchip.schema.animal.ownedtype;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.zalimannard.dripchip.schema.animal.AnimalDto;
 import ru.zalimannard.dripchip.schema.animal.ownedtype.update.AnimalOwnedTypeUpdateDto;
 
 @RestController
 @RequestMapping("${application.endpoint.animals}/{animalId}")
-@Validated
 @RequiredArgsConstructor
 public class AnimalOwnedTypeController {
 

@@ -2,14 +2,12 @@ package ru.zalimannard.dripchip.schema.account;
 
 import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("${application.endpoint.accounts}")
-@Validated
 @RequiredArgsConstructor
 public class AccountController {
 

@@ -2,12 +2,10 @@ package ru.zalimannard.dripchip.schema.location;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("${application.endpoint.locations}")
-@Validated
 @RequiredArgsConstructor
 public class LocationController {
 
