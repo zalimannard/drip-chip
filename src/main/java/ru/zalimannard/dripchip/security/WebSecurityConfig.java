@@ -1,6 +1,7 @@
 package ru.zalimannard.dripchip.security;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -14,6 +15,8 @@ import org.springframework.security.web.SecurityFilterChain;
 public class WebSecurityConfig {
 
     private final UserDetailsService userDetailsService;
+    @Value("${application.endpoint.registration}")
+    private String registrationPath;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -21,7 +24,7 @@ public class WebSecurityConfig {
                 .userDetailsService(userDetailsService)
                 .csrf().disable()
                 .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers(HttpMethod.POST, "/registration").anonymous()
+                        .requestMatchers(HttpMethod.POST, registrationPath).anonymous()
                         .requestMatchers(HttpMethod.GET).permitAll()
                         .anyRequest().authenticated()
                 )
