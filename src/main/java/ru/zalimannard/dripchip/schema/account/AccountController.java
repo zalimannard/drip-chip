@@ -1,6 +1,5 @@
 package ru.zalimannard.dripchip.schema.account;
 
-import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,7 +13,7 @@ public class AccountController {
     private final AccountService accountService;
 
     @GetMapping("{id}")
-    public AccountDto get(@PathVariable @Positive int id) {
+    public AccountDto get(@PathVariable int id) {
         return accountService.read(id);
     }
 
@@ -26,13 +25,13 @@ public class AccountController {
     }
 
     @PutMapping("{id}")
-    public AccountDto put(@PathVariable @Positive int id,
+    public AccountDto put(@PathVariable int id,
                           @RequestBody AccountDto accountDto) {
         return accountService.update(id, accountDto);
     }
 
     @DeleteMapping("{id}")
-    public void delete(@PathVariable @Positive int id) {
+    public void delete(@PathVariable int id) {
         accountService.delete(id);
     }
 
