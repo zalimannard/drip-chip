@@ -7,4 +7,4 @@ services:
     build:
       context: .
     environment:
-      - DDL_BEHAVIOUR = create
+      - DDL_BEHAVIOUR = create-drop
