@@ -17,3 +17,14 @@ application:
     animals: /animals
     locations: /locations
     registration: /registration
+  init:
+    accounts:
+      admin:
+        email: ${ADMIN_EMAIL}
+        password: ${ADMIN_PASSWORD}
+      chipper:
+        email: ${CHIPPER_EMAIL}
+        password: ${CHIPPER_PASSWORD}
+      user:
+        email: ${USER_EMAIL}
+        password: ${USER_PASSWORD}
