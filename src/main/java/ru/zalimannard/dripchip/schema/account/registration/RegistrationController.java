@@ -18,6 +18,7 @@ public class RegistrationController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public AccountDto createAccount(@RequestBody AccountDto accountDto) {
+        accountDto.setRole(AccountRole.USER);
         return accountService.create(accountDto);
     }
 

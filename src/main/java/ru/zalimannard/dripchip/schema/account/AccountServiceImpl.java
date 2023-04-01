@@ -3,7 +3,6 @@ package ru.zalimannard.dripchip.schema.account;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import ru.zalimannard.dripchip.exception.BadRequestException;
@@ -11,7 +10,6 @@ import ru.zalimannard.dripchip.exception.ConflictException;
 import ru.zalimannard.dripchip.exception.ForbiddenException;
 import ru.zalimannard.dripchip.exception.NotFoundException;
 import ru.zalimannard.dripchip.page.OffsetBasedPage;
-import ru.zalimannard.dripchip.security.UserSecurity;
 
 import java.util.List;
 
@@ -22,7 +20,6 @@ public class AccountServiceImpl implements AccountService {
     private final AccountRepository accountRepository;
     private final AccountMapper accountMapper;
     private final PasswordEncoder encoder;
-    private final UserSecurity userSecurity;
 
     @Override
     public AccountDto create(AccountDto accountDto) {
@@ -58,7 +55,6 @@ public class AccountServiceImpl implements AccountService {
         } catch (NotFoundException e) {
             throw new ForbiddenException();
         }
-        checkAccess(id);
 
         Account accountRequest = accountMapper.toEntity(accountDto);
         accountRequest.setId(id);
@@ -75,7 +71,6 @@ public class AccountServiceImpl implements AccountService {
         } catch (NotFoundException e) {
             throw new ForbiddenException();
         }
-        checkAccess(id);
 
         try {
             accountRepository.deleteById(id);
@@ -87,12 +82,6 @@ public class AccountServiceImpl implements AccountService {
     private void checkExist(int id) {
         if (!accountRepository.existsById(id)) {
             throw new NotFoundException("Account", String.valueOf(id));
-        }
-    }
-
-    private void checkAccess(int id) {
-        if (!userSecurity.hasUserId(SecurityContextHolder.getContext().getAuthentication(), id)) {
-            throw new ForbiddenException();
         }
     }
 

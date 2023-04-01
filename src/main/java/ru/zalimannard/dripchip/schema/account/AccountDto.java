@@ -7,7 +7,6 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Data;
 import ru.zalimannard.dripchip.schema.account.role.AccountRole;
-import ru.zalimannard.dripchip.schema.animal.gender.AnimalGender;
 
 @Data
 @Builder

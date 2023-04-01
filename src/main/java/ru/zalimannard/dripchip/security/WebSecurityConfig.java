@@ -9,14 +9,18 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.SecurityFilterChain;
+import ru.zalimannard.dripchip.schema.account.role.AccountRole;
 
 @Configuration
 @RequiredArgsConstructor
 public class WebSecurityConfig {
 
     private final UserDetailsService userDetailsService;
+
     @Value("${application.endpoint.registration}")
     private String registrationPath;
+    @Value("${application.endpoint.accounts}")
+    private String accountsPath;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -25,6 +29,7 @@ public class WebSecurityConfig {
                 .csrf().disable()
                 .authorizeHttpRequests((auth) -> auth
                         .requestMatchers(HttpMethod.POST, registrationPath).anonymous()
+                        .requestMatchers(HttpMethod.POST, accountsPath).hasAnyAuthority(AccountRole.ADMIN.toString())
                         .requestMatchers(HttpMethod.GET).permitAll()
                         .anyRequest().authenticated()
                 )
