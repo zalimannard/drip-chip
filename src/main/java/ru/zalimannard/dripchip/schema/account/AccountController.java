@@ -1,5 +1,6 @@
 package ru.zalimannard.dripchip.schema.account;
 
+import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -14,7 +15,7 @@ public class AccountController {
     private final AccountService accountService;
 
     @GetMapping("{id}")
-    public AccountDto get(@PathVariable int id) {
+    public AccountDto get(@PathVariable @Positive int id) {
         return accountService.read(id);
     }
 

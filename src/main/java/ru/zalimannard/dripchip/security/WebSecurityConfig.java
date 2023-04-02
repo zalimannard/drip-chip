@@ -62,8 +62,6 @@ public class WebSecurityConfig {
 
         String requesterId = requesterrAccount.getId().toString();
         String existingUserId = object.getVariables().get("accountId");
-        System.out.println(requesterId);
-        System.out.println(existingUserId);
         boolean hasAccess = requesterId.equals(existingUserId);
         return new AuthorizationDecision(hasAccess);
     }

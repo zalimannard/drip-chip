@@ -31,7 +31,9 @@ public class RegistrationController {
                 .password(System.getenv("ADMIN_PASSWORD"))
                 .role(AccountRole.ADMIN)
                 .build();
-        accountService.create(adminAccountDto);
+        int adminAccountId = accountService.create(adminAccountDto).getId();
+        accountService.update(adminAccountId, adminAccountDto);
+
         AccountDto chipperAccountDto = AccountDto.builder()
                 .firstName("chipperFirstName")
                 .lastName("chipperLastName")
@@ -39,7 +41,9 @@ public class RegistrationController {
                 .password(System.getenv("CHIPPER_PASSWORD"))
                 .role(AccountRole.CHIPPER)
                 .build();
-        accountService.create(chipperAccountDto);
+        int chipperAccountId = accountService.create(chipperAccountDto).getId();
+        accountService.update(chipperAccountId, chipperAccountDto);
+
         AccountDto userAccountDto = AccountDto.builder()
                 .firstName("userFirstName")
                 .lastName("userLastName")
