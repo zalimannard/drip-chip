@@ -3,6 +3,7 @@ package ru.zalimannard.dripchip.schema.area;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 import ru.zalimannard.dripchip.schema.area.point.PointDto;
@@ -21,6 +22,7 @@ public class AreaDto {
     private String name;
 
     @JsonProperty("areaPoints")
+    @NotNull
     @Size(min = 3)
     private List<@Valid PointDto> points = new ArrayList<>();
 

@@ -19,7 +19,6 @@ public class AreaController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public AreaDto post(@RequestBody AreaDto areaDto) {
-        System.out.println(areaDto);
         return areaService.create(areaDto);
     }
 
