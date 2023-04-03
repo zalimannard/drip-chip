@@ -39,8 +39,8 @@ public class AnimalController {
 
     @PutMapping("{id}")
     public AnimalDto put(@PathVariable long id,
-                         @RequestBody AnimalDto accountDto) {
-        return animalService.update(id, accountDto);
+                         @RequestBody AnimalDto animalDto) {
+        return animalService.update(id, animalDto);
     }
 
     @DeleteMapping("{id}")
