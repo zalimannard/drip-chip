@@ -3,6 +3,7 @@ package ru.zalimannard.dripchip.schema.account;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import ru.zalimannard.dripchip.schema.account.role.AccountRole;
 
 @Entity
 @Table(name = "accounts")
@@ -27,5 +28,8 @@ public class Account {
 
     @Column(name = "password")
     private String password;
+
+    @Column(name = "role")
+    private AccountRole role;
 
 }

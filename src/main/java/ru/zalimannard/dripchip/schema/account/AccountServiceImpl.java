@@ -3,30 +3,31 @@ package ru.zalimannard.dripchip.schema.account;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 import ru.zalimannard.dripchip.exception.BadRequestException;
 import ru.zalimannard.dripchip.exception.ConflictException;
 import ru.zalimannard.dripchip.exception.ForbiddenException;
 import ru.zalimannard.dripchip.exception.NotFoundException;
 import ru.zalimannard.dripchip.page.OffsetBasedPage;
-import ru.zalimannard.dripchip.security.UserSecurity;
+import ru.zalimannard.dripchip.schema.account.role.AccountRole;
 
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Validated
 public class AccountServiceImpl implements AccountService {
 
     private final AccountRepository accountRepository;
     private final AccountMapper accountMapper;
     private final PasswordEncoder encoder;
-    private final UserSecurity userSecurity;
 
     @Override
     public AccountDto create(AccountDto accountDto) {
         Account accountRequest = accountMapper.toEntity(accountDto);
+        accountRequest.setRole(AccountRole.USER);
         accountRequest.setPassword(encoder.encode((accountRequest.getEmail() + ":" + accountRequest.getPassword())));
 
         Account accountResponse = saveToDatabase(accountRequest);
@@ -58,7 +59,6 @@ public class AccountServiceImpl implements AccountService {
         } catch (NotFoundException e) {
             throw new ForbiddenException();
         }
-        checkAccess(id);
 
         Account accountRequest = accountMapper.toEntity(accountDto);
         accountRequest.setId(id);
@@ -70,13 +70,7 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public void delete(int id) {
-        try {
-            checkExist(id);
-        } catch (NotFoundException e) {
-            throw new ForbiddenException();
-        }
-        checkAccess(id);
-
+        checkExist(id);
         try {
             accountRepository.deleteById(id);
         } catch (DataIntegrityViolationException e) {
@@ -87,12 +81,6 @@ public class AccountServiceImpl implements AccountService {
     private void checkExist(int id) {
         if (!accountRepository.existsById(id)) {
             throw new NotFoundException("Account", String.valueOf(id));
-        }
-    }
-
-    private void checkAccess(int id) {
-        if (!userSecurity.hasUserId(SecurityContextHolder.getContext().getAuthentication(), id)) {
-            throw new ForbiddenException();
         }
     }
 

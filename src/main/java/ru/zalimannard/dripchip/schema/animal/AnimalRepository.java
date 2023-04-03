@@ -23,9 +23,9 @@ public interface AnimalRepository extends JpaRepository<Animal, Long> {
             FROM
                 Animal a
             WHERE
-                ((cast(:start AS DATE) IS NULL ) OR a.chippingDateTime >= :start)
+                ((cast(:start AS DATE) IS NULL) OR a.chippingDateTime >= :start)
             AND
-                ((cast(:end AS DATE) IS NULL ) OR a.chippingDateTime <= :end)
+                ((cast(:end AS DATE) IS NULL) OR a.chippingDateTime <= :end)
             AND
                 (:chipper IS NULL OR a.chipper = :chipper)
             AND
