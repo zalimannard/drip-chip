@@ -16,6 +16,7 @@ application:
     accounts: /accounts
     animals: /animals
     locations: /locations
+    areas: /areas
     registration: /registration
   init:
     accounts:
