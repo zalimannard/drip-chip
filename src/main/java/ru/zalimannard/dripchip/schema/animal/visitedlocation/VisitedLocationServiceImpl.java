@@ -2,10 +2,12 @@ package ru.zalimannard.dripchip.schema.animal.visitedlocation;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ru.zalimannard.dripchip.exception.BadRequestException;
 import ru.zalimannard.dripchip.exception.ConflictException;
 import ru.zalimannard.dripchip.exception.NotFoundException;
+import ru.zalimannard.dripchip.page.OffsetBasedPage;
 import ru.zalimannard.dripchip.schema.animal.Animal;
 import ru.zalimannard.dripchip.schema.animal.AnimalDto;
 import ru.zalimannard.dripchip.schema.animal.AnimalMapper;
@@ -68,8 +70,13 @@ public class VisitedLocationServiceImpl implements VisitedLocationService {
     }
 
     @Override
-    public List<VisitedLocationDto> readByAnimalId(long animalId) {
-        List<VisitedLocation> visitedLocations = visitedLocationRepository.findAllByAnimalIdOrderByDateTimeOfVisitLocationPoint(animalId);
+    public List<VisitedLocationDto> search(long animalId, Date startDateTime, Date endDateTime, int from, int size) {
+        AnimalDto animalDto = animalService.read(animalId);
+        Animal animal = animalMapper.toEntity(animalDto);
+        Pageable pageable = new OffsetBasedPage(from, size);
+
+        List<VisitedLocation> visitedLocations = visitedLocationRepository.search(startDateTime, endDateTime, animal,
+                pageable);
         return visitedLocationMapper.toDtoList(visitedLocations);
     }
 

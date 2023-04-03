@@ -1,10 +1,12 @@
 package ru.zalimannard.dripchip.schema.animal.visitedlocation;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.zalimannard.dripchip.schema.animal.visitedlocation.update.VisitedLocationUpdateDto;
 
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -15,8 +17,14 @@ public class VisitedLocationController {
     private final VisitedLocationService visitedLocationService;
 
     @GetMapping("${application.endpoint.locations}")
-    public List<VisitedLocationDto> getAll(@PathVariable long animalId) {
-        return visitedLocationService.readByAnimalId(animalId);
+    public List<VisitedLocationDto> getAll(@PathVariable long animalId,
+                                           @RequestParam(required = false) @DateTimeFormat(iso =
+                                                   DateTimeFormat.ISO.DATE_TIME) Date startDateTime,
+                                           @RequestParam(required = false) @DateTimeFormat(iso =
+                                                   DateTimeFormat.ISO.DATE_TIME) Date endDateTime,
+                                           @RequestParam(defaultValue = "0") int from,
+                                           @RequestParam(defaultValue = "10") int size) {
+        return visitedLocationService.search(animalId, startDateTime, endDateTime, from, size);
     }
 
     @PostMapping("${application.endpoint.locations}/{locationId}")
