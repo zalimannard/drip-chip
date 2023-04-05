@@ -6,6 +6,7 @@ import lombok.EqualsAndHashCode;
 import ru.zalimannard.dripchip.schema.area.Area;
 
 @Entity
+@Table(name = "points")
 @Data
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Point {
