@@ -95,14 +95,11 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public void delete(int id) {
-        if (accountRepository.existsById(id)) {
-            try {
-                accountRepository.deleteById(id);
-            } catch (DataIntegrityViolationException e) {
-                throw new BadRequestException();
-            }
-        } else {
-            throw new NotFoundException();
+        try {
+            Account account = readEntity(id);
+            accountRepository.delete(account);
+        } catch (DataIntegrityViolationException e) {
+            throw new BadRequestException();
         }
     }
 

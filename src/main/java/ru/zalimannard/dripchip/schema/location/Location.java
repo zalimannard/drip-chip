@@ -6,7 +6,7 @@ import lombok.EqualsAndHashCode;
 
 @Entity
 @Table(name = "locations",
-        uniqueConstraints = {@UniqueConstraint(columnNames = {"latitude", "longitude"})
+        uniqueConstraints = {@UniqueConstraint(columnNames = {"longitude", "latitude"})
         })
 @Data
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
@@ -18,10 +18,10 @@ public class Location {
     @EqualsAndHashCode.Include
     private Long id;
 
-    @Column(name = "latitude")
-    private Double latitude;
-
     @Column(name = "longitude")
     private Double longitude;
+
+    @Column(name = "latitude")
+    private Double latitude;
 
 }
