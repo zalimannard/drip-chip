@@ -9,14 +9,10 @@ import ru.zalimannard.dripchip.exception.ConflictException;
 import ru.zalimannard.dripchip.exception.NotFoundException;
 import ru.zalimannard.dripchip.page.OffsetBasedPage;
 import ru.zalimannard.dripchip.schema.animal.Animal;
-import ru.zalimannard.dripchip.schema.animal.AnimalDto;
-import ru.zalimannard.dripchip.schema.animal.AnimalMapper;
 import ru.zalimannard.dripchip.schema.animal.AnimalService;
 import ru.zalimannard.dripchip.schema.animal.lifestatus.AnimalLifeStatus;
 import ru.zalimannard.dripchip.schema.animal.visitedlocation.update.VisitedLocationUpdateDto;
 import ru.zalimannard.dripchip.schema.location.Location;
-import ru.zalimannard.dripchip.schema.location.LocationDto;
-import ru.zalimannard.dripchip.schema.location.LocationMapper;
 import ru.zalimannard.dripchip.schema.location.LocationService;
 
 import java.time.Instant;
@@ -28,96 +24,108 @@ import java.util.List;
 @RequiredArgsConstructor
 public class VisitedLocationServiceImpl implements VisitedLocationService {
 
-    private final VisitedLocationRepository visitedLocationRepository;
     private final VisitedLocationMapper visitedLocationMapper;
+    private final VisitedLocationRepository visitedLocationRepository;
+
     private final AnimalService animalService;
-    private final AnimalMapper animalMapper;
     private final LocationService locationService;
-    private final LocationMapper locationMapper;
 
     @Override
     public VisitedLocationDto create(long animalId, long locationId) {
-        AnimalDto animalDto = animalService.read(animalId);
-        Animal animal = animalMapper.toEntity(animalDto);
-        LocationDto locationDto = locationService.read(locationId);
-        Location location = locationMapper.toEntity(locationDto);
+        VisitedLocation visitedLocationResponse = createEntity(animalId, locationId);
 
-        if (animal.getLifeStatus() == AnimalLifeStatus.DEAD) {
-            throw new BadRequestException("Dead animal can't visit new location");
-        }
-
-        ArrayList<VisitedLocation> allAnimalVisitedLocations = new ArrayList<>(getAllVisitedLocation(animal));
-        VisitedLocation newVisitedLocation = new VisitedLocation();
-        newVisitedLocation.setLocation(location);
-        allAnimalVisitedLocations.add(newVisitedLocation);
-
-        checkOrderOfVisit(allAnimalVisitedLocations);
-
-        VisitedLocation visitedLocationRequest = new VisitedLocation();
-        visitedLocationRequest.setDateTimeOfVisitLocationPoint(Date.from(Instant.now()));
-        visitedLocationRequest.setAnimal(animal);
-        visitedLocationRequest.setLocation(location);
-
-        VisitedLocation visitedLocationResponse = saveToDatabase(visitedLocationRequest);
         return visitedLocationMapper.toDto(visitedLocationResponse);
+    }
+
+    @Override
+    public VisitedLocation createEntity(long animalId, long locationId) {
+        Animal animal = animalService.readEntity(animalId);
+        Location location = locationService.readEntity(locationId);
+        VisitedLocation newVisitedLocation = new VisitedLocation();
+        newVisitedLocation.setAnimal(animal);
+        newVisitedLocation.setLocation(location);
+        newVisitedLocation.setDateTimeOfVisitLocationPoint(Date.from(Instant.now()));
+
+        if (animal.getLifeStatus().equals(AnimalLifeStatus.DEAD)) {
+            throw new BadRequestException();
+        }
+        ArrayList<VisitedLocation> allAnimalVisitedLocations = getAllVisitedLocation(animal);
+        allAnimalVisitedLocations.add(newVisitedLocation);
+        checkCorrectnessOrder(allAnimalVisitedLocations);
+
+        return saveToDatabase(newVisitedLocation);
     }
 
     @Override
     public VisitedLocationDto read(long id) {
-        VisitedLocation visitedLocation = visitedLocationRepository.findById(id).orElseThrow(
-                () -> new NotFoundException("Visited location", String.valueOf(id)));
-        return visitedLocationMapper.toDto(visitedLocation);
-    }
+        VisitedLocation visitedLocationResponse = readEntity(id);
 
-    @Override
-    public List<VisitedLocationDto> search(long animalId, Date startDateTime, Date endDateTime, int from, int size) {
-        AnimalDto animalDto = animalService.read(animalId);
-        Animal animal = animalMapper.toEntity(animalDto);
-        Pageable pageable = new OffsetBasedPage(from, size);
-
-        List<VisitedLocation> visitedLocations = visitedLocationRepository.search(startDateTime, endDateTime, animal,
-                pageable);
-        return visitedLocationMapper.toDtoList(visitedLocations);
-    }
-
-    @Override
-    public VisitedLocationDto update(long animalId, VisitedLocationUpdateDto visitedLocationUpdateDto) {
-        AnimalDto animalDto = animalService.read(animalId);
-        Animal animal = animalMapper.toEntity(animalDto);
-
-        long visitedLocationPointId = visitedLocationUpdateDto.getVisitedLocationPointId();
-        VisitedLocationDto visitedLocationDto = read(visitedLocationPointId);
-        VisitedLocation visitedLocation = visitedLocationMapper.toEntity(visitedLocationDto);
-        checkHasAnimalVisitedLocation(animal, visitedLocation.getId());
-
-        long locationPointId = visitedLocationUpdateDto.getLocationPointId();
-        LocationDto locationDto = locationService.read(locationPointId);
-        Location newLocation = locationMapper.toEntity(locationDto);
-
-        ArrayList<VisitedLocation> allAnimalVisitedLocations = getAllVisitedLocation(animal);
-        int indexOfVisitedLocationForUpdate = allAnimalVisitedLocations.indexOf(visitedLocation);
-        allAnimalVisitedLocations.get(indexOfVisitedLocationForUpdate).setLocation(newLocation);
-
-        checkOrderOfVisit(allAnimalVisitedLocations);
-
-        if (visitedLocation.getLocation().equals(newLocation)) {
-            throw new BadRequestException("Replacing the last point with the same point");
-        }
-
-        visitedLocation.setLocation(newLocation);
-        VisitedLocation visitedLocationResponse = saveToDatabase(visitedLocation);
         return visitedLocationMapper.toDto(visitedLocationResponse);
     }
 
     @Override
+    public VisitedLocation readEntity(long id) {
+        return visitedLocationRepository.findById(id).orElseThrow(NotFoundException::new);
+    }
+
+    @Override
+    public List<VisitedLocationDto> search(long animalId, Date start, Date end, int from, int size) {
+        Animal animal = animalService.readEntity(animalId);
+        VisitedLocation filter = new VisitedLocation();
+        filter.setAnimal(animal);
+
+        List<VisitedLocation> visitedLocations = searchEntities(filter, start, end, from, size);
+
+        return visitedLocationMapper.toDtoList(visitedLocations);
+    }
+
+    @Override
+    public List<VisitedLocation> searchEntities(VisitedLocation filter, Date start, Date end, int from, int size) {
+        Pageable pageable = new OffsetBasedPage(from, size);
+
+        return visitedLocationRepository.search(
+                start,
+                end,
+                filter.getAnimal(),
+                pageable
+        );
+    }
+
+    @Override
+    public VisitedLocationDto update(long animalId, VisitedLocationUpdateDto visitedLocationUpdateDto) {
+        VisitedLocation visitedLocationResponse = updateEntity(animalId,
+                visitedLocationUpdateDto.getVisitedLocationPointId(), visitedLocationUpdateDto.getLocationPointId());
+
+        return visitedLocationMapper.toDto(visitedLocationResponse);
+    }
+
+    @Override
+    public VisitedLocation updateEntity(long animalId, long visitedLocationPointId, long locationPointId) {
+        Animal animal = animalService.readEntity(animalId);
+        VisitedLocation visitedLocation = readEntity(visitedLocationPointId);
+        Location location = locationService.readEntity(locationPointId);
+        ArrayList<VisitedLocation> allAnimalVisitedLocations = getAllVisitedLocation(animal);
+
+        // Replacing the location with the same one
+        if (visitedLocation.getLocation().equals(location)) {
+            throw new BadRequestException();
+        }
+        checkHasAnimalVisitedLocation(animal, visitedLocation);
+        int indexOfVisitedLocationForUpdate = allAnimalVisitedLocations.indexOf(visitedLocation);
+        allAnimalVisitedLocations.get(indexOfVisitedLocationForUpdate).setLocation(location);
+
+        checkCorrectnessOrder(allAnimalVisitedLocations);
+        visitedLocation.setLocation(location);
+
+        return saveToDatabase(visitedLocation);
+    }
+
+    @Override
     public void delete(long animalId, long visitedLocationId) {
-        AnimalDto animalDto = animalService.read(animalId);
-        Animal animal = animalMapper.toEntity(animalDto);
-        VisitedLocationDto visitedLocationDto = read(visitedLocationId);
-        VisitedLocation visitedLocation = visitedLocationMapper.toEntity(visitedLocationDto);
+        Animal animal = animalService.readEntity(animalId);
+        VisitedLocation visitedLocation = readEntity(visitedLocationId);
 
-        checkHasAnimalVisitedLocation(animal, visitedLocationId);
-
+        checkHasAnimalVisitedLocation(animal, visitedLocation);
         ArrayList<VisitedLocation> allAnimalVisitedLocations = getAllVisitedLocation(animal);
         int indexOfVisitedLocationToDelete = allAnimalVisitedLocations.indexOf(visitedLocation);
         allAnimalVisitedLocations.remove(indexOfVisitedLocationToDelete);
@@ -131,30 +139,16 @@ public class VisitedLocationServiceImpl implements VisitedLocationService {
                 allAnimalVisitedLocations.remove(1);
             }
         }
-        checkOrderOfVisit(allAnimalVisitedLocations);
+        checkCorrectnessOrder(allAnimalVisitedLocations);
 
         visitedLocationRepository.deleteById(visitedLocationId);
     }
 
-    private void checkOrderOfVisit(ArrayList<VisitedLocation> orderOfVisit) {
-        for (int i = 0; i < orderOfVisit.size() - 1; ++i) {
-            Location prevLocation = orderOfVisit.get(i).getLocation();
-            Location nextLocation = orderOfVisit.get(i + 1).getLocation();
-            if (prevLocation.equals(nextLocation)) {
-                throw new BadRequestException("Two visited points in a row are the same");
-            }
-        }
-    }
-
-    private void checkHasAnimalVisitedLocation(Animal animal, long visitedLocationId) {
-        List<VisitedLocation> visitedLocations = visitedLocationRepository.findAllByAnimalIdOrderByDateTimeOfVisitLocationPoint(animal.getId());
-        if (visitedLocations == null) {
-            visitedLocations = new ArrayList<>();
-        }
-        VisitedLocation visitedLocation = new VisitedLocation();
-        visitedLocation.setId(visitedLocationId);
-        if (!visitedLocations.contains(visitedLocation)) {
-            throw new NotFoundException("Visited Location", visitedLocationId + " at animal with id=" + animal.getId());
+    private VisitedLocation saveToDatabase(VisitedLocation visitedLocation) {
+        try {
+            return visitedLocationRepository.save(visitedLocation);
+        } catch (DataIntegrityViolationException e) {
+            throw new ConflictException();
         }
     }
 
@@ -167,11 +161,27 @@ public class VisitedLocationServiceImpl implements VisitedLocationService {
         return visitedLocations;
     }
 
-    private VisitedLocation saveToDatabase(VisitedLocation visitedLocation) {
-        try {
-            return visitedLocationRepository.save(visitedLocation);
-        } catch (DataIntegrityViolationException e) {
-            throw new ConflictException("Visited location");
+    private void checkCorrectnessOrder(List<VisitedLocation> visitedLocations) {
+        if (!isCorrectOrder(visitedLocations)) {
+            throw new BadRequestException();
+        }
+    }
+
+    private boolean isCorrectOrder(List<VisitedLocation> visitedLocations) {
+        for (int i = 0; i < visitedLocations.size() - 1; ++i) {
+            Location prevLocation = visitedLocations.get(i).getLocation();
+            Location nextLocation = visitedLocations.get(i + 1).getLocation();
+            if (prevLocation.equals(nextLocation)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private void checkHasAnimalVisitedLocation(Animal animal, VisitedLocation visitedLocation) {
+        List<VisitedLocation> visitedLocations = animal.getVisitedLocations();
+        if (!visitedLocations.contains(visitedLocation)) {
+            throw new NotFoundException();
         }
     }
 
