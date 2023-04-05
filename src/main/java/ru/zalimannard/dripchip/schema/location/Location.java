@@ -6,7 +6,7 @@ import lombok.EqualsAndHashCode;
 
 @Entity
 @Table(name = "locations",
-        uniqueConstraints = {@UniqueConstraint(columnNames = {"latitude", "latitude"})
+        uniqueConstraints = {@UniqueConstraint(columnNames = {"latitude", "longitude"})
         })
 @Data
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
