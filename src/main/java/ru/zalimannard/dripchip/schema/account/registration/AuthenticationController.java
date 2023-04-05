@@ -9,9 +9,9 @@ import ru.zalimannard.dripchip.schema.account.AccountService;
 import ru.zalimannard.dripchip.schema.account.role.AccountRole;
 
 @RestController
-@RequestMapping("${application.endpoint.registration}")
+@RequestMapping("${application.endpoint.authentication}")
 @RequiredArgsConstructor
-public class RegistrationController {
+public class AuthenticationController {
 
     private final AccountService accountService;
 
