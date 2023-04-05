@@ -10,7 +10,6 @@ import ru.zalimannard.dripchip.schema.account.AccountDto;
 import ru.zalimannard.dripchip.schema.account.AccountMapper;
 import ru.zalimannard.dripchip.schema.account.AccountService;
 import ru.zalimannard.dripchip.schema.animal.ownedtype.type.AnimalType;
-import ru.zalimannard.dripchip.schema.animal.ownedtype.type.AnimalTypeDto;
 import ru.zalimannard.dripchip.schema.animal.ownedtype.type.AnimalTypeMapper;
 import ru.zalimannard.dripchip.schema.animal.ownedtype.type.AnimalTypeService;
 import ru.zalimannard.dripchip.schema.animal.visitedlocation.VisitedLocation;
@@ -58,8 +57,7 @@ public abstract class AnimalMapper {
     @AfterMapping
     protected void toEntity(@MappingTarget Animal entity, AnimalDto dto) {
         if (dto.getAnimalTypeIds() != null) {
-            List<AnimalTypeDto> animalTypesDto = animalTypeService.getAllById(dto.getAnimalTypeIds());
-            List<AnimalType> animalTypes = animalTypeMapper.toEntityList(animalTypesDto);
+            List<AnimalType> animalTypes = animalTypeService.readAllEntitiesById(dto.getAnimalTypeIds());
             entity.setAnimalTypes(new HashSet<>(animalTypes));
         }
 

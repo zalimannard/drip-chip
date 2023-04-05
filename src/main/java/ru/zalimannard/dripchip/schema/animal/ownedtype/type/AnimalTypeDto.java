@@ -2,16 +2,18 @@ package ru.zalimannard.dripchip.schema.animal.ownedtype.type;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotBlank;
-import lombok.Data;
+import lombok.Builder;
+import lombok.Value;
 
-@Data
+@Value
+@Builder
 public class AnimalTypeDto {
 
     @JsonProperty(value = "id", access = JsonProperty.Access.READ_ONLY)
-    private Long id;
+    Long id;
 
     @JsonProperty("type")
     @NotBlank
-    private String type;
+    String type;
 
 }
