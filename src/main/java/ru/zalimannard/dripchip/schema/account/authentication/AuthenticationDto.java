@@ -1,19 +1,14 @@
-package ru.zalimannard.dripchip.schema.account;
+package ru.zalimannard.dripchip.schema.account.authentication;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Value;
-import ru.zalimannard.dripchip.schema.account.role.AccountRole;
 
 @Value
 @Builder
-public class AccountDto {
-
-    @JsonProperty(value = "id", access = JsonProperty.Access.READ_ONLY)
-    Integer id;
+public class AuthenticationDto {
 
     @JsonProperty("firstName")
     @NotBlank
@@ -28,12 +23,8 @@ public class AccountDto {
     @Email
     String email;
 
-    @JsonProperty(value = "password", access = JsonProperty.Access.WRITE_ONLY)
+    @JsonProperty("password")
     @NotBlank
     String password;
-
-    @JsonProperty("role")
-    @NotNull
-    AccountRole role;
 
 }

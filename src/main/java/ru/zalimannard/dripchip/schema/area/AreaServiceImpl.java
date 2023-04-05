@@ -34,9 +34,6 @@ public class AreaServiceImpl implements AreaService {
         List<Area> existedAreas = readAll();
 
         for (Area existedArea : existedAreas) {
-            System.out.println();
-            System.out.println("Id существующей области:");
-            System.out.println(existedArea.getId());
             if (!isConsistent(existedArea, requestArea)) {
                 throw new BadRequestException("Area conflicts with existing areas");
             }
@@ -54,13 +51,8 @@ public class AreaServiceImpl implements AreaService {
     }
 
     private boolean hasIntersection(Area existedArea, Area requestArea) {
-        System.out.println("Проверяем на пересечение");
         for (int e = 0; e < existedArea.getPoints().size(); ++e) {
-            System.out.println("У существующей берём ребро (" + existedArea.getPoints().get(e).getLongitude() + "; " + existedArea.getPoints().get(e).getLatitude() + ") -> (" +
-                    existedArea.getPoints().get((e + 1) % existedArea.getPoints().size()).getLongitude() + "; " + existedArea.getPoints().get((e + 1) % existedArea.getPoints().size()).getLatitude() + ")");
             for (int r = 0; r < requestArea.getPoints().size(); ++r) {
-                System.out.println("У новой берём ребро (" + requestArea.getPoints().get(r).getLongitude() + "; " + requestArea.getPoints().get(r).getLatitude() + ") -> (" +
-                        requestArea.getPoints().get((r + 1) % requestArea.getPoints().size()).getLongitude() + "; " + requestArea.getPoints().get((r + 1) % requestArea.getPoints().size()).getLatitude() + ")");
                 if (hasIntersection(existedArea.getPoints().get(e),
                         existedArea.getPoints().get((e + 1) % existedArea.getPoints().size()),
                         requestArea.getPoints().get(r),
@@ -161,7 +153,6 @@ public class AreaServiceImpl implements AreaService {
         }
         double x = (bFreeMember - aFreeMember) / (aCoefficient - bCoefficient);
         double y = (aCoefficient * bFreeMember - bCoefficient * aFreeMember) / (bCoefficient - aCoefficient);
-        System.out.println("Точка пересечения: (" + x + "; " + y + ")");
 
         boolean xInRange = ((doubleLess(a1Best.getLongitude(), x)) && (doubleLess(x, a2Best.getLongitude())) &&
                 doubleLess(b1Best.getLongitude(), x) && doubleLess(x, b2Best.getLongitude()));
