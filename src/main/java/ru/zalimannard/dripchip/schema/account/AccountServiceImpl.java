@@ -33,10 +33,6 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public Account createEntity(Account account) {
-        String password = encoder.encode((account.getEmail() + ":" + account.getPassword()));
-
-        account.setPassword(password);
-
         return saveToDatabase(account);
     }
 
@@ -91,8 +87,6 @@ public class AccountServiceImpl implements AccountService {
     public Account updateEntity(int id, Account account) {
         if (accountRepository.existsById(id)) {
             account.setId(id);
-            String password = encoder.encode((account.getEmail() + ":" + account.getPassword()));
-            account.setPassword(password);
             return saveToDatabase(account);
         } else {
             throw new NotFoundException();
@@ -114,6 +108,9 @@ public class AccountServiceImpl implements AccountService {
 
     private Account saveToDatabase(Account account) {
         try {
+            String textToEncode = account.getEmail() + ":" + account.getPassword();
+            String password = encoder.encode(textToEncode);
+            account.setPassword(password);
             return accountRepository.save(account);
         } catch (DataIntegrityViolationException e) {
             throw new ConflictException();
