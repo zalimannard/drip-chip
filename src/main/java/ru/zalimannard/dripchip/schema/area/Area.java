@@ -37,15 +37,18 @@ public class Area {
     }
 
     public double calcAreaValue() {
-        double area = 0;
+        double value1 = 0;
+        double value2 = 0;
         List<Point> pointList = getPoints();
 
         for (int i = 0; i < pointList.size(); ++i) {
-            area += pointList.get(i).getLongitude() *
+            value1 += pointList.get(i).getLongitude() *
                     pointList.get((i + 1) % pointList.size()).getLatitude();
+            value2 += pointList.get(i).getLatitude() *
+                    pointList.get((i + 1) % pointList.size()).getLongitude();
         }
 
-        return area;
+        return value1 - value2;
     }
 
 }
