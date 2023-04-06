@@ -18,14 +18,13 @@ public class Point {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
+    @EqualsAndHashCode.Include
     private Long id;
 
     @Column(name = "longitude")
-    @EqualsAndHashCode.Include
     private Double longitude;
 
     @Column(name = "latitude")
-    @EqualsAndHashCode.Include
     private Double latitude;
 
     @ManyToOne
