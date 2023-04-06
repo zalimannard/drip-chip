@@ -7,6 +7,7 @@ import org.springframework.validation.annotation.Validated;
 import ru.zalimannard.dripchip.exception.BadRequestException;
 import ru.zalimannard.dripchip.schema.area.Area;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -15,17 +16,28 @@ import java.util.List;
 public class PointServiceImpl implements PointService {
 
     private final PointRepository pointRepository;
-    private final PointMapper pointMapper;
 
     @Override
-    public List<PointDto> createAll(Area area, List<PointDto> pointDtos) {
-        List<Point> pointsRequest = pointMapper.toEntityList(pointDtos);
-        pointsRequest.forEach(point -> point.setArea(area));
+    public List<Point> createAllEntities(Area area, List<Point> points) {
+        List<Point> pointsRequest = new ArrayList<>();
+
+        for (long i = 0; i < points.size(); ++i) {
+            Point currentPoint = points.get((int) i);
+            Point newPoint = currentPoint.toBuilder()
+                    .area(area)
+                    .numberInArea(i)
+                    .build();
+            pointsRequest.add(newPoint);
+        }
+
+        return saveToDatabase(pointsRequest);
+    }
+
+    private List<Point> saveToDatabase(List<Point> points) {
         try {
-            List<Point> pointsResponse = pointRepository.saveAll(pointsRequest);
-            return pointMapper.toDtoList(pointsResponse);
+            return pointRepository.saveAll(points);
         } catch (DataIntegrityViolationException e) {
-            throw new BadRequestException("Point");
+            throw new BadRequestException();
         }
     }
 

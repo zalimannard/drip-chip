@@ -9,7 +9,6 @@ import ru.zalimannard.dripchip.exception.BadRequestException;
 import ru.zalimannard.dripchip.exception.ConflictException;
 import ru.zalimannard.dripchip.exception.NotFoundException;
 import ru.zalimannard.dripchip.schema.area.point.Point;
-import ru.zalimannard.dripchip.schema.area.point.PointDto;
 import ru.zalimannard.dripchip.schema.area.point.PointMapper;
 import ru.zalimannard.dripchip.schema.area.point.PointService;
 
@@ -40,9 +39,10 @@ public class AreaServiceImpl implements AreaService {
         }
 
         Area areaResponse = saveToDatabase(requestArea);
-        List<PointDto> pointDtos = pointService.createAll(areaResponse, areaDto.getPoints());
+        List<Point> areasPoins = pointMapper.toEntityList(areaDto.getPoints());
+        List<Point> points = pointService.createAllEntities(areaResponse, areasPoins);
         AreaDto areaDtoResponse = areaMapper.toDto(areaResponse);
-        areaDtoResponse.setPoints(pointDtos);
+        areaDtoResponse.setPoints(pointMapper.toDtoList(points));
         return areaDtoResponse;
     }
 
@@ -102,41 +102,41 @@ public class AreaServiceImpl implements AreaService {
     }
 
     private boolean hasIntersection(Point a1, Point a2, Point b1, Point b2) {
-        Point a1Best = new Point(a1);
-        Point a2Best = new Point(a2);
+        Point a1Best = a1.toBuilder().build();
+        Point a2Best = a2.toBuilder().build();
         double minADistance = distance(a1Best, a2Best);
         for (Point a1Var : genPointVariation(a1)) {
             for (Point a2Var : genPointVariation(a2)) {
                 if (distance(a1Var, a2Var) < minADistance) {
-                    a1Best = new Point(a1Var);
-                    a2Best = new Point(a2Var);
+                    a1Best = a1Var.toBuilder().build();
+                    a2Best = a2Var.toBuilder().build();
                     minADistance = distance(a1Best, a2Best);
                 }
             }
         }
         // Чтобы первая была левой
         if (a1Best.getLongitude() > a2Best.getLongitude()) {
-            Point temp = new Point(a1Best);
-            a1Best = new Point(a2Best);
-            a2Best = new Point(temp);
+            Point temp = a1Best.toBuilder().build();
+            a1Best = a2Best.toBuilder().build();
+            a2Best = temp.toBuilder().build();
         }
-        Point b1Best = new Point(b1);
-        Point b2Best = new Point(b2);
+        Point b1Best = b1.toBuilder().build();
+        Point b2Best = b2.toBuilder().build();
         double minBDistance = distance(b1Best, b2Best);
         for (Point b1Var : genPointVariation(b1)) {
             for (Point b2Var : genPointVariation(b2)) {
                 if (distance(b1Var, b2Var) < minBDistance) {
-                    b1Best = new Point(b1Var);
-                    b2Best = new Point(b2Var);
+                    b1Best = b1Var.toBuilder().build();
+                    b2Best = b2Var.toBuilder().build();
                     minBDistance = distance(b1Best, b2Best);
                 }
             }
         }
         // Чтобы первая была левой
         if (b1Best.getLongitude() > b2Best.getLongitude()) {
-            Point temp = new Point(b1Best);
-            b1Best = new Point(b2Best);
-            b2Best = new Point(temp);
+            Point temp = b1Best.toBuilder().build();
+            b1Best = b2Best.toBuilder().build();
+            b2Best = temp.toBuilder().build();
         }
 
         double aCoefficient = (a2Best.getLatitude() - a1Best.getLatitude()) /
@@ -174,7 +174,7 @@ public class AreaServiceImpl implements AreaService {
         List<Point> answer = new ArrayList<>();
         for (int x = -1; x <= 1; ++x) {
             for (int y = -1; y <= 1; ++y) {
-                Point newPoint = new Point(point);
+                Point newPoint = point.toBuilder().build();
                 newPoint.setLongitude(newPoint.getLongitude() + x * 360);
                 newPoint.setLatitude(newPoint.getLatitude() + y * 180);
                 answer.add(newPoint);

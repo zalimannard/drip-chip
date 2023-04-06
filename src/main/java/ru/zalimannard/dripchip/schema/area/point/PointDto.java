@@ -4,21 +4,23 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
-import lombok.Data;
+import lombok.Builder;
+import lombok.Value;
 
-@Data
+@Value
+@Builder
 public class PointDto {
-
-    @JsonProperty("latitude")
-    @NotNull
-    @Min(-90)
-    @Max(90)
-    private Double latitude;
 
     @JsonProperty("longitude")
     @NotNull
     @Min(-180)
     @Max(180)
-    private Double longitude;
+    Double longitude;
+
+    @JsonProperty("latitude")
+    @NotNull
+    @Min(-90)
+    @Max(90)
+    Double latitude;
 
 }
