@@ -1,5 +1,6 @@
 package ru.zalimannard.dripchip.schema.area.point;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
@@ -41,6 +42,7 @@ public class PointServiceImpl implements PointService {
         }
     }
 
+    @Transactional
     @Override
     public void deleteAll(Area area) {
         pointRepository.deleteAllByArea(area);
