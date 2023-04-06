@@ -65,7 +65,8 @@ public class VisitedLocationServiceImpl implements VisitedLocationService {
 
     @Override
     public VisitedLocation readEntity(long id) {
-        return visitedLocationRepository.findById(id).orElseThrow(NotFoundException::new);
+        return visitedLocationRepository.findById(id).
+                orElseThrow(NotFoundException::new);
     }
 
     @Override

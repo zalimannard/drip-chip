@@ -73,7 +73,8 @@ public class AreaServiceImpl implements AreaService {
 
     @Override
     public Area readEntity(long id) {
-        return areaRepository.findById(id).orElseThrow(NotFoundException::new);
+        return areaRepository.findById(id).
+                orElseThrow(NotFoundException::new);
     }
 
     @Override

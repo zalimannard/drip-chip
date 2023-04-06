@@ -53,7 +53,8 @@ public class AnimalServiceImpl implements AnimalService {
 
     @Override
     public Animal readEntity(long id) {
-        return animalRepository.findById(id).orElseThrow(NotFoundException::new);
+        return animalRepository.findById(id).
+                orElseThrow(NotFoundException::new);
     }
 
     @Override

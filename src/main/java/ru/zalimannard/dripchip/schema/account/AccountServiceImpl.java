@@ -45,7 +45,8 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public Account readEntity(int id) {
-        return accountRepository.findById(id).orElseThrow(NotFoundException::new);
+        return accountRepository.findById(id).
+                orElseThrow(NotFoundException::new);
     }
 
     @Override
