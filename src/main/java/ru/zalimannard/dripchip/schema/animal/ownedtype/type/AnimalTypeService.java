@@ -12,11 +12,20 @@ public interface AnimalTypeService {
 
     AnimalTypeDto create(@Valid AnimalTypeDto animalTypeDto);
 
+    AnimalType createEntity(@Valid AnimalType animalType);
+
+
     AnimalTypeDto read(@Positive long id);
 
-    List<AnimalTypeDto> getAllById(Set<@Positive Long> ids);
+    AnimalType readEntity(@Positive long id);
+
+    List<AnimalType> readAllEntitiesById(Set<@Positive Long> ids);
+
 
     AnimalTypeDto update(@Positive long id, @Valid AnimalTypeDto animalTypeDto);
+
+    AnimalType updateEntity(@Positive long id, @Valid AnimalType animalType);
+
 
     void delete(@Positive long id);
 

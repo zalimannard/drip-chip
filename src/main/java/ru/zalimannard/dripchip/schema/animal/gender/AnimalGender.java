@@ -5,10 +5,12 @@ import lombok.Getter;
 
 @AllArgsConstructor
 public enum AnimalGender {
+
     MALE("M"),
     FEMALE("F"),
     OTHER("O");
 
     @Getter
     private final String code;
+
 }

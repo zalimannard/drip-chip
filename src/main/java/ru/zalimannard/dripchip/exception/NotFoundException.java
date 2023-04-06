@@ -10,4 +10,8 @@ public class NotFoundException extends RuntimeException {
         super(objectName + " with id=" + id + " not found");
     }
 
+    public NotFoundException() {
+        super();
+    }
+
 }

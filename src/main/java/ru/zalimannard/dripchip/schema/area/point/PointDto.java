@@ -1,4 +1,4 @@
-package ru.zalimannard.dripchip.schema.location;
+package ru.zalimannard.dripchip.schema.area.point;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.Max;
@@ -9,10 +9,7 @@ import lombok.Value;
 
 @Value
 @Builder
-public class LocationDto {
-
-    @JsonProperty(value = "id", access = JsonProperty.Access.READ_ONLY)
-    Long id;
+public class PointDto {
 
     @JsonProperty("longitude")
     @NotNull

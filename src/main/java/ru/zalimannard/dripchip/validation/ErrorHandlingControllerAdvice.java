@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @ControllerAdvice
 public class ErrorHandlingControllerAdvice {
@@ -27,7 +26,7 @@ public class ErrorHandlingControllerAdvice {
                                 violation.getMessage()
                         )
                 )
-                .collect(Collectors.toList());
+                .toList();
         return new ValidationErrorResponse(violations);
     }
 
@@ -39,7 +38,7 @@ public class ErrorHandlingControllerAdvice {
     ) {
         final List<Violation> violations = e.getBindingResult().getFieldErrors().stream()
                 .map(error -> new Violation(error.getField(), error.getDefaultMessage()))
-                .collect(Collectors.toList());
+                .toList();
         return new ValidationErrorResponse(violations);
     }
 

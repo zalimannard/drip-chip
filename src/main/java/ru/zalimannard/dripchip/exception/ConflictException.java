@@ -10,4 +10,8 @@ public class ConflictException extends RuntimeException {
         super("Conflict when working with " + name + " in the databaseConflict in adding ");
     }
 
+    public ConflictException() {
+        super();
+    }
+
 }

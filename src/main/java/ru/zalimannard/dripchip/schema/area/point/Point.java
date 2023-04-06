@@ -1,16 +1,19 @@
-package ru.zalimannard.dripchip.schema.location;
+package ru.zalimannard.dripchip.schema.area.point;
 
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
+import ru.zalimannard.dripchip.schema.area.Area;
 
 @Entity
-@Table(name = "locations",
-        uniqueConstraints = {@UniqueConstraint(columnNames = {"longitude", "latitude"})
-        })
+@Table(name = "points")
 @Data
+@SuperBuilder(toBuilder = true)
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class Location {
+@NoArgsConstructor
+public class Point {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,5 +26,12 @@ public class Location {
 
     @Column(name = "latitude")
     private Double latitude;
+
+    @ManyToOne
+    @JoinColumn(name = "area_id")
+    private Area area;
+
+    @Column(name = "number_in_area")
+    private Long numberInArea;
 
 }

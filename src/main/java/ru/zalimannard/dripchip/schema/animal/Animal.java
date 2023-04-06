@@ -65,4 +65,12 @@ public class Animal {
     @OneToMany(mappedBy = "animal")
     private List<VisitedLocation> visitedLocations;
 
+    public void addType(AnimalType animalType) {
+        animalTypes.add(animalType);
+    }
+
+    public void removeType(AnimalType animalType) {
+        animalTypes.remove(animalType);
+    }
+
 }

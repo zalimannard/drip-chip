@@ -8,10 +8,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 import ru.zalimannard.dripchip.exception.BadRequestException;
 import ru.zalimannard.dripchip.exception.ConflictException;
-import ru.zalimannard.dripchip.exception.ForbiddenException;
 import ru.zalimannard.dripchip.exception.NotFoundException;
 import ru.zalimannard.dripchip.page.OffsetBasedPage;
-import ru.zalimannard.dripchip.schema.account.role.AccountRole;
 
 import java.util.List;
 
@@ -20,75 +18,100 @@ import java.util.List;
 @Validated
 public class AccountServiceImpl implements AccountService {
 
-    private final AccountRepository accountRepository;
     private final AccountMapper accountMapper;
+    private final AccountRepository accountRepository;
     private final PasswordEncoder encoder;
 
     @Override
     public AccountDto create(AccountDto accountDto) {
         Account accountRequest = accountMapper.toEntity(accountDto);
-        accountRequest.setRole(AccountRole.USER);
-        accountRequest.setPassword(encoder.encode((accountRequest.getEmail() + ":" + accountRequest.getPassword())));
 
-        Account accountResponse = saveToDatabase(accountRequest);
+        Account accountResponse = createEntity(accountRequest);
+
         return accountMapper.toDto(accountResponse);
     }
 
     @Override
+    public Account createEntity(Account account) {
+        return saveToDatabase(account);
+    }
+
+    @Override
     public AccountDto read(int id) {
-        checkExist(id);
-        Account account = accountRepository.findById(id).get();
-        return accountMapper.toDto(account);
+        Account accountResponse = readEntity(id);
+
+        return accountMapper.toDto(accountResponse);
+    }
+
+    @Override
+    public Account readEntity(int id) {
+        return accountRepository.findById(id).
+                orElseThrow(NotFoundException::new);
+    }
+
+    @Override
+    public Account readEntityByEmail(String email) {
+        return accountRepository.findByEmail(email);
     }
 
     @Override
     public List<AccountDto> search(AccountDto filterDto, int from, int size) {
         Account filter = accountMapper.toEntity(filterDto);
+
+        List<Account> accounts = searchEntities(filter, from, size);
+
+        return accountMapper.toDtoList(accounts);
+    }
+
+    @Override
+    public List<Account> searchEntities(Account filter, int from, int size) {
         Pageable pageable = new OffsetBasedPage(from, size);
 
-        List<Account> accountList = accountRepository.search(filter.getLastName(), filter.getFirstName(),
-                filter.getEmail(), pageable);
-
-        return accountMapper.toDtoList(accountList);
+        return accountRepository.search(
+                filter.getLastName(),
+                filter.getFirstName(),
+                filter.getEmail(),
+                pageable
+        );
     }
 
     @Override
     public AccountDto update(int id, AccountDto accountDto) {
-        try {
-            checkExist(id);
-        } catch (NotFoundException e) {
-            throw new ForbiddenException();
-        }
-
         Account accountRequest = accountMapper.toEntity(accountDto);
-        accountRequest.setId(id);
-        accountRequest.setPassword(encoder.encode((accountRequest.getEmail() + ":" + accountRequest.getPassword())));
 
-        Account accountResponse = saveToDatabase(accountRequest);
+        Account accountResponse = updateEntity(id, accountRequest);
+
         return accountMapper.toDto(accountResponse);
     }
 
     @Override
-    public void delete(int id) {
-        checkExist(id);
-        try {
-            accountRepository.deleteById(id);
-        } catch (DataIntegrityViolationException e) {
-            throw new BadRequestException("It is impossible to delete Account with id=" + id);
+    public Account updateEntity(int id, Account account) {
+        if (accountRepository.existsById(id)) {
+            account.setId(id);
+            return saveToDatabase(account);
+        } else {
+            throw new NotFoundException();
         }
     }
 
-    private void checkExist(int id) {
-        if (!accountRepository.existsById(id)) {
-            throw new NotFoundException("Account", String.valueOf(id));
+    @Override
+    public void delete(int id) {
+        try {
+            Account account = readEntity(id);
+            accountRepository.delete(account);
+        } catch (DataIntegrityViolationException e) {
+            throw new BadRequestException();
         }
     }
 
     private Account saveToDatabase(Account account) {
         try {
+            String textToEncode = account.getEmail() + ":" + account.getPassword();
+            String password = encoder.encode(textToEncode);
+            account.setPassword(password);
             return accountRepository.save(account);
         } catch (DataIntegrityViolationException e) {
-            throw new ConflictException("Account");
+            throw new ConflictException();
         }
     }
 

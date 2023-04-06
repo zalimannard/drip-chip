@@ -11,12 +11,13 @@ spring:
 
 application:
   endpoint:
+    authentication: /registration
     search: /search
     types: /types
     accounts: /accounts
     animals: /animals
     locations: /locations
-    registration: /registration
+    areas: /areas
   init:
     accounts:
       admin:

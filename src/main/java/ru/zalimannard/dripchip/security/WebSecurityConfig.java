@@ -26,7 +26,7 @@ public class WebSecurityConfig {
     private final UserDetailsService userDetailsService;
     private final AccountRepository accountRepository;
 
-    @Value("${application.endpoint.registration}")
+    @Value("${application.endpoint.authentication}")
     private String registrationPath;
     @Value("${application.endpoint.accounts}")
     private String accountsPath;
@@ -36,7 +36,7 @@ public class WebSecurityConfig {
         http
                 .userDetailsService(userDetailsService)
                 .csrf().disable()
-                .authorizeHttpRequests((auth) -> auth
+                .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.POST, registrationPath).anonymous()
                         .requestMatchers(HttpMethod.PUT, accountsPath + "/{accountId}").access(this::checkAdminOrElementBelongsToUser)
                         .requestMatchers(HttpMethod.DELETE, accountsPath + "/{accountId}").access(this::checkAdminOrElementBelongsToUser)

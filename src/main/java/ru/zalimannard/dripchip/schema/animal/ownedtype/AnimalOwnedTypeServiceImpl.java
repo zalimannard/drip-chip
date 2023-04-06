@@ -8,8 +8,6 @@ import ru.zalimannard.dripchip.exception.ConflictException;
 import ru.zalimannard.dripchip.exception.NotFoundException;
 import ru.zalimannard.dripchip.schema.animal.*;
 import ru.zalimannard.dripchip.schema.animal.ownedtype.type.AnimalType;
-import ru.zalimannard.dripchip.schema.animal.ownedtype.type.AnimalTypeDto;
-import ru.zalimannard.dripchip.schema.animal.ownedtype.type.AnimalTypeMapper;
 import ru.zalimannard.dripchip.schema.animal.ownedtype.type.AnimalTypeService;
 import ru.zalimannard.dripchip.schema.animal.ownedtype.update.AnimalOwnedTypeUpdateDto;
 
@@ -21,84 +19,75 @@ public class AnimalOwnedTypeServiceImpl implements AnimalOwnedTypeService {
     private final AnimalMapper animalMapper;
     private final AnimalRepository animalRepository;
     private final AnimalTypeService animalTypeService;
-    private final AnimalTypeMapper animalTypeMapper;
 
     @Override
     public AnimalDto create(long animalId, long typeId) {
-        AnimalDto animalDto = animalService.read(animalId);
-        Animal animal = animalMapper.toEntity(animalDto);
-
-        AnimalTypeDto animalTypeDto = animalTypeService.read(typeId);
-        AnimalType animalType = animalTypeMapper.toEntity(animalTypeDto);
-
-        animal.getAnimalTypes().add(animalType);
-        Animal animalResponse = saveToDatabase(animal);
+        Animal animalResponse = createEntity(animalId, typeId);
 
         return animalMapper.toDto(animalResponse);
+    }
+
+    @Override
+    public Animal createEntity(long animalId, long typeId) {
+        Animal animal = animalService.readEntity(animalId);
+        AnimalType animalType = animalTypeService.readEntity(typeId);
+
+        animal.addType(animalType);
+
+        return saveToDatabase(animal);
     }
 
     @Override
     public AnimalDto update(long animalId, AnimalOwnedTypeUpdateDto animalOwnedTypeUpdateDto) {
-        AnimalDto animalDto = animalService.read(animalId);
-        Animal animal = animalMapper.toEntity(animalDto);
-
-        long oldTypeId = animalOwnedTypeUpdateDto.getOldTypeId();
-        checkAnimalHaveType(animal, oldTypeId);
-        AnimalTypeDto oldAnimalTypeDto = animalTypeService.read(oldTypeId);
-        AnimalType oldAnimalType = animalTypeMapper.toEntity(oldAnimalTypeDto);
-
-        long newTypeId = animalOwnedTypeUpdateDto.getNewTypeId();
-        checkAnimalDontHaveType(animal, newTypeId);
-        AnimalTypeDto newAnimalTypeDto = animalTypeService.read(newTypeId);
-        AnimalType newAnimalType = animalTypeMapper.toEntity(newAnimalTypeDto);
-
-        animal.getAnimalTypes().remove(oldAnimalType);
-        animal.getAnimalTypes().add(newAnimalType);
-
-        Animal animalResponse = saveToDatabase(animal);
+        Animal animalResponse = updateEntity(animalId,
+                animalOwnedTypeUpdateDto.getOldTypeId(), animalOwnedTypeUpdateDto.getNewTypeId());
 
         return animalMapper.toDto(animalResponse);
     }
 
     @Override
+    public Animal updateEntity(long animalId, long oldTypeId, long newTypeId) {
+        Animal animal = animalService.readEntity(animalId);
+        AnimalType oldType = animalTypeService.readEntity(oldTypeId);
+        AnimalType newType = animalTypeService.readEntity(newTypeId);
+
+        if (!haveType(animal, oldType)) {
+            throw new NotFoundException();
+        }
+        if (haveType(animal, newType)) {
+            throw new ConflictException();
+        }
+        animal.removeType(oldType);
+        animal.addType(newType);
+
+        return saveToDatabase(animal);
+    }
+
+    @Override
     public void delete(long animalId, long typeId) {
-        AnimalDto animalDto = animalService.read(animalId);
-        Animal animal = animalMapper.toEntity(animalDto);
+        Animal animal = animalService.readEntity(animalId);
+        AnimalType animalType = animalTypeService.readEntity(typeId);
 
-        checkAnimalHaveType(animal, typeId);
+        if (!haveType(animal, animalType)) {
+            throw new NotFoundException();
+        }
         if (animal.getAnimalTypes().size() == 1) {
-            throw new BadRequestException("The animal must have at least one type");
+            throw new BadRequestException();
         }
-
-        AnimalTypeDto animalTypeDto = animalTypeService.read(typeId);
-        AnimalType animalType = animalTypeMapper.toEntity(animalTypeDto);
-
-        animal.getAnimalTypes().remove(animalType);
+        animal.removeType(animalType);
         saveToDatabase(animal);
-    }
-
-    private void checkAnimalHaveType(Animal animal, long typeId) {
-        AnimalType animalType = new AnimalType();
-        animalType.setId(typeId);
-        if (!animal.getAnimalTypes().contains(animalType)) {
-            throw new NotFoundException("Animal type", typeId + " at animal with id=" + animal.getId());
-        }
-    }
-
-    private void checkAnimalDontHaveType(Animal animal, long typeId) {
-        AnimalType animalType = new AnimalType();
-        animalType.setId(typeId);
-        if (animal.getAnimalTypes().contains(animalType)) {
-            throw new ConflictException("Animal type at Animal");
-        }
     }
 
     private Animal saveToDatabase(Animal animal) {
         try {
             return animalRepository.save(animal);
         } catch (DataIntegrityViolationException e) {
-            throw new ConflictException("Animal");
+            throw new ConflictException();
         }
+    }
+
+    private boolean haveType(Animal animal, AnimalType animalType) {
+        return animal.getAnimalTypes().contains(animalType);
     }
 
 }
