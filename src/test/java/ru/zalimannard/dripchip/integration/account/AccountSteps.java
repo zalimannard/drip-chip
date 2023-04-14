@@ -125,4 +125,57 @@ public class AccountSteps {
                 .extract().as(ExceptionResponse.class);
     }
 
+
+    private static ValidatableResponse basePut(Integer id, AccountRequestDto accountRequestDto,
+                                               String auth) {
+        if (auth != null) {
+            return given()
+                    .body(accountRequestDto)
+                    .headers("Authorization",
+                            "Basic " + auth)
+                    .when()
+                    .put(endpoint + "/" + id)
+                    .then().log().all();
+        } else {
+            return given()
+                    .body(accountRequestDto)
+                    .when()
+                    .put(endpoint + "/" + id)
+                    .then().log().all();
+        }
+    }
+
+    public static AccountResponseDto put(Integer id, AccountRequestDto accountRequestDto,
+                                         String auth) {
+        return basePut(id, accountRequestDto, auth)
+                .statusCode(200)
+                .extract().as(AccountResponseDto.class);
+    }
+
+    public static ExceptionResponse putExpectedBadRequest(Integer id, AccountRequestDto accountRequestDto,
+                                                          String auth) {
+        return basePut(id, accountRequestDto, auth)
+                .statusCode(400)
+                .extract().as(ExceptionResponse.class);
+    }
+
+    public static void putExpectedUnauthorized(Integer id, AccountRequestDto accountRequestDto,
+                                               String auth) {
+        basePut(id, accountRequestDto, auth)
+                .statusCode(401);
+    }
+
+    public static void putExpectedForbidden(Integer id, AccountRequestDto accountRequestDto,
+                                            String auth) {
+        basePut(id, accountRequestDto, auth)
+                .statusCode(403);
+    }
+
+    public static ExceptionResponse putExpectedConflict(Integer id, AccountRequestDto accountRequestDto,
+                                                        String auth) {
+        return basePut(id, accountRequestDto, auth)
+                .statusCode(409)
+                .extract().as(ExceptionResponse.class);
+    }
+
 }
