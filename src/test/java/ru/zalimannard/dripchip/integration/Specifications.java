@@ -12,7 +12,7 @@ public class Specifications {
                 .setBaseUri("http://localhost")
                 .setAccept(ContentType.JSON)
                 .setContentType(ContentType.JSON)
-                .log(LogDetail.ALL)
+                .log(LogDetail.BODY)
                 .build();
     }
 

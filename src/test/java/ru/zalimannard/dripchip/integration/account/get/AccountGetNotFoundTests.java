@@ -50,7 +50,7 @@ class AccountGetNotFoundTests {
     @ParameterizedTest
     @DisplayName("Негативный тест. Админ запрашивает несуществующий аккаунт")
     @ValueSource(ints = {42424242})
-    void positiveTestUserByAdmin(Integer id) {
+    void nonexistentAccountByAdmin(Integer id) {
         ExceptionResponse response = AccountSteps.getExpectedNotFound(id, adminAuth);
         Assertions.assertNotNull(response);
     }

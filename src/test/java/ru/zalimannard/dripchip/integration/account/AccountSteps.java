@@ -53,6 +53,12 @@ public class AccountSteps {
                 .extract().as(ExceptionResponse.class);
     }
 
+    public static void getExpectedUnauthorized(Integer id,
+                                               String auth) {
+        baseGet(id, auth)
+                .statusCode(401);
+    }
+
     public static void getExpectedForbidden(Integer id,
                                             String auth) {
         baseGet(id, auth)
@@ -63,13 +69,6 @@ public class AccountSteps {
                                                         String auth) {
         return baseGet(id, auth)
                 .statusCode(404)
-                .extract().as(ExceptionResponse.class);
-    }
-
-    public static ExceptionResponse getExpectedConflict(Integer id,
-                                                        String auth) {
-        return baseGet(id, auth)
-                .statusCode(409)
                 .extract().as(ExceptionResponse.class);
     }
 
