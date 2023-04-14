@@ -53,12 +53,12 @@ class RegistrationPostCreatedTests {
     @DisplayName("Позитивный тест. Запрос успешно выполнен")
     void positiveTest() {
         AuthenticationDto request = RegistrationDefaultDtos.defaultAuthentication.toBuilder()
-                .email("registration@created.1")
+                .email("registration@post.created1")
                 .build();
         AccountResponseDto actual = RegistrationSteps.registration(request, null);
         AccountResponseDto expected = RegistrationDefaultDtos.defaultAccountResponse.toBuilder()
                 .id(actual.getId())
-                .email("registration@created.1")
+                .email("registration@post.created1")
                 .build();
 
         Assertions.assertEquals(expected, actual);

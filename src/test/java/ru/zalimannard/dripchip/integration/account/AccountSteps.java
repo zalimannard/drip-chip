@@ -4,12 +4,23 @@ import io.restassured.response.ValidatableResponse;
 import ru.zalimannard.dripchip.exception.response.ExceptionResponse;
 import ru.zalimannard.dripchip.schema.account.dto.AccountRequestDto;
 import ru.zalimannard.dripchip.schema.account.dto.AccountResponseDto;
+import ru.zalimannard.dripchip.schema.account.role.AccountRole;
 
 import static io.restassured.RestAssured.given;
 
 public class AccountSteps {
 
     private static final String endpoint = "/accounts";
+
+    public static AccountResponseDto create(String email, String password, AccountRole role,
+                                            String auth) {
+        AccountRequestDto requestDto = AccountDefaultDtos.defaultAccountRequest.toBuilder()
+                .email(email)
+                .password(password)
+                .role(role)
+                .build();
+        return post(requestDto, auth);
+    }
 
     private static ValidatableResponse baseGet(Integer id,
                                                String auth) {
@@ -46,6 +57,13 @@ public class AccountSteps {
                                             String auth) {
         baseGet(id, auth)
                 .statusCode(403);
+    }
+
+    public static ExceptionResponse getExpectedNotFound(Integer id,
+                                                        String auth) {
+        return baseGet(id, auth)
+                .statusCode(404)
+                .extract().as(ExceptionResponse.class);
     }
 
     public static ExceptionResponse getExpectedConflict(Integer id,

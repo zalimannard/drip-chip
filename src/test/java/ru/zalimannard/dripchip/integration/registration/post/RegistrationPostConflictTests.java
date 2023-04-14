@@ -54,12 +54,12 @@ class RegistrationPostConflictTests {
     @DisplayName("Негативный тест. Аккаунт с таким email уже существует")
     void emailAlreadyUsed() {
         AuthenticationDto request = RegistrationDefaultDtos.defaultAuthentication.toBuilder()
-                .email("registration@forbidden.1")
+                .email("registration@post.forbidden1")
                 .build();
         AccountResponseDto actual = RegistrationSteps.registration(request, null);
         AccountResponseDto expected = RegistrationDefaultDtos.defaultAccountResponse.toBuilder()
                 .id(actual.getId())
-                .email("registration@forbidden.1")
+                .email("registration@post.forbidden1")
                 .build();
         Assertions.assertEquals(expected, actual);
         AccountResponseDto createdAccount = AccountSteps.get(actual.getId(), adminAuth);

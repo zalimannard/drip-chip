@@ -53,13 +53,13 @@ class AccountGetOkTests {
     @DisplayName("Позитивный тест. Админ запрашивает аккаунт пользователя")
     void positiveTestUserByAdmin() {
         AccountRequestDto accountToCreate = AccountDefaultDtos.defaultAccountRequest.toBuilder()
-                .email("account@get.1")
+                .email("account@get.ok1")
                 .role(AccountRole.USER)
                 .build();
         AccountResponseDto actual = AccountSteps.post(accountToCreate, adminAuth);
         AccountResponseDto expected = AccountDefaultDtos.defaultAccountResponse.toBuilder()
                 .id(actual.getId())
-                .email("account@get.1")
+                .email("account@get.ok1")
                 .role(AccountRole.USER)
                 .build();
         Assertions.assertEquals(expected, actual);
@@ -72,13 +72,13 @@ class AccountGetOkTests {
     @DisplayName("Позитивный тест. Админ запрашивает аккаунт чипировщика")
     void positiveTestChipperByAdmin() {
         AccountRequestDto accountToCreate = AccountDefaultDtos.defaultAccountRequest.toBuilder()
-                .email("account@get.2")
+                .email("account@get.ok2")
                 .role(AccountRole.CHIPPER)
                 .build();
         AccountResponseDto actual = AccountSteps.post(accountToCreate, adminAuth);
         AccountResponseDto expected = AccountDefaultDtos.defaultAccountResponse.toBuilder()
                 .id(actual.getId())
-                .email("account@get.2")
+                .email("account@get.ok2")
                 .role(AccountRole.CHIPPER)
                 .build();
         Assertions.assertEquals(expected, actual);
@@ -91,13 +91,13 @@ class AccountGetOkTests {
     @DisplayName("Позитивный тест. Админ запрашивает аккаунт админа")
     void positiveTestAdminByAdmin() {
         AccountRequestDto accountToCreate = AccountDefaultDtos.defaultAccountRequest.toBuilder()
-                .email("account@get.3")
+                .email("account@get.ok3")
                 .role(AccountRole.ADMIN)
                 .build();
         AccountResponseDto actual = AccountSteps.post(accountToCreate, adminAuth);
         AccountResponseDto expected = AccountDefaultDtos.defaultAccountResponse.toBuilder()
                 .id(actual.getId())
-                .email("account@get.3")
+                .email("account@get.ok3")
                 .role(AccountRole.ADMIN)
                 .build();
         Assertions.assertEquals(expected, actual);
@@ -110,13 +110,13 @@ class AccountGetOkTests {
     @DisplayName("Позитивный тест. Пользователь запрашивает информацию о себе")
     void positiveTestUserByUser() {
         AccountRequestDto accountToCreate = AccountDefaultDtos.defaultAccountRequest.toBuilder()
-                .email("account@get.4")
+                .email("account@get.ok4")
                 .role(AccountRole.USER)
                 .build();
         AccountResponseDto actual = AccountSteps.post(accountToCreate, adminAuth);
         AccountResponseDto expected = AccountDefaultDtos.defaultAccountResponse.toBuilder()
                 .id(actual.getId())
-                .email("account@get.4")
+                .email("account@get.ok4")
                 .role(AccountRole.USER)
                 .build();
         Assertions.assertEquals(expected, actual);
@@ -131,13 +131,13 @@ class AccountGetOkTests {
     @DisplayName("Позитивный тест. Чипировщик запрашивает информацию о себе")
     void positiveTestChipperByChipper() {
         AccountRequestDto accountToCreate = AccountDefaultDtos.defaultAccountRequest.toBuilder()
-                .email("account@get.5")
+                .email("account@get.ok5")
                 .role(AccountRole.CHIPPER)
                 .build();
         AccountResponseDto actual = AccountSteps.post(accountToCreate, adminAuth);
         AccountResponseDto expected = AccountDefaultDtos.defaultAccountResponse.toBuilder()
                 .id(actual.getId())
-                .email("account@get.5")
+                .email("account@get.ok5")
                 .role(AccountRole.CHIPPER)
                 .build();
         Assertions.assertEquals(expected, actual);
