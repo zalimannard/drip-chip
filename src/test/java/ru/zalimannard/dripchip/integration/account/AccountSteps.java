@@ -2,6 +2,7 @@ package ru.zalimannard.dripchip.integration.account;
 
 import io.restassured.response.ValidatableResponse;
 import ru.zalimannard.dripchip.exception.response.ExceptionResponse;
+import ru.zalimannard.dripchip.schema.account.dto.AccountRequestDto;
 import ru.zalimannard.dripchip.schema.account.dto.AccountResponseDto;
 
 import static io.restassured.RestAssured.given;
@@ -53,4 +54,58 @@ public class AccountSteps {
                 .statusCode(409)
                 .extract().as(ExceptionResponse.class);
     }
+
+
+    private static ValidatableResponse basePost(AccountRequestDto accountRequestDto,
+                                                String auth) {
+        if (auth != null) {
+            return given()
+                    .body(accountRequestDto)
+                    .headers("Authorization",
+                            "Basic " + auth)
+                    .when()
+                    .post(endpoint)
+                    .then().log().all();
+        } else {
+            return given()
+                    .body(accountRequestDto)
+                    .when()
+                    .post(endpoint)
+                    .then().log().all();
+        }
+    }
+
+    public static AccountResponseDto post(AccountRequestDto accountRequestDto,
+                                          String auth) {
+        return basePost(accountRequestDto, auth)
+                .statusCode(201)
+                .extract().as(AccountResponseDto.class);
+    }
+
+    public static ExceptionResponse postExpectedBadRequest(AccountRequestDto accountRequestDto,
+                                                           String auth) {
+        return basePost(accountRequestDto, auth)
+                .statusCode(400)
+                .extract().as(ExceptionResponse.class);
+    }
+
+    public static void postExpectedUnauthorized(AccountRequestDto accountRequestDto,
+                                                String auth) {
+        basePost(accountRequestDto, auth)
+                .statusCode(401);
+    }
+
+    public static void postExpectedForbidden(AccountRequestDto accountRequestDto,
+                                             String auth) {
+        basePost(accountRequestDto, auth)
+                .statusCode(403);
+    }
+
+    public static ExceptionResponse postExpectedConflict(AccountRequestDto accountRequestDto,
+                                                         String auth) {
+        return basePost(accountRequestDto, auth)
+                .statusCode(409)
+                .extract().as(ExceptionResponse.class);
+    }
+
 }
