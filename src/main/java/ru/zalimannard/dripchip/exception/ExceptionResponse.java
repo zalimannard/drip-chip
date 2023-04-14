@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public class ExceptionMessage {
+public class ExceptionResponse {
 
     private final String message;
 

@@ -3,7 +3,7 @@ package ru.zalimannard.dripchip.schema.account.authentication;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import ru.zalimannard.dripchip.schema.account.AccountDto;
+import ru.zalimannard.dripchip.schema.account.dto.AccountResponseDto;
 
 @RestController
 @RequestMapping("${application.endpoint.authentication}")
@@ -14,7 +14,7 @@ public class AuthenticationController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public AccountDto createAccount(@RequestBody AuthenticationDto authenticationDto) {
+    public AccountResponseDto createAccount(@RequestBody AuthenticationDto authenticationDto) {
         return authenticationService.register(authenticationDto);
     }
 

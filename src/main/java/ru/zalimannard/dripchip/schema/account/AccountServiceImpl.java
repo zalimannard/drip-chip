@@ -10,6 +10,8 @@ import ru.zalimannard.dripchip.exception.BadRequestException;
 import ru.zalimannard.dripchip.exception.ConflictException;
 import ru.zalimannard.dripchip.exception.NotFoundException;
 import ru.zalimannard.dripchip.page.OffsetBasedPage;
+import ru.zalimannard.dripchip.schema.account.dto.AccountRequestDto;
+import ru.zalimannard.dripchip.schema.account.dto.AccountResponseDto;
 
 import java.util.List;
 
@@ -23,8 +25,8 @@ public class AccountServiceImpl implements AccountService {
     private final PasswordEncoder encoder;
 
     @Override
-    public AccountDto create(AccountDto accountDto) {
-        Account accountRequest = accountMapper.toEntity(accountDto);
+    public AccountResponseDto create(AccountRequestDto accountRequestDto) {
+        Account accountRequest = accountMapper.toEntity(accountRequestDto);
 
         Account accountResponse = createEntity(accountRequest);
 
@@ -37,7 +39,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public AccountDto read(int id) {
+    public AccountResponseDto read(int id) {
         Account accountResponse = readEntity(id);
 
         return accountMapper.toDto(accountResponse);
@@ -55,7 +57,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public List<AccountDto> search(AccountDto filterDto, int from, int size) {
+    public List<AccountResponseDto> search(AccountRequestDto filterDto, int from, int size) {
         Account filter = accountMapper.toEntity(filterDto);
 
         List<Account> accounts = searchEntities(filter, from, size);
@@ -76,8 +78,8 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public AccountDto update(int id, AccountDto accountDto) {
-        Account accountRequest = accountMapper.toEntity(accountDto);
+    public AccountResponseDto update(int id, AccountRequestDto accountRequestDto) {
+        Account accountRequest = accountMapper.toEntity(accountRequestDto);
 
         Account accountResponse = updateEntity(id, accountRequest);
 

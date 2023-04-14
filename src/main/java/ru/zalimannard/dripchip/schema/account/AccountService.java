@@ -5,30 +5,32 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
 import org.springframework.validation.annotation.Validated;
+import ru.zalimannard.dripchip.schema.account.dto.AccountRequestDto;
+import ru.zalimannard.dripchip.schema.account.dto.AccountResponseDto;
 
 import java.util.List;
 
 @Validated
 public interface AccountService {
 
-    AccountDto create(@Valid AccountDto accountDto);
+    AccountResponseDto create(@Valid AccountRequestDto accountRequestDto);
 
     Account createEntity(@Valid Account account);
 
 
-    AccountDto read(@Positive int id);
+    AccountResponseDto read(@Positive int id);
 
     Account readEntity(@Positive int id);
 
     Account readEntityByEmail(@NotBlank String email);
 
 
-    List<AccountDto> search(AccountDto filterDto, @PositiveOrZero int from, @Positive int size);
+    List<AccountResponseDto> search(AccountRequestDto filterDto, @PositiveOrZero int from, @Positive int size);
 
     List<Account> searchEntities(Account filter, @PositiveOrZero int from, @Positive int size);
 
 
-    AccountDto update(@Positive int id, @Valid AccountDto accountDto);
+    AccountResponseDto update(@Positive int id, @Valid AccountRequestDto accountRequestDto);
 
     Account updateEntity(@Positive int id, @Valid Account account);
 

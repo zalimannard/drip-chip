@@ -6,7 +6,6 @@ import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.springframework.beans.factory.annotation.Autowired;
 import ru.zalimannard.dripchip.schema.account.Account;
-import ru.zalimannard.dripchip.schema.account.AccountDto;
 import ru.zalimannard.dripchip.schema.account.AccountMapper;
 import ru.zalimannard.dripchip.schema.account.AccountService;
 import ru.zalimannard.dripchip.schema.animal.ownedtype.type.AnimalType;
@@ -62,8 +61,7 @@ public abstract class AnimalMapper {
         }
 
         if (dto.getChipperId() != null) {
-            AccountDto chipperDto = accountService.read(dto.getChipperId());
-            Account chipper = accountMapper.toEntity(chipperDto);
+            Account chipper = accountService.readEntity(dto.getChipperId());
             entity.setChipper(chipper);
         }
 

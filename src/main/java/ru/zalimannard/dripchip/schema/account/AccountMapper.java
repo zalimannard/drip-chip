@@ -1,22 +1,21 @@
 package ru.zalimannard.dripchip.schema.account;
 
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
+import org.springframework.stereotype.Component;
 import ru.zalimannard.dripchip.schema.account.authentication.AuthenticationDto;
+import ru.zalimannard.dripchip.schema.account.dto.AccountRequestDto;
+import ru.zalimannard.dripchip.schema.account.dto.AccountResponseDto;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring")
+@Component
 public interface AccountMapper {
 
-    Account toEntity(AccountDto dto);
+    Account toEntity(AccountRequestDto dto);
 
-    @Mapping(target = "id", ignore = true)
-    @Mapping(target = "role", ignore = true)
     Account toEntity(AuthenticationDto dto);
 
-    AccountDto toDto(Account entity);
+    AccountResponseDto toDto(Account entity);
 
-    List<AccountDto> toDtoList(List<Account> entity);
+    List<AccountResponseDto> toDtoList(List<Account> entity);
 
 }
