@@ -28,8 +28,6 @@ class AccountGetForbiddenTests {
     private int port;
 
     @Autowired
-    private AuthenticationController authenticationController;
-    @Autowired
     private AccountController accountController;
 
     @Autowired
@@ -52,7 +50,6 @@ class AccountGetForbiddenTests {
 
     @BeforeEach
     void setUp() {
-        Assertions.assertNotNull(authenticationController);
         Assertions.assertNotNull(accountController);
 
         RestAssured.port = port;

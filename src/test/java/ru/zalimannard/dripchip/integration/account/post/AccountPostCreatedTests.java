@@ -1,24 +1,24 @@
-package ru.zalimannard.dripchip.integration.account.get;
+package ru.zalimannard.dripchip.integration.account.post;
 
 import io.restassured.RestAssured;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
-import ru.zalimannard.dripchip.exception.response.ExceptionResponse;
 import ru.zalimannard.dripchip.integration.AccountToAuthCode;
 import ru.zalimannard.dripchip.integration.Specifications;
+import ru.zalimannard.dripchip.integration.account.AccountDefaultDtos;
 import ru.zalimannard.dripchip.integration.account.AccountSteps;
 import ru.zalimannard.dripchip.schema.account.AccountController;
-import ru.zalimannard.dripchip.schema.account.authentication.AuthenticationController;
+import ru.zalimannard.dripchip.schema.account.dto.AccountRequestDto;
+import ru.zalimannard.dripchip.schema.account.dto.AccountResponseDto;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class AccountGetNotFoundTests {
+class AccountPostCreatedTests {
 
     @LocalServerPort
     private int port;
@@ -44,12 +44,21 @@ class AccountGetNotFoundTests {
         adminAuth = accountToAuthCode.convert(adminEmail, adminPassword);
     }
 
-    @ParameterizedTest
-    @DisplayName("Негативный тест. Админ запрашивает несуществующий аккаунт")
-    @ValueSource(ints = {42424242})
-    void nonexistentAccountByAdmin(Integer id) {
-        ExceptionResponse response = AccountSteps.getExpectedNotFound(id, adminAuth);
-        Assertions.assertNotNull(response);
-    }
+    @Test
+    @DisplayName("Позитивный тест. Запрос успешно выполнен")
+    void positiveTest() {
+        AccountRequestDto request = AccountDefaultDtos.defaultAccountRequest.toBuilder()
+                .email("account@post.created1")
+                .build();
+        AccountResponseDto actual = AccountSteps.post(request, adminAuth);
+        AccountResponseDto expected = AccountDefaultDtos.defaultAccountResponse.toBuilder()
+                .id(actual.getId())
+                .email("account@post.created1")
+                .build();
 
+        Assertions.assertEquals(expected, actual);
+
+        AccountResponseDto createdAccount = AccountSteps.get(actual.getId(), adminAuth);
+        Assertions.assertEquals(expected, createdAccount);
+    }
 }

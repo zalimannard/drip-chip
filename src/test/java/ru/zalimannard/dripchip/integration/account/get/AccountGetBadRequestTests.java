@@ -25,8 +25,6 @@ class AccountGetBadRequestTests {
     private int port;
 
     @Autowired
-    private AuthenticationController authenticationController;
-    @Autowired
     private AccountController accountController;
 
     @Autowired
@@ -49,7 +47,6 @@ class AccountGetBadRequestTests {
 
     @BeforeEach
     void setUp() {
-        Assertions.assertNotNull(authenticationController);
         Assertions.assertNotNull(accountController);
 
         RestAssured.port = port;
