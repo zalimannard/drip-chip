@@ -1,7 +1,7 @@
 package ru.zalimannard.dripchip.integration.account;
 
 import io.restassured.response.ValidatableResponse;
-import ru.zalimannard.dripchip.exception.ExceptionResponse;
+import ru.zalimannard.dripchip.exception.response.ExceptionResponse;
 import ru.zalimannard.dripchip.schema.account.dto.AccountResponseDto;
 
 import static io.restassured.RestAssured.given;

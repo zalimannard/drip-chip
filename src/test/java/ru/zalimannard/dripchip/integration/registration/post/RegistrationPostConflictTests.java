@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import ru.zalimannard.dripchip.exception.response.ExceptionResponse;
 import ru.zalimannard.dripchip.integration.AccountToAuthCode;
 import ru.zalimannard.dripchip.integration.Specifications;
 import ru.zalimannard.dripchip.integration.account.AccountSteps;
@@ -19,10 +20,8 @@ import ru.zalimannard.dripchip.schema.account.authentication.AuthenticationContr
 import ru.zalimannard.dripchip.schema.account.authentication.AuthenticationDto;
 import ru.zalimannard.dripchip.schema.account.dto.AccountResponseDto;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class RegistrationCreatedTests {
+class RegistrationPostConflictTests {
 
     @LocalServerPort
     private int port;
@@ -42,8 +41,8 @@ class RegistrationCreatedTests {
 
     @BeforeEach
     void setUp() {
-        assertThat(authenticationController).isNotNull();
-        assertThat(accountController).isNotNull();
+        Assertions.assertNotNull(authenticationController);
+        Assertions.assertNotNull(accountController);
 
         RestAssured.port = port;
         RestAssured.requestSpecification = Specifications.requestSpec();
@@ -52,18 +51,22 @@ class RegistrationCreatedTests {
     }
 
     @Test
-    @DisplayName("Позитивный тест. Регистрация со всеми верными полями")
-    void positiveTest() {
-        AuthenticationDto request = RegistrationDefaultDtos.defaultAuthentication.toBuilder().build();
+    @DisplayName("Негативный тест. Аккаунт с таким email уже существует")
+    void emailAlreadyUsed() {
+        AuthenticationDto request = RegistrationDefaultDtos.defaultAuthentication.toBuilder()
+                .email("registration@forbidden.1")
+                .build();
         AccountResponseDto actual = RegistrationSteps.registration(request, null);
         AccountResponseDto expected = RegistrationDefaultDtos.defaultAccountResponse.toBuilder()
                 .id(actual.getId())
+                .email("registration@forbidden.1")
                 .build();
-
         Assertions.assertEquals(expected, actual);
-
         AccountResponseDto createdAccount = AccountSteps.get(actual.getId(), adminAuth);
         Assertions.assertEquals(expected, createdAccount);
+
+        ExceptionResponse response = RegistrationSteps.registrationExpectedConflict(request, null);
+        Assertions.assertNotNull(response);
     }
 
 }

@@ -38,7 +38,7 @@ public class PointServiceImpl implements PointService {
         try {
             return pointRepository.saveAll(points);
         } catch (DataIntegrityViolationException e) {
-            throw new BadRequestException();
+            throw new BadRequestException("", "", "");
         }
     }
 

@@ -67,7 +67,7 @@ public class Segment {
         if (isHorizontal()) {
             return 0.0;
         } else if (isVertical()) {
-            throw new BadRequestException();
+            throw new BadRequestException("", "", "");
         } else {
             return (b.getLatitude() - a.getLatitude()) /
                     (b.getLongitude() - a.getLongitude());
@@ -78,7 +78,7 @@ public class Segment {
         if (isHorizontal()) {
             return a.getLatitude();
         } else if (isVertical()) {
-            throw new BadRequestException();
+            throw new BadRequestException("", "", "");
         } else {
             return -((a.getLongitude() * b.getLatitude()) / (b.getLongitude() - a.getLongitude())) +
                     ((a.getLatitude() * b.getLongitude()) / (b.getLongitude() - a.getLongitude()));

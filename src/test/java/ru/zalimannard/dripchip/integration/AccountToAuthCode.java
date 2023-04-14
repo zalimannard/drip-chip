@@ -11,8 +11,8 @@ public class AccountToAuthCode {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    public String convert(String adminEmail, String adminPassword) {
-        String stringToEncode = adminEmail + ":" + adminPassword;
+    public String convert(String email, String password) {
+        String stringToEncode = email + ":" + password;
         return passwordEncoder.encode(stringToEncode);
     }
 

@@ -42,7 +42,7 @@ public class AnimalTypeServiceImpl implements AnimalTypeService {
     @Override
     public AnimalType readEntity(long id) {
         return animalTypeRepository.findById(id).
-                orElseThrow(NotFoundException::new);
+                orElseThrow();
     }
 
     @Override
@@ -50,7 +50,7 @@ public class AnimalTypeServiceImpl implements AnimalTypeService {
         List<AnimalType> animalTypes = animalTypeRepository.findAllById(ids);
 
         if (ids.size() != animalTypes.size()) {
-            throw new NotFoundException();
+            throw new NotFoundException("", "", "");
         }
 
         return animalTypes;
@@ -71,7 +71,7 @@ public class AnimalTypeServiceImpl implements AnimalTypeService {
             animalType.setId(id);
             return saveToDatabase(animalType);
         } else {
-            throw new NotFoundException();
+            throw new NotFoundException("", "", "");
         }
     }
 
@@ -81,7 +81,7 @@ public class AnimalTypeServiceImpl implements AnimalTypeService {
             AnimalType animalType = readEntity(id);
             animalTypeRepository.delete(animalType);
         } catch (DataIntegrityViolationException e) {
-            throw new BadRequestException();
+            throw new BadRequestException("", "", "");
         }
     }
 
@@ -89,7 +89,7 @@ public class AnimalTypeServiceImpl implements AnimalTypeService {
         try {
             return animalTypeRepository.save(animalType);
         } catch (DataIntegrityViolationException e) {
-            throw new ConflictException();
+            throw new ConflictException("", "", "");
         }
     }
 

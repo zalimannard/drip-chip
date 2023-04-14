@@ -55,11 +55,11 @@ public class AreaServiceImpl implements AreaService {
     private void checkAvailability(List<Area> existedAreas, Area targetArea) {
         for (Area existedArea : existedAreas) {
             if (!isConsistent(existedArea, targetArea)) {
-                throw new BadRequestException();
+                throw new BadRequestException("", "", "");
             } else if (!isConsistent(targetArea, targetArea)) {
-                throw new BadRequestException();
+                throw new BadRequestException("", "", "");
             } else if (Double.compare(targetArea.calcAreaValue(), 0.0) == 0) {
-                throw new BadRequestException();
+                throw new BadRequestException("", "", "");
             }
         }
     }
@@ -74,7 +74,7 @@ public class AreaServiceImpl implements AreaService {
     @Override
     public Area readEntity(long id) {
         return areaRepository.findById(id).
-                orElseThrow(NotFoundException::new);
+                orElseThrow();
     }
 
     @Override
@@ -113,7 +113,7 @@ public class AreaServiceImpl implements AreaService {
             updatedArea.setPoints(createdPoints);
             return updatedArea;
         } else {
-            throw new NotFoundException();
+            throw new NotFoundException("", "", "");
         }
     }
 
@@ -125,7 +125,7 @@ public class AreaServiceImpl implements AreaService {
             pointService.deleteAll(area);
             areaRepository.deleteById(id);
         } catch (DataIntegrityViolationException e) {
-            throw new BadRequestException();
+            throw new BadRequestException("", "", "");
         }
     }
 
@@ -133,7 +133,7 @@ public class AreaServiceImpl implements AreaService {
         try {
             return areaRepository.save(area);
         } catch (DataIntegrityViolationException e) {
-            throw new ConflictException();
+            throw new ConflictException("", "", "");
         }
     }
 

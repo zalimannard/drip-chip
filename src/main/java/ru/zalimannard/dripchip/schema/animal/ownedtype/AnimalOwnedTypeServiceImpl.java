@@ -52,10 +52,10 @@ public class AnimalOwnedTypeServiceImpl implements AnimalOwnedTypeService {
         AnimalType newType = animalTypeService.readEntity(newTypeId);
 
         if (!haveType(animal, oldType)) {
-            throw new NotFoundException();
+            throw new NotFoundException("", "", "");
         }
         if (haveType(animal, newType)) {
-            throw new ConflictException();
+            throw new ConflictException("", "", "");
         }
         animal.removeType(oldType);
         animal.addType(newType);
@@ -69,10 +69,10 @@ public class AnimalOwnedTypeServiceImpl implements AnimalOwnedTypeService {
         AnimalType animalType = animalTypeService.readEntity(typeId);
 
         if (!haveType(animal, animalType)) {
-            throw new NotFoundException();
+            throw new NotFoundException("", "", "");
         }
         if (animal.getAnimalTypes().size() == 1) {
-            throw new BadRequestException();
+            throw new BadRequestException("", "", "");
         }
         animal.removeType(animalType);
         saveToDatabase(animal);
@@ -82,7 +82,7 @@ public class AnimalOwnedTypeServiceImpl implements AnimalOwnedTypeService {
         try {
             return animalRepository.save(animal);
         } catch (DataIntegrityViolationException e) {
-            throw new ConflictException();
+            throw new ConflictException("", "", "");
         }
     }
 

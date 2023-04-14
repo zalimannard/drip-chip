@@ -47,7 +47,7 @@ public class VisitedLocationServiceImpl implements VisitedLocationService {
         newVisitedLocation.setDateTimeOfVisitLocationPoint(Date.from(Instant.now()));
 
         if (animal.getLifeStatus().equals(AnimalLifeStatus.DEAD)) {
-            throw new BadRequestException();
+            throw new BadRequestException("", "", "");
         }
         ArrayList<VisitedLocation> allAnimalVisitedLocations = getAllVisitedLocation(animal);
         allAnimalVisitedLocations.add(newVisitedLocation);
@@ -66,7 +66,7 @@ public class VisitedLocationServiceImpl implements VisitedLocationService {
     @Override
     public VisitedLocation readEntity(long id) {
         return visitedLocationRepository.findById(id).
-                orElseThrow(NotFoundException::new);
+                orElseThrow();
     }
 
     @Override
@@ -109,7 +109,7 @@ public class VisitedLocationServiceImpl implements VisitedLocationService {
 
         // Replacing the location with the same one
         if (visitedLocation.getLocation().equals(location)) {
-            throw new BadRequestException();
+            throw new BadRequestException("", "", "");
         }
         checkHasAnimalVisitedLocation(animal, visitedLocation);
         int indexOfVisitedLocationForUpdate = allAnimalVisitedLocations.indexOf(visitedLocation);
@@ -149,7 +149,7 @@ public class VisitedLocationServiceImpl implements VisitedLocationService {
         try {
             return visitedLocationRepository.save(visitedLocation);
         } catch (DataIntegrityViolationException e) {
-            throw new ConflictException();
+            throw new ConflictException("", "", "");
         }
     }
 
@@ -164,7 +164,7 @@ public class VisitedLocationServiceImpl implements VisitedLocationService {
 
     private void checkCorrectnessOrder(List<VisitedLocation> visitedLocations) {
         if (!isCorrectOrder(visitedLocations)) {
-            throw new BadRequestException();
+            throw new BadRequestException("", "", "");
         }
     }
 
@@ -182,7 +182,7 @@ public class VisitedLocationServiceImpl implements VisitedLocationService {
     private void checkHasAnimalVisitedLocation(Animal animal, VisitedLocation visitedLocation) {
         List<VisitedLocation> visitedLocations = animal.getVisitedLocations();
         if (!visitedLocations.contains(visitedLocation)) {
-            throw new NotFoundException();
+            throw new NotFoundException("", "", "");
         }
     }
 

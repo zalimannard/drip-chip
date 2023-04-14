@@ -6,6 +6,8 @@ import org.springframework.stereotype.Component;
 import ru.zalimannard.dripchip.schema.account.Account;
 import ru.zalimannard.dripchip.schema.account.AccountRepository;
 
+import java.util.Optional;
+
 @Component
 @RequiredArgsConstructor
 public class UserSecurity {
@@ -14,8 +16,8 @@ public class UserSecurity {
 
     public boolean hasUserId(Authentication authentication, int userId) {
         String authEmail = authentication.getName();
-        Account accountAuthed = accountRepository.findByEmail(authEmail);
-        return userId == accountAuthed.getId();
+        Optional<Account> accountAuthed = accountRepository.findByEmail(authEmail);
+        return accountAuthed.filter(account -> userId == account.getId()).isPresent();
     }
 
 }

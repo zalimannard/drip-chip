@@ -3,6 +3,7 @@ package ru.zalimannard.dripchip.schema.animal;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.Data;
@@ -18,6 +19,8 @@ public class AnimalDto {
     private Long id;
 
     @JsonProperty("animalTypes")
+    @NotNull
+    @NotEmpty
     private Set<@Positive Long> animalTypeIds = new HashSet<>();
 
     @JsonProperty("weight")

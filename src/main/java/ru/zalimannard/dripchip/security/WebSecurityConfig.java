@@ -17,6 +17,7 @@ import ru.zalimannard.dripchip.schema.account.Account;
 import ru.zalimannard.dripchip.schema.account.AccountRepository;
 import ru.zalimannard.dripchip.schema.account.role.AccountRole;
 
+import java.util.Optional;
 import java.util.function.Supplier;
 
 @Configuration
@@ -54,13 +55,13 @@ public class WebSecurityConfig {
             return new AuthorizationDecision(true);
         }
 
-        Account requesterrAccount = accountRepository.findByEmail(authentication.get().getName());
-        if (requesterrAccount == null) {
+        Optional<Account> requesterAccount = accountRepository.findByEmail(authentication.get().getName());
+        if (requesterAccount.isEmpty()) {
             // Account does not exist
             return new AuthorizationDecision(false);
         }
 
-        String requesterId = requesterrAccount.getId().toString();
+        String requesterId = requesterAccount.get().getId().toString();
         String existingUserId = object.getVariables().get("accountId");
         boolean hasAccess = requesterId.equals(existingUserId);
         return new AuthorizationDecision(hasAccess);

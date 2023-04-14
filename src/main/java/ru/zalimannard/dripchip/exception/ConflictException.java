@@ -1,17 +1,19 @@
 package ru.zalimannard.dripchip.exception;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import ru.zalimannard.dripchip.exception.response.ExceptionMessage;
+import ru.zalimannard.dripchip.exception.response.HttpCodes;
 
-@ResponseStatus(HttpStatus.CONFLICT)
-public class ConflictException extends RuntimeException {
+import java.util.List;
 
-    public ConflictException(String name) {
-        super("Conflict when working with " + name + " in the databaseConflict in adding ");
-    }
+public class ConflictException extends BaseException {
 
-    public ConflictException() {
-        super();
+    public ConflictException(String code, String field, String value) {
+        super(HttpCodes.CONFLICT,
+                code,
+                "Конфликт при работе с объектом",
+                List.of(ExceptionMessage.builder()
+                        .field(field)
+                        .value(value).build()));
     }
 
 }

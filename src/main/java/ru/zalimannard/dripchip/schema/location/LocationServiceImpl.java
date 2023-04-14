@@ -37,7 +37,7 @@ public class LocationServiceImpl implements LocationService {
 
     @Override
     public Location readEntity(long id) {
-        return locationRepository.findById(id).orElseThrow(NotFoundException::new);
+        return locationRepository.findById(id).orElseThrow();
     }
 
     @Override
@@ -55,7 +55,7 @@ public class LocationServiceImpl implements LocationService {
             location.setId(id);
             return saveToDatabase(location);
         } else {
-            throw new NotFoundException();
+            throw new NotFoundException("", "", "");
         }
     }
 
@@ -65,7 +65,7 @@ public class LocationServiceImpl implements LocationService {
             Location location = readEntity(id);
             locationRepository.delete(location);
         } catch (DataIntegrityViolationException e) {
-            throw new BadRequestException();
+            throw new BadRequestException("", "", "");
         }
     }
 
@@ -73,7 +73,7 @@ public class LocationServiceImpl implements LocationService {
         try {
             return locationRepository.save(location);
         } catch (DataIntegrityViolationException e) {
-            throw new ConflictException();
+            throw new ConflictException("", "", "");
         }
     }
 
