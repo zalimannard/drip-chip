@@ -50,7 +50,7 @@ class RegistrationPostBadRequestTests {
             "",
             " ",
             "   "})
-    void incorrectFirstname(String firstName) {
+    void invalidFirstname(String firstName) {
         AuthenticationDto request = RegistrationDefaultDtos.defaultAuthentication.toBuilder()
                 .firstName(firstName)
                 .build();
@@ -65,7 +65,7 @@ class RegistrationPostBadRequestTests {
             "",
             " ",
             "   "})
-    void incorrectLastname(String lastName) {
+    void invalidLastname(String lastName) {
         AuthenticationDto request = RegistrationDefaultDtos.defaultAuthentication.toBuilder()
                 .lastName(lastName)
                 .build();
@@ -85,7 +85,7 @@ class RegistrationPostBadRequestTests {
             "----@",
             "a@mail@ru",
             "a@mail@mail.ru"})
-    void incorrectEmail(String email) {
+    void invalidEmail(String email) {
         AuthenticationDto request = RegistrationDefaultDtos.defaultAuthentication.toBuilder()
                 .email(email)
                 .build();
@@ -100,7 +100,7 @@ class RegistrationPostBadRequestTests {
             "",
             " ",
             "   "})
-    void incorrectPassword(String password) {
+    void invalidPassword(String password) {
         AuthenticationDto request = RegistrationDefaultDtos.defaultAuthentication.toBuilder()
                 .email(password)
                 .build();
@@ -110,7 +110,7 @@ class RegistrationPostBadRequestTests {
 
     @Test
     @DisplayName("Негативный тест. Неверные авторизационные данные")
-    void incorrectAuth() {
+    void invalidAuth() {
         String auth = accountToAuthCode.convert("unexistedaccount", "unexistedaccount");
 
         AuthenticationDto request = RegistrationDefaultDtos.defaultAuthentication.toBuilder()

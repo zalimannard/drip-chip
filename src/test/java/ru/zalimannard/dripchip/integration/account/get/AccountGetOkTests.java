@@ -1,22 +1,24 @@
 package ru.zalimannard.dripchip.integration.account.get;
 
 import io.restassured.RestAssured;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import ru.zalimannard.dripchip.integration.AccountToAuthCode;
 import ru.zalimannard.dripchip.integration.Specifications;
-import ru.zalimannard.dripchip.integration.account.AccountDefaultDtos;
+import ru.zalimannard.dripchip.integration.account.AccountFactory;
 import ru.zalimannard.dripchip.integration.account.AccountSteps;
 import ru.zalimannard.dripchip.schema.account.AccountController;
 import ru.zalimannard.dripchip.schema.account.dto.AccountRequestDto;
 import ru.zalimannard.dripchip.schema.account.dto.AccountResponseDto;
 import ru.zalimannard.dripchip.schema.account.role.AccountRole;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class AccountGetOkTests {
@@ -37,7 +39,7 @@ class AccountGetOkTests {
 
     @BeforeEach
     void setUp() {
-        Assertions.assertNotNull(accountController);
+        assertThat(accountController).isNotNull();
 
         RestAssured.port = port;
         RestAssured.requestSpecification = Specifications.requestSpec();
@@ -45,103 +47,42 @@ class AccountGetOkTests {
         adminAuth = accountToAuthCode.convert(adminEmail, adminPassword);
     }
 
-    @Test
-    @DisplayName("Позитивный тест. Админ запрашивает аккаунт пользователя")
-    void positiveTestUserByAdmin() {
-        AccountRequestDto accountToCreate = AccountDefaultDtos.defaultAccountRequest.toBuilder()
-                .email("account@get.ok1")
-                .role(AccountRole.USER)
-                .build();
-        AccountResponseDto actual = AccountSteps.post(accountToCreate, adminAuth);
-        AccountResponseDto expected = AccountDefaultDtos.defaultAccountResponse.toBuilder()
-                .id(actual.getId())
-                .email("account@get.ok1")
-                .role(AccountRole.USER)
-                .build();
-        Assertions.assertEquals(expected, actual);
+    @ParameterizedTest
+    @DisplayName("Позитивный тест. Админ запрашивает чужой аккаунт")
+    @CsvSource(value = {
+            "ADMIN",
+            "CHIPPER",
+            "USER",
+    })
+    void positiveTestAccountByAdmin(AccountRole role) {
+        AccountRequestDto admin = AccountFactory.createAccountRequest(AccountRole.ADMIN);
+        AccountSteps.post(admin, adminAuth);
+        String auth = accountToAuthCode.convert(admin);
 
-        AccountResponseDto createdAccount = AccountSteps.get(actual.getId(), adminAuth);
-        Assertions.assertEquals(expected, createdAccount);
+        AccountRequestDto account = AccountFactory.createAccountRequest(role);
+        AccountResponseDto createdAccount = AccountSteps.post(account, adminAuth);
+        AccountResponseDto expectedAccount = AccountFactory.createAccountResponse(createdAccount.getId(), account);
+        assertThat(expectedAccount).isEqualTo(createdAccount);
+
+        AccountResponseDto gotAccount = AccountSteps.get(createdAccount.getId(), auth);
+        assertThat(expectedAccount).isEqualTo(gotAccount);
     }
 
-    @Test
-    @DisplayName("Позитивный тест. Админ запрашивает аккаунт чипировщика")
-    void positiveTestChipperByAdmin() {
-        AccountRequestDto accountToCreate = AccountDefaultDtos.defaultAccountRequest.toBuilder()
-                .email("account@get.ok2")
-                .role(AccountRole.CHIPPER)
-                .build();
-        AccountResponseDto actual = AccountSteps.post(accountToCreate, adminAuth);
-        AccountResponseDto expected = AccountDefaultDtos.defaultAccountResponse.toBuilder()
-                .id(actual.getId())
-                .email("account@get.ok2")
-                .role(AccountRole.CHIPPER)
-                .build();
-        Assertions.assertEquals(expected, actual);
+    @ParameterizedTest
+    @DisplayName("Позитивный тест. Запрос данных о себе")
+    @CsvSource(value = {
+            "ADMIN",
+            "CHIPPER",
+            "USER",
+    })
+    void positiveTestAccountBySelf(AccountRole role) {
+        AccountRequestDto account = AccountFactory.createAccountRequest(role);
+        AccountResponseDto createdAccount = AccountSteps.post(account, adminAuth);
+        String auth = accountToAuthCode.convert(account);
+        AccountResponseDto expectedAccount = AccountFactory.createAccountResponse(createdAccount.getId(), account);
 
-        AccountResponseDto createdAccount = AccountSteps.get(actual.getId(), adminAuth);
-        Assertions.assertEquals(expected, createdAccount);
-    }
-
-    @Test
-    @DisplayName("Позитивный тест. Админ запрашивает аккаунт админа")
-    void positiveTestAdminByAdmin() {
-        AccountRequestDto accountToCreate = AccountDefaultDtos.defaultAccountRequest.toBuilder()
-                .email("account@get.ok3")
-                .role(AccountRole.ADMIN)
-                .build();
-        AccountResponseDto actual = AccountSteps.post(accountToCreate, adminAuth);
-        AccountResponseDto expected = AccountDefaultDtos.defaultAccountResponse.toBuilder()
-                .id(actual.getId())
-                .email("account@get.ok3")
-                .role(AccountRole.ADMIN)
-                .build();
-        Assertions.assertEquals(expected, actual);
-
-        AccountResponseDto createdAccount = AccountSteps.get(actual.getId(), adminAuth);
-        Assertions.assertEquals(expected, createdAccount);
-    }
-
-    @Test
-    @DisplayName("Позитивный тест. Пользователь запрашивает информацию о себе")
-    void positiveTestUserByUser() {
-        AccountRequestDto accountToCreate = AccountDefaultDtos.defaultAccountRequest.toBuilder()
-                .email("account@get.ok4")
-                .role(AccountRole.USER)
-                .build();
-        AccountResponseDto actual = AccountSteps.post(accountToCreate, adminAuth);
-        AccountResponseDto expected = AccountDefaultDtos.defaultAccountResponse.toBuilder()
-                .id(actual.getId())
-                .email("account@get.ok4")
-                .role(AccountRole.USER)
-                .build();
-        Assertions.assertEquals(expected, actual);
-
-        String userAuth = accountToAuthCode.convert(accountToCreate);
-
-        AccountResponseDto createdAccount = AccountSteps.get(actual.getId(), userAuth);
-        Assertions.assertEquals(expected, createdAccount);
-    }
-
-    @Test
-    @DisplayName("Позитивный тест. Чипировщик запрашивает информацию о себе")
-    void positiveTestChipperByChipper() {
-        AccountRequestDto accountToCreate = AccountDefaultDtos.defaultAccountRequest.toBuilder()
-                .email("account@get.ok5")
-                .role(AccountRole.CHIPPER)
-                .build();
-        AccountResponseDto actual = AccountSteps.post(accountToCreate, adminAuth);
-        AccountResponseDto expected = AccountDefaultDtos.defaultAccountResponse.toBuilder()
-                .id(actual.getId())
-                .email("account@get.ok5")
-                .role(AccountRole.CHIPPER)
-                .build();
-        Assertions.assertEquals(expected, actual);
-
-        String chipperAuth = accountToAuthCode.convert(accountToCreate);
-
-        AccountResponseDto createdAccount = AccountSteps.get(actual.getId(), chipperAuth);
-        Assertions.assertEquals(expected, createdAccount);
+        AccountResponseDto gotAccount = AccountSteps.get(createdAccount.getId(), auth);
+        assertThat(expectedAccount).isEqualTo(gotAccount);
     }
 
 }

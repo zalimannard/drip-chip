@@ -1,21 +1,25 @@
 package ru.zalimannard.dripchip.integration.account.get;
 
 import io.restassured.RestAssured;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import ru.zalimannard.dripchip.integration.AccountToAuthCode;
 import ru.zalimannard.dripchip.integration.Specifications;
+import ru.zalimannard.dripchip.integration.account.AccountFactory;
 import ru.zalimannard.dripchip.integration.account.AccountSteps;
 import ru.zalimannard.dripchip.schema.account.AccountController;
-import ru.zalimannard.dripchip.schema.account.authentication.AuthenticationController;
+import ru.zalimannard.dripchip.schema.account.dto.AccountRequestDto;
 import ru.zalimannard.dripchip.schema.account.dto.AccountResponseDto;
 import ru.zalimannard.dripchip.schema.account.role.AccountRole;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class AccountGetUnauthorizedTests {
@@ -23,8 +27,6 @@ class AccountGetUnauthorizedTests {
     @LocalServerPort
     private int port;
 
-    @Autowired
-    private AuthenticationController authenticationController;
     @Autowired
     private AccountController accountController;
 
@@ -38,8 +40,7 @@ class AccountGetUnauthorizedTests {
 
     @BeforeEach
     void setUp() {
-        Assertions.assertNotNull(authenticationController);
-        Assertions.assertNotNull(accountController);
+        assertThat(accountController).isNotNull();
 
         RestAssured.port = port;
         RestAssured.requestSpecification = Specifications.requestSpec();
@@ -47,21 +48,26 @@ class AccountGetUnauthorizedTests {
         adminAuth = accountToAuthCode.convert(adminEmail, adminPassword);
     }
 
-    @Test
+    @ParameterizedTest
     @DisplayName("Негативный тест. Запрос несуществующего аккаунта от неавторизированного аккаунта")
+    @CsvSource(value = {
+            "42424242",
+    })
     void nonexistentAccountByUnauthorized() {
-        String auth = accountToAuthCode.convert("nonexistentaccount", "nonexistentaccount");
+        AccountRequestDto account = AccountFactory.createAccountRequest(AccountRole.USER);
+        String auth = accountToAuthCode.convert(account);
         AccountSteps.getExpectedUnauthorized(42424242, auth);
     }
 
     @Test
     @DisplayName("Негативный тест. Запрос существующего аккаунта от неавторизированного аккаунта")
     void existingAccountByUserUnauthorized() {
-        AccountResponseDto existingAccount = AccountSteps.create(
-                "account@get.unauthorized2", "password", AccountRole.USER, adminAuth);
+        AccountRequestDto account = AccountFactory.createAccountRequest(AccountRole.USER);
+        AccountResponseDto createdAccount = AccountSteps.post(account, adminAuth);
 
-        String auth = accountToAuthCode.convert("nonexistentaccount", "nonexistentaccount");
-        AccountSteps.getExpectedUnauthorized(existingAccount.getId(), auth);
+        AccountRequestDto requester = AccountFactory.createAccountRequest(AccountRole.USER);
+        String auth = accountToAuthCode.convert(requester);
+        AccountSteps.getExpectedUnauthorized(createdAccount.getId(), auth);
     }
 
 }
