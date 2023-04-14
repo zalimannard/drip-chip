@@ -14,7 +14,6 @@ import ru.zalimannard.dripchip.integration.Specifications;
 import ru.zalimannard.dripchip.integration.account.AccountDefaultDtos;
 import ru.zalimannard.dripchip.integration.account.AccountSteps;
 import ru.zalimannard.dripchip.schema.account.AccountController;
-import ru.zalimannard.dripchip.schema.account.authentication.AuthenticationController;
 import ru.zalimannard.dripchip.schema.account.dto.AccountRequestDto;
 import ru.zalimannard.dripchip.schema.account.dto.AccountResponseDto;
 import ru.zalimannard.dripchip.schema.account.role.AccountRole;

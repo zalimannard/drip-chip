@@ -11,7 +11,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import ru.zalimannard.dripchip.integration.AccountToAuthCode;
 import ru.zalimannard.dripchip.integration.Specifications;
+import ru.zalimannard.dripchip.integration.account.AccountDefaultDtos;
+import ru.zalimannard.dripchip.integration.account.AccountSteps;
 import ru.zalimannard.dripchip.schema.account.AccountController;
+import ru.zalimannard.dripchip.schema.account.dto.AccountRequestDto;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class AccountPostForbiddenTests {
@@ -24,11 +27,16 @@ class AccountPostForbiddenTests {
 
     @Autowired
     private AccountToAuthCode accountToAuthCode;
-    @Value("${application.init.accounts.admin.email}")
-    private String adminEmail;
-    @Value("${application.init.accounts.admin.password}")
-    private String adminPassword;
-    private String adminAuth;
+    @Value("${application.init.accounts.chipper.email}")
+    private String chipperEmail;
+    @Value("${application.init.accounts.chipper.password}")
+    private String chipperPassword;
+    private String chipperAuth;
+    @Value("${application.init.accounts.user.email}")
+    private String userEmail;
+    @Value("${application.init.accounts.user.password}")
+    private String userPassword;
+    private String userAuth;
 
     @BeforeEach
     void setUp() {
@@ -37,12 +45,26 @@ class AccountPostForbiddenTests {
         RestAssured.port = port;
         RestAssured.requestSpecification = Specifications.requestSpec();
 
-        adminAuth = accountToAuthCode.convert(adminEmail, adminPassword);
+        chipperAuth = accountToAuthCode.convert(chipperEmail, chipperPassword);
+        userAuth = accountToAuthCode.convert(userEmail, userPassword);
     }
 
     @Test
-    @DisplayName("Позитивный тест. Запрос успешно выполнен")
-    void positiveTest() {
+    @DisplayName("Негативный тест. Пользователь пытается создать аккаунт")
+    void requestByUser() {
+        AccountRequestDto request = AccountDefaultDtos.defaultAccountRequest.toBuilder()
+                .email("account@post.forbidden1")
+                .build();
+        AccountSteps.postExpectedForbidden(request, chipperAuth);
+    }
+
+    @Test
+    @DisplayName("Негативный тест. Пользователь пытается создать аккаунт")
+    void requestByChipper() {
+        AccountRequestDto request = AccountDefaultDtos.defaultAccountRequest.toBuilder()
+                .email("account@post.forbidden2")
+                .build();
+        AccountSteps.postExpectedForbidden(request, chipperAuth);
     }
 
 }

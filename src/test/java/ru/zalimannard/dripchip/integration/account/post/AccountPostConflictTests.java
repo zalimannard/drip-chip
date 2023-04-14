@@ -9,9 +9,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import ru.zalimannard.dripchip.exception.response.ExceptionResponse;
 import ru.zalimannard.dripchip.integration.AccountToAuthCode;
 import ru.zalimannard.dripchip.integration.Specifications;
+import ru.zalimannard.dripchip.integration.account.AccountDefaultDtos;
+import ru.zalimannard.dripchip.integration.account.AccountSteps;
 import ru.zalimannard.dripchip.schema.account.AccountController;
+import ru.zalimannard.dripchip.schema.account.dto.AccountRequestDto;
+import ru.zalimannard.dripchip.schema.account.dto.AccountResponseDto;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class AccountPostConflictTests {
@@ -40,9 +45,23 @@ class AccountPostConflictTests {
         adminAuth = accountToAuthCode.convert(adminEmail, adminPassword);
     }
 
+
     @Test
     @DisplayName("Позитивный тест. Запрос успешно выполнен")
-    void positiveTest() {
+    void emailAlreadyUsed() {
+        AccountRequestDto request = AccountDefaultDtos.defaultAccountRequest.toBuilder()
+                .email("account@post.conflict1")
+                .build();
+        AccountResponseDto actual = AccountSteps.post(request, adminAuth);
+        AccountResponseDto expected = AccountDefaultDtos.defaultAccountResponse.toBuilder()
+                .id(actual.getId())
+                .email("account@post.conflict1")
+                .build();
+
+        Assertions.assertEquals(expected, actual);
+
+        ExceptionResponse response = AccountSteps.postExpectedConflict(request, adminAuth);
+        Assertions.assertNotNull(response);
     }
 
 }

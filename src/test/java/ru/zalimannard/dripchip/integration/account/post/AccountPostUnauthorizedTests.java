@@ -6,12 +6,14 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import ru.zalimannard.dripchip.integration.AccountToAuthCode;
 import ru.zalimannard.dripchip.integration.Specifications;
+import ru.zalimannard.dripchip.integration.account.AccountDefaultDtos;
+import ru.zalimannard.dripchip.integration.account.AccountSteps;
 import ru.zalimannard.dripchip.schema.account.AccountController;
+import ru.zalimannard.dripchip.schema.account.dto.AccountRequestDto;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class AccountPostUnauthorizedTests {
@@ -24,11 +26,6 @@ class AccountPostUnauthorizedTests {
 
     @Autowired
     private AccountToAuthCode accountToAuthCode;
-    @Value("${application.init.accounts.admin.email}")
-    private String adminEmail;
-    @Value("${application.init.accounts.admin.password}")
-    private String adminPassword;
-    private String adminAuth;
 
     @BeforeEach
     void setUp() {
@@ -36,13 +33,16 @@ class AccountPostUnauthorizedTests {
 
         RestAssured.port = port;
         RestAssured.requestSpecification = Specifications.requestSpec();
-
-        adminAuth = accountToAuthCode.convert(adminEmail, adminPassword);
     }
 
     @Test
-    @DisplayName("Позитивный тест. Запрос успешно выполнен")
-    void positiveTest() {
+    @DisplayName("Негативный тест. Запрос от неавторизованного аккаунта")
+    void byUnauthorized() {
+        String auth = accountToAuthCode.convert("nonexistentaccount", "nonexistentaccount");
+        AccountRequestDto request = AccountDefaultDtos.defaultAccountRequest.toBuilder()
+                .email("account@post.unauthorized1")
+                .build();
+        AccountSteps.postExpectedUnauthorized(request, auth);
     }
 
 }
