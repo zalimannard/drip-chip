@@ -50,16 +50,19 @@ class AccountGetBadRequestTests {
     @ParameterizedTest
     @DisplayName("Негативный тест. Запрос некорректного accountId")
     @CsvSource(value = {
+            "ADMIN, null",
             "ADMIN, 0",
             "ADMIN, -1",
             "ADMIN, -424242",
+            "CHIPPER, null",
             "CHIPPER, 0",
             "CHIPPER, -1",
             "CHIPPER, -424242",
+            "USER, null",
             "USER, 0",
             "USER, -1",
             "USER, -424242",
-    })
+    }, nullValues = {"null"})
     void invalidAccountId(AccountRole role, Integer accountId) {
         AccountRequestDto account = AccountFactory.createAccountRequest(role);
         AccountSteps.post(account, adminAuth);

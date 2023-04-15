@@ -160,6 +160,12 @@ public class AccountSteps {
                 .statusCode(403);
     }
 
+    public static void putExpectedNotFound(Integer id, AccountRequestDto accountRequestDto,
+                                           String auth) {
+        basePut(id, accountRequestDto, auth)
+                .statusCode(404);
+    }
+
     public static ExceptionResponse putExpectedConflict(Integer id, AccountRequestDto accountRequestDto,
                                                         String auth) {
         return basePut(id, accountRequestDto, auth)

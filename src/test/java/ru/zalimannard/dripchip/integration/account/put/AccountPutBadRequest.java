@@ -1,9 +1,8 @@
-package ru.zalimannard.dripchip.integration.account.post;
+package ru.zalimannard.dripchip.integration.account.put;
 
 import io.restassured.RestAssured;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.NullSource;
@@ -19,12 +18,13 @@ import ru.zalimannard.dripchip.integration.account.AccountFactory;
 import ru.zalimannard.dripchip.integration.account.AccountSteps;
 import ru.zalimannard.dripchip.schema.account.AccountController;
 import ru.zalimannard.dripchip.schema.account.dto.AccountRequestDto;
+import ru.zalimannard.dripchip.schema.account.dto.AccountResponseDto;
 import ru.zalimannard.dripchip.schema.account.role.AccountRole;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class AccountPostBadRequestTests {
+class AccountPutBadRequest {
 
     @LocalServerPort
     private int port;
@@ -51,18 +51,33 @@ class AccountPostBadRequestTests {
     }
 
     @ParameterizedTest
+    @DisplayName("Негативный тест. Неверный accountId")
+    @NullSource
+    @ValueSource(ints = {
+            -424242,
+            -1,
+            0})
+    void invalidAccountId(Integer id) {
+        AccountRequestDto request = AccountFactory.createAccountRequest(AccountRole.USER);
+        ExceptionResponse response = AccountSteps.putExpectedBadRequest(id, request, adminAuth);
+        assertThat(response).isNotNull();
+    }
+
+    @ParameterizedTest
     @DisplayName("Негативный тест. Неверное имя")
     @NullSource
     @ValueSource(strings = {
             "",
             " ",
             "   "})
-    void invalidFirstname(String firstName) {
-        AccountRequestDto request = AccountFactory.createAccountRequest(AccountRole.USER).toBuilder()
-                .firstName(firstName)
+    void invalidFirstname(String firstname) {
+        AccountRequestDto account = AccountFactory.createAccountRequest(AccountRole.USER);
+        AccountResponseDto createdAccount = AccountSteps.post(account, adminAuth);
+
+        AccountRequestDto changedAccount = account.toBuilder()
+                .firstName(firstname)
                 .build();
-        ExceptionResponse response = AccountSteps.postExpectedBadRequest(request, adminAuth);
-        assertThat(response).isNotNull();
+        AccountSteps.putExpectedBadRequest(createdAccount.getId(), changedAccount, adminAuth);
     }
 
     @ParameterizedTest
@@ -72,12 +87,14 @@ class AccountPostBadRequestTests {
             "",
             " ",
             "   "})
-    void invalidLastname(String lastName) {
-        AccountRequestDto request = AccountFactory.createAccountRequest(AccountRole.USER).toBuilder()
-                .lastName(lastName)
+    void invalidLastname(String lastname) {
+        AccountRequestDto account = AccountFactory.createAccountRequest(AccountRole.USER);
+        AccountResponseDto createdAccount = AccountSteps.post(account, adminAuth);
+
+        AccountRequestDto changedAccount = account.toBuilder()
+                .lastName(lastname)
                 .build();
-        ExceptionResponse response = AccountSteps.postExpectedBadRequest(request, adminAuth);
-        assertThat(response).isNotNull();
+        AccountSteps.putExpectedBadRequest(createdAccount.getId(), changedAccount, adminAuth);
     }
 
     @ParameterizedTest
@@ -93,11 +110,13 @@ class AccountPostBadRequestTests {
             "a@mail@ru",
             "a@mail@mail.ru"})
     void invalidEmail(String email) {
-        AccountRequestDto request = AccountFactory.createAccountRequest(AccountRole.USER).toBuilder()
+        AccountRequestDto account = AccountFactory.createAccountRequest(AccountRole.USER);
+        AccountResponseDto createdAccount = AccountSteps.post(account, adminAuth);
+
+        AccountRequestDto changedAccount = account.toBuilder()
                 .email(email)
                 .build();
-        ExceptionResponse response = AccountSteps.postExpectedBadRequest(request, adminAuth);
-        assertThat(response).isNotNull();
+        AccountSteps.putExpectedBadRequest(createdAccount.getId(), changedAccount, adminAuth);
     }
 
     @ParameterizedTest
@@ -108,21 +127,13 @@ class AccountPostBadRequestTests {
             " ",
             "   "})
     void invalidPassword(String password) {
-        AccountRequestDto request = AccountFactory.createAccountRequest(AccountRole.USER).toBuilder()
+        AccountRequestDto account = AccountFactory.createAccountRequest(AccountRole.USER);
+        AccountResponseDto createdAccount = AccountSteps.post(account, adminAuth);
+
+        AccountRequestDto changedAccount = account.toBuilder()
                 .password(password)
                 .build();
-        ExceptionResponse response = AccountSteps.postExpectedBadRequest(request, adminAuth);
-        assertThat(response).isNotNull();
-    }
-
-    @Test
-    @DisplayName("Негативный тест. Неверные авторизационные данные")
-    void invalidAuth() {
-        AccountRequestDto nonexistentAccount = AccountFactory.createAccountRequest(AccountRole.USER);
-        String auth = accountToAuthConverter.convert(nonexistentAccount);
-
-        AccountRequestDto request = AccountFactory.createAccountRequest(AccountRole.USER);
-        AccountSteps.postExpectedUnauthorized(request, auth);
+        AccountSteps.putExpectedBadRequest(createdAccount.getId(), changedAccount, adminAuth);
     }
 
     @ParameterizedTest
@@ -133,9 +144,13 @@ class AccountPostBadRequestTests {
             "SYS",
             "VOVA"}, nullValues = {"null"})
     void invalidRole(AccountRole role) {
-        AccountRequestDto request = AccountFactory.createAccountRequest(role);
-        ExceptionResponse response = AccountSteps.postExpectedBadRequest(request, adminAuth);
-        assertThat(response).isNotNull();
+        AccountRequestDto account = AccountFactory.createAccountRequest(AccountRole.USER);
+        AccountResponseDto createdAccount = AccountSteps.post(account, adminAuth);
+
+        AccountRequestDto changedAccount = account.toBuilder()
+                .role(role)
+                .build();
+        AccountSteps.putExpectedBadRequest(createdAccount.getId(), changedAccount, adminAuth);
     }
 
 }

@@ -1,7 +1,6 @@
 package ru.zalimannard.dripchip.integration.registration.post;
 
 import io.restassured.RestAssured;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -20,6 +19,8 @@ import ru.zalimannard.dripchip.schema.account.AccountController;
 import ru.zalimannard.dripchip.schema.account.authentication.AuthenticationController;
 import ru.zalimannard.dripchip.schema.account.authentication.AuthenticationDto;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class RegistrationPostBadRequestTests {
 
@@ -36,8 +37,8 @@ class RegistrationPostBadRequestTests {
 
     @BeforeEach
     void setUp() {
-        Assertions.assertNotNull(authenticationController);
-        Assertions.assertNotNull(accountController);
+        assertThat(authenticationController).isNotNull();
+        assertThat(accountController).isNotNull();
 
         RestAssured.port = port;
         RestAssured.requestSpecification = Specifications.requestSpec();
@@ -55,7 +56,7 @@ class RegistrationPostBadRequestTests {
                 .firstName(firstName)
                 .build();
         ExceptionResponse response = RegistrationSteps.registrationExpectedBadRequest(request, null);
-        Assertions.assertNotNull(response);
+        assertThat(response).isNotNull();
     }
 
     @ParameterizedTest
@@ -70,7 +71,7 @@ class RegistrationPostBadRequestTests {
                 .lastName(lastName)
                 .build();
         ExceptionResponse response = RegistrationSteps.registrationExpectedBadRequest(request, null);
-        Assertions.assertNotNull(response);
+        assertThat(response).isNotNull();
     }
 
     @ParameterizedTest
@@ -90,7 +91,7 @@ class RegistrationPostBadRequestTests {
                 .email(email)
                 .build();
         ExceptionResponse response = RegistrationSteps.registrationExpectedBadRequest(request, null);
-        Assertions.assertNotNull(response);
+        assertThat(response).isNotNull();
     }
 
     @ParameterizedTest
@@ -105,7 +106,7 @@ class RegistrationPostBadRequestTests {
                 .email(password)
                 .build();
         ExceptionResponse response = RegistrationSteps.registrationExpectedBadRequest(request, null);
-        Assertions.assertNotNull(response);
+        assertThat(response).isNotNull();
     }
 
     @Test
@@ -116,7 +117,7 @@ class RegistrationPostBadRequestTests {
         AuthenticationDto request = RegistrationDefaultDtos.defaultAuthentication.toBuilder()
                 .build();
         ExceptionResponse response = RegistrationSteps.registrationExpectedBadRequest(request, auth);
-        Assertions.assertNotNull(response);
+        assertThat(response).isNotNull();
     }
 
 }

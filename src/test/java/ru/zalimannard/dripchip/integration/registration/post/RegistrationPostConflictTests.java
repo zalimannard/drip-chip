@@ -1,7 +1,6 @@
 package ru.zalimannard.dripchip.integration.registration.post;
 
 import io.restassured.RestAssured;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -19,6 +18,8 @@ import ru.zalimannard.dripchip.schema.account.AccountController;
 import ru.zalimannard.dripchip.schema.account.authentication.AuthenticationController;
 import ru.zalimannard.dripchip.schema.account.authentication.AuthenticationDto;
 import ru.zalimannard.dripchip.schema.account.dto.AccountResponseDto;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class RegistrationPostConflictTests {
@@ -41,8 +42,8 @@ class RegistrationPostConflictTests {
 
     @BeforeEach
     void setUp() {
-        Assertions.assertNotNull(authenticationController);
-        Assertions.assertNotNull(accountController);
+        assertThat(authenticationController).isNotNull();
+        assertThat(accountController).isNotNull();
 
         RestAssured.port = port;
         RestAssured.requestSpecification = Specifications.requestSpec();
@@ -61,12 +62,12 @@ class RegistrationPostConflictTests {
                 .id(actual.getId())
                 .email("registration@post.forbidden1")
                 .build();
-        Assertions.assertEquals(expected, actual);
+        assertThat(actual).isEqualTo(expected);
         AccountResponseDto createdAccount = AccountSteps.get(actual.getId(), adminAuth);
-        Assertions.assertEquals(expected, createdAccount);
+        assertThat(createdAccount).isEqualTo(expected);
 
         ExceptionResponse response = RegistrationSteps.registrationExpectedConflict(request, null);
-        Assertions.assertNotNull(response);
+        assertThat(response).isNotNull();
     }
 
 }

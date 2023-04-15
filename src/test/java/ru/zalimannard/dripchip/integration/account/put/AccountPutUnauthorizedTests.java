@@ -1,4 +1,4 @@
-package ru.zalimannard.dripchip.integration.account.post;
+package ru.zalimannard.dripchip.integration.account.put;
 
 import io.restassured.RestAssured;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,7 +20,7 @@ import ru.zalimannard.dripchip.schema.account.role.AccountRole;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class AccountPostCreatedTests {
+class AccountPutUnauthorizedTests {
 
     @LocalServerPort
     private int port;
@@ -47,14 +47,13 @@ class AccountPostCreatedTests {
     }
 
     @Test
-    @DisplayName("Позитивный тест. Запрос успешно выполнен")
-    void positiveTest() {
-        AccountRequestDto request = AccountFactory.createAccountRequest(AccountRole.USER);
-        AccountResponseDto actual = AccountSteps.post(request, adminAuth);
-        AccountResponseDto expected = AccountFactory.createAccountResponse(actual.getId(), request);
-        assertThat(actual).isEqualTo(expected);
+    @DisplayName("Негативный тест. Неавторизованный аккаунт")
+    void unauthorizedRequest() {
+        AccountRequestDto account = AccountFactory.createAccountRequest(AccountRole.USER);
+        AccountResponseDto createdAccount = AccountSteps.post(account, adminAuth);
 
-        AccountResponseDto createdAccount = AccountSteps.get(actual.getId(), adminAuth);
-        assertThat(createdAccount).isEqualTo(expected);
+        AccountRequestDto changedAccount = AccountFactory.createAccountRequest(AccountRole.USER);
+        AccountSteps.putExpectedUnauthorized(createdAccount.getId(), changedAccount, null);
     }
+
 }

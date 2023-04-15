@@ -1,4 +1,4 @@
-package ru.zalimannard.dripchip.integration.account.post;
+package ru.zalimannard.dripchip.integration.account.put;
 
 import io.restassured.RestAssured;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,12 +15,13 @@ import ru.zalimannard.dripchip.integration.account.AccountFactory;
 import ru.zalimannard.dripchip.integration.account.AccountSteps;
 import ru.zalimannard.dripchip.schema.account.AccountController;
 import ru.zalimannard.dripchip.schema.account.dto.AccountRequestDto;
+import ru.zalimannard.dripchip.schema.account.dto.AccountResponseDto;
 import ru.zalimannard.dripchip.schema.account.role.AccountRole;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class AccountPostForbiddenTests {
+class AccountPutOkTests {
 
     @LocalServerPort
     private int port;
@@ -47,18 +48,38 @@ class AccountPostForbiddenTests {
     }
 
     @ParameterizedTest
-    @DisplayName("Негативный тест. Неадмин пытается создать аккаунт")
+    @DisplayName("Позитивный тест. Админ меняет всех")
     @CsvSource(value = {
-            "USER",
+            "ADMIN",
             "CHIPPER",
+            "USER",
     })
-    void requestByUser(AccountRole role) {
-        AccountRequestDto requester = AccountFactory.createAccountRequest(role);
-        AccountSteps.postExpectedForbidden(requester, adminAuth);
-        String auth = accountToAuthConverter.convert(requester);
+    void adminChangesUser(AccountRole role) {
+        AccountRequestDto account = AccountFactory.createAccountRequest(role);
+        AccountResponseDto createdAccount = AccountSteps.post(account, adminAuth);
 
-        AccountRequestDto request = AccountFactory.createAccountRequest(AccountRole.USER);
-        AccountSteps.postExpectedForbidden(request, auth);
+        AccountRequestDto changedAccount = AccountFactory.createAccountRequest(role);
+        AccountResponseDto changedAccountActual = AccountSteps.put(createdAccount.getId(), changedAccount, adminAuth);
+        AccountResponseDto changedAccountExpected = AccountFactory.createAccountResponse(createdAccount.getId(), changedAccount);
+        assertThat(changedAccountActual).isEqualTo(changedAccountExpected);
+    }
+
+    @ParameterizedTest
+    @DisplayName("Позитивный тест. Изменение себя")
+    @CsvSource(value = {
+            "ADMIN",
+            "CHIPPER",
+            "USER",
+    })
+    void chipperChangesChipper(AccountRole role) {
+        AccountRequestDto account = AccountFactory.createAccountRequest(role);
+        AccountResponseDto createdAccount = AccountSteps.post(account, adminAuth);
+        String auth = accountToAuthConverter.convert(account);
+
+        AccountRequestDto changedAccount = AccountFactory.createAccountRequest(role);
+        AccountResponseDto changedAccountActual = AccountSteps.put(createdAccount.getId(), changedAccount, auth);
+        AccountResponseDto changedAccountExpected = AccountFactory.createAccountResponse(createdAccount.getId(), changedAccount);
+        assertThat(changedAccountActual).isEqualTo(changedAccountExpected);
     }
 
 }

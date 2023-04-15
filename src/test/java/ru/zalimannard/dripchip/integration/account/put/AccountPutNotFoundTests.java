@@ -1,9 +1,10 @@
-package ru.zalimannard.dripchip.integration.account.post;
+package ru.zalimannard.dripchip.integration.account.put;
 
 import io.restassured.RestAssured;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -14,13 +15,12 @@ import ru.zalimannard.dripchip.integration.account.AccountFactory;
 import ru.zalimannard.dripchip.integration.account.AccountSteps;
 import ru.zalimannard.dripchip.schema.account.AccountController;
 import ru.zalimannard.dripchip.schema.account.dto.AccountRequestDto;
-import ru.zalimannard.dripchip.schema.account.dto.AccountResponseDto;
 import ru.zalimannard.dripchip.schema.account.role.AccountRole;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class AccountPostCreatedTests {
+class AccountPutNotFoundTests {
 
     @LocalServerPort
     private int port;
@@ -46,15 +46,14 @@ class AccountPostCreatedTests {
         adminAuth = accountToAuthConverter.convert(adminEmail, adminPassword);
     }
 
-    @Test
-    @DisplayName("Позитивный тест. Запрос успешно выполнен")
-    void positiveTest() {
-        AccountRequestDto request = AccountFactory.createAccountRequest(AccountRole.USER);
-        AccountResponseDto actual = AccountSteps.post(request, adminAuth);
-        AccountResponseDto expected = AccountFactory.createAccountResponse(actual.getId(), request);
-        assertThat(actual).isEqualTo(expected);
-
-        AccountResponseDto createdAccount = AccountSteps.get(actual.getId(), adminAuth);
-        assertThat(createdAccount).isEqualTo(expected);
+    @ParameterizedTest
+    @DisplayName("Негативный тест. Изменение несуществующего аккаунта")
+    @CsvSource(value = {
+            "42424242",
+    })
+    void changesNonexistentAccount(Integer accountId) {
+        AccountRequestDto newAccount = AccountFactory.createAccountRequest(AccountRole.USER).toBuilder().build();
+        AccountSteps.putExpectedNotFound(accountId, newAccount, adminAuth);
     }
+
 }

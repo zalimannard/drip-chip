@@ -1,7 +1,6 @@
 package ru.zalimannard.dripchip.integration.registration.post;
 
 import io.restassured.RestAssured;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,6 +15,8 @@ import ru.zalimannard.dripchip.integration.registration.RegistrationSteps;
 import ru.zalimannard.dripchip.schema.account.AccountController;
 import ru.zalimannard.dripchip.schema.account.authentication.AuthenticationController;
 import ru.zalimannard.dripchip.schema.account.authentication.AuthenticationDto;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class RegistrationPostForbiddenTests {
@@ -38,8 +39,8 @@ class RegistrationPostForbiddenTests {
 
     @BeforeEach
     void setUp() {
-        Assertions.assertNotNull(authenticationController);
-        Assertions.assertNotNull(accountController);
+        assertThat(authenticationController).isNotNull();
+        assertThat(accountController).isNotNull();
 
         RestAssured.port = port;
         RestAssured.requestSpecification = Specifications.requestSpec();
