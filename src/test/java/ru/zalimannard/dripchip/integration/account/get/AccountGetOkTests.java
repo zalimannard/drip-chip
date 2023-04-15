@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
-import ru.zalimannard.dripchip.integration.AccountToAuthCode;
+import ru.zalimannard.dripchip.integration.AccountToAuthConverter;
 import ru.zalimannard.dripchip.integration.Specifications;
 import ru.zalimannard.dripchip.integration.account.AccountFactory;
 import ru.zalimannard.dripchip.integration.account.AccountSteps;
@@ -30,7 +30,7 @@ class AccountGetOkTests {
     private AccountController accountController;
 
     @Autowired
-    private AccountToAuthCode accountToAuthCode;
+    private AccountToAuthConverter accountToAuthConverter;
     @Value("${application.init.accounts.admin.email}")
     private String adminEmail;
     @Value("${application.init.accounts.admin.password}")
@@ -44,7 +44,7 @@ class AccountGetOkTests {
         RestAssured.port = port;
         RestAssured.requestSpecification = Specifications.requestSpec();
 
-        adminAuth = accountToAuthCode.convert(adminEmail, adminPassword);
+        adminAuth = accountToAuthConverter.convert(adminEmail, adminPassword);
     }
 
     @ParameterizedTest
@@ -57,7 +57,7 @@ class AccountGetOkTests {
     void positiveTestAccountByAdmin(AccountRole role) {
         AccountRequestDto admin = AccountFactory.createAccountRequest(AccountRole.ADMIN);
         AccountSteps.post(admin, adminAuth);
-        String auth = accountToAuthCode.convert(admin);
+        String auth = accountToAuthConverter.convert(admin);
 
         AccountRequestDto account = AccountFactory.createAccountRequest(role);
         AccountResponseDto createdAccount = AccountSteps.post(account, adminAuth);
@@ -78,7 +78,7 @@ class AccountGetOkTests {
     void positiveTestAccountBySelf(AccountRole role) {
         AccountRequestDto account = AccountFactory.createAccountRequest(role);
         AccountResponseDto createdAccount = AccountSteps.post(account, adminAuth);
-        String auth = accountToAuthCode.convert(account);
+        String auth = accountToAuthConverter.convert(account);
         AccountResponseDto expectedAccount = AccountFactory.createAccountResponse(createdAccount.getId(), account);
 
         AccountResponseDto gotAccount = AccountSteps.get(createdAccount.getId(), auth);

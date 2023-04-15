@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 import ru.zalimannard.dripchip.schema.account.dto.AccountRequestDto;
 
 @Component
-public class AccountToAuthCode {
+public class AccountToAuthConverter {
 
     @Autowired
     private PasswordEncoder passwordEncoder;

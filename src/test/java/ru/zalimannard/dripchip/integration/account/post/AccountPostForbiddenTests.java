@@ -1,6 +1,7 @@
-package ru.zalimannard.dripchip.integration.account.get;
+package ru.zalimannard.dripchip.integration.account.post;
 
 import io.restassured.RestAssured;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -9,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
-import ru.zalimannard.dripchip.exception.response.ExceptionResponse;
 import ru.zalimannard.dripchip.integration.AccountToAuthConverter;
 import ru.zalimannard.dripchip.integration.Specifications;
 import ru.zalimannard.dripchip.integration.account.AccountFactory;
@@ -18,10 +18,8 @@ import ru.zalimannard.dripchip.schema.account.AccountController;
 import ru.zalimannard.dripchip.schema.account.dto.AccountRequestDto;
 import ru.zalimannard.dripchip.schema.account.role.AccountRole;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class AccountGetBadRequestTests {
+class AccountPostForbiddenTests {
 
     @LocalServerPort
     private int port;
@@ -39,7 +37,7 @@ class AccountGetBadRequestTests {
 
     @BeforeEach
     void setUp() {
-        assertThat(accountController).isNotNull();
+        Assertions.assertNotNull(accountController);
 
         RestAssured.port = port;
         RestAssured.requestSpecification = Specifications.requestSpec();
@@ -48,25 +46,18 @@ class AccountGetBadRequestTests {
     }
 
     @ParameterizedTest
-    @DisplayName("Негативный тест. Запрос некорректного accountId")
+    @DisplayName("Негативный тест. Неадмин пытается создать аккаунт")
     @CsvSource(value = {
-            "ADMIN, 0",
-            "ADMIN, -1",
-            "ADMIN, -424242",
-            "CHIPPER, 0",
-            "CHIPPER, -1",
-            "CHIPPER, -424242",
-            "USER, 0",
-            "USER, -1",
-            "USER, -424242",
+            "USER",
+            "CHIPPER",
     })
-    void invalidAccountId(AccountRole role, Integer accountId) {
-        AccountRequestDto account = AccountFactory.createAccountRequest(role);
-        AccountSteps.post(account, adminAuth);
-        String auth = accountToAuthConverter.convert(account);
+    void requestByUser(AccountRole role) {
+        AccountRequestDto requester = AccountFactory.createAccountRequest(role);
+        AccountSteps.postExpectedForbidden(requester, adminAuth);
+        String auth = accountToAuthConverter.convert(requester);
 
-        ExceptionResponse response = AccountSteps.getExpectedBadRequest(accountId, auth);
-        assertThat(response).isNotNull();
+        AccountRequestDto request = AccountFactory.createAccountRequest(AccountRole.USER);
+        AccountSteps.postExpectedForbidden(request, auth);
     }
 
 }

@@ -1,4 +1,4 @@
-package ru.zalimannard.dripchip.integration.registration.post;
+package ru.zalimannard.dripchip.integration.account.post;
 
 import io.restassured.RestAssured;
 import org.junit.jupiter.api.Assertions;
@@ -11,22 +11,19 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import ru.zalimannard.dripchip.integration.AccountToAuthConverter;
 import ru.zalimannard.dripchip.integration.Specifications;
+import ru.zalimannard.dripchip.integration.account.AccountFactory;
 import ru.zalimannard.dripchip.integration.account.AccountSteps;
-import ru.zalimannard.dripchip.integration.registration.RegistrationDefaultDtos;
-import ru.zalimannard.dripchip.integration.registration.RegistrationSteps;
 import ru.zalimannard.dripchip.schema.account.AccountController;
-import ru.zalimannard.dripchip.schema.account.authentication.AuthenticationController;
-import ru.zalimannard.dripchip.schema.account.authentication.AuthenticationDto;
+import ru.zalimannard.dripchip.schema.account.dto.AccountRequestDto;
 import ru.zalimannard.dripchip.schema.account.dto.AccountResponseDto;
+import ru.zalimannard.dripchip.schema.account.role.AccountRole;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class RegistrationPostCreatedTests {
+class AccountPostCreatedTests {
 
     @LocalServerPort
     private int port;
 
-    @Autowired
-    private AuthenticationController authenticationController;
     @Autowired
     private AccountController accountController;
 
@@ -40,7 +37,6 @@ class RegistrationPostCreatedTests {
 
     @BeforeEach
     void setUp() {
-        Assertions.assertNotNull(authenticationController);
         Assertions.assertNotNull(accountController);
 
         RestAssured.port = port;
@@ -52,19 +48,12 @@ class RegistrationPostCreatedTests {
     @Test
     @DisplayName("Позитивный тест. Запрос успешно выполнен")
     void positiveTest() {
-        AuthenticationDto request = RegistrationDefaultDtos.defaultAuthentication.toBuilder()
-                .email("registration@post.created1")
-                .build();
-        AccountResponseDto actual = RegistrationSteps.registration(request, null);
-        AccountResponseDto expected = RegistrationDefaultDtos.defaultAccountResponse.toBuilder()
-                .id(actual.getId())
-                .email("registration@post.created1")
-                .build();
-
+        AccountRequestDto request = AccountFactory.createAccountRequest(AccountRole.USER);
+        AccountResponseDto actual = AccountSteps.post(request, adminAuth);
+        AccountResponseDto expected = AccountFactory.createAccountResponse(actual.getId(), request);
         Assertions.assertEquals(expected, actual);
 
         AccountResponseDto createdAccount = AccountSteps.get(actual.getId(), adminAuth);
         Assertions.assertEquals(expected, createdAccount);
     }
-
 }

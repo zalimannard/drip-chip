@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import ru.zalimannard.dripchip.exception.response.ExceptionResponse;
-import ru.zalimannard.dripchip.integration.AccountToAuthCode;
+import ru.zalimannard.dripchip.integration.AccountToAuthConverter;
 import ru.zalimannard.dripchip.integration.Specifications;
 import ru.zalimannard.dripchip.integration.account.AccountFactory;
 import ru.zalimannard.dripchip.integration.account.AccountSteps;
@@ -30,7 +30,7 @@ class AccountGetNotFoundTests {
     private AccountController accountController;
 
     @Autowired
-    private AccountToAuthCode accountToAuthCode;
+    private AccountToAuthConverter accountToAuthConverter;
     @Value("${application.init.accounts.admin.email}")
     private String adminEmail;
     @Value("${application.init.accounts.admin.password}")
@@ -44,7 +44,7 @@ class AccountGetNotFoundTests {
         RestAssured.port = port;
         RestAssured.requestSpecification = Specifications.requestSpec();
 
-        adminAuth = accountToAuthCode.convert(adminEmail, adminPassword);
+        adminAuth = accountToAuthConverter.convert(adminEmail, adminPassword);
     }
 
     @ParameterizedTest
@@ -55,7 +55,7 @@ class AccountGetNotFoundTests {
     void nonexistentAccountByUser(AccountRole role, Integer accountId) {
         AccountRequestDto account = AccountFactory.createAccountRequest(role);
         AccountSteps.post(account, adminAuth);
-        String auth = accountToAuthCode.convert(account);
+        String auth = accountToAuthConverter.convert(account);
 
         ExceptionResponse response = AccountSteps.getExpectedNotFound(accountId, auth);
         assertThat(response).isNotNull();

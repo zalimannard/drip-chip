@@ -1,4 +1,4 @@
-package ru.zalimannard.dripchip.integration.registration.post;
+package ru.zalimannard.dripchip.integration.account.post;
 
 import io.restassured.RestAssured;
 import org.junit.jupiter.api.Assertions;
@@ -9,38 +9,43 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import ru.zalimannard.dripchip.exception.response.ExceptionResponse;
 import ru.zalimannard.dripchip.integration.AccountToAuthConverter;
 import ru.zalimannard.dripchip.integration.Specifications;
-import ru.zalimannard.dripchip.integration.registration.RegistrationDefaultDtos;
-import ru.zalimannard.dripchip.integration.registration.RegistrationSteps;
+import ru.zalimannard.dripchip.integration.account.AccountFactory;
+import ru.zalimannard.dripchip.integration.account.AccountSteps;
 import ru.zalimannard.dripchip.schema.account.AccountController;
-import ru.zalimannard.dripchip.schema.account.authentication.AuthenticationController;
-import ru.zalimannard.dripchip.schema.account.authentication.AuthenticationDto;
+import ru.zalimannard.dripchip.schema.account.dto.AccountRequestDto;
+import ru.zalimannard.dripchip.schema.account.role.AccountRole;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class RegistrationPostBadRequestTests {
+class AccountPostBadRequestTests {
 
     @LocalServerPort
     private int port;
 
     @Autowired
-    private AuthenticationController authenticationController;
-    @Autowired
     private AccountController accountController;
 
     @Autowired
     private AccountToAuthConverter accountToAuthConverter;
+    @Value("${application.init.accounts.admin.email}")
+    private String adminEmail;
+    @Value("${application.init.accounts.admin.password}")
+    private String adminPassword;
+    private String adminAuth;
 
     @BeforeEach
     void setUp() {
-        Assertions.assertNotNull(authenticationController);
         Assertions.assertNotNull(accountController);
 
         RestAssured.port = port;
         RestAssured.requestSpecification = Specifications.requestSpec();
+
+        adminAuth = accountToAuthConverter.convert(adminEmail, adminPassword);
     }
 
     @ParameterizedTest
@@ -51,10 +56,10 @@ class RegistrationPostBadRequestTests {
             " ",
             "   "})
     void invalidFirstname(String firstName) {
-        AuthenticationDto request = RegistrationDefaultDtos.defaultAuthentication.toBuilder()
+        AccountRequestDto request = AccountFactory.createAccountRequest(AccountRole.USER).toBuilder()
                 .firstName(firstName)
                 .build();
-        ExceptionResponse response = RegistrationSteps.registrationExpectedBadRequest(request, null);
+        ExceptionResponse response = AccountSteps.postExpectedBadRequest(request, adminAuth);
         Assertions.assertNotNull(response);
     }
 
@@ -66,10 +71,10 @@ class RegistrationPostBadRequestTests {
             " ",
             "   "})
     void invalidLastname(String lastName) {
-        AuthenticationDto request = RegistrationDefaultDtos.defaultAuthentication.toBuilder()
+        AccountRequestDto request = AccountFactory.createAccountRequest(AccountRole.USER).toBuilder()
                 .lastName(lastName)
                 .build();
-        ExceptionResponse response = RegistrationSteps.registrationExpectedBadRequest(request, null);
+        ExceptionResponse response = AccountSteps.postExpectedBadRequest(request, adminAuth);
         Assertions.assertNotNull(response);
     }
 
@@ -86,10 +91,10 @@ class RegistrationPostBadRequestTests {
             "a@mail@ru",
             "a@mail@mail.ru"})
     void invalidEmail(String email) {
-        AuthenticationDto request = RegistrationDefaultDtos.defaultAuthentication.toBuilder()
+        AccountRequestDto request = AccountFactory.createAccountRequest(AccountRole.USER).toBuilder()
                 .email(email)
                 .build();
-        ExceptionResponse response = RegistrationSteps.registrationExpectedBadRequest(request, null);
+        ExceptionResponse response = AccountSteps.postExpectedBadRequest(request, adminAuth);
         Assertions.assertNotNull(response);
     }
 
@@ -101,22 +106,21 @@ class RegistrationPostBadRequestTests {
             " ",
             "   "})
     void invalidPassword(String password) {
-        AuthenticationDto request = RegistrationDefaultDtos.defaultAuthentication.toBuilder()
-                .email(password)
+        AccountRequestDto request = AccountFactory.createAccountRequest(AccountRole.USER).toBuilder()
+                .password(password)
                 .build();
-        ExceptionResponse response = RegistrationSteps.registrationExpectedBadRequest(request, null);
+        ExceptionResponse response = AccountSteps.postExpectedBadRequest(request, adminAuth);
         Assertions.assertNotNull(response);
     }
 
     @Test
     @DisplayName("Негативный тест. Неверные авторизационные данные")
     void invalidAuth() {
-        String auth = accountToAuthConverter.convert("unexistedaccount", "unexistedaccount");
+        AccountRequestDto nonexistentAccount = AccountFactory.createAccountRequest(AccountRole.USER);
+        String auth = accountToAuthConverter.convert(nonexistentAccount);
 
-        AuthenticationDto request = RegistrationDefaultDtos.defaultAuthentication.toBuilder()
-                .build();
-        ExceptionResponse response = RegistrationSteps.registrationExpectedBadRequest(request, auth);
-        Assertions.assertNotNull(response);
+        AccountRequestDto request = AccountFactory.createAccountRequest(AccountRole.USER);
+        AccountSteps.postExpectedUnauthorized(request, auth);
     }
 
 }

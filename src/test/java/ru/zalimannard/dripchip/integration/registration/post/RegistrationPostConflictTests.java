@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import ru.zalimannard.dripchip.exception.response.ExceptionResponse;
-import ru.zalimannard.dripchip.integration.AccountToAuthCode;
+import ru.zalimannard.dripchip.integration.AccountToAuthConverter;
 import ru.zalimannard.dripchip.integration.Specifications;
 import ru.zalimannard.dripchip.integration.account.AccountSteps;
 import ru.zalimannard.dripchip.integration.registration.RegistrationDefaultDtos;
@@ -32,7 +32,7 @@ class RegistrationPostConflictTests {
     private AccountController accountController;
 
     @Autowired
-    private AccountToAuthCode accountToAuthCode;
+    private AccountToAuthConverter accountToAuthConverter;
     @Value("${application.init.accounts.admin.email}")
     private String adminEmail;
     @Value("${application.init.accounts.admin.password}")
@@ -47,7 +47,7 @@ class RegistrationPostConflictTests {
         RestAssured.port = port;
         RestAssured.requestSpecification = Specifications.requestSpec();
 
-        adminAuth = accountToAuthCode.convert(adminEmail, adminPassword);
+        adminAuth = accountToAuthConverter.convert(adminEmail, adminPassword);
     }
 
     @Test

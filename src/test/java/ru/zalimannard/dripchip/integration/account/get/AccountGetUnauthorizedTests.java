@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
-import ru.zalimannard.dripchip.integration.AccountToAuthCode;
+import ru.zalimannard.dripchip.integration.AccountToAuthConverter;
 import ru.zalimannard.dripchip.integration.Specifications;
 import ru.zalimannard.dripchip.integration.account.AccountFactory;
 import ru.zalimannard.dripchip.integration.account.AccountSteps;
@@ -31,7 +31,7 @@ class AccountGetUnauthorizedTests {
     private AccountController accountController;
 
     @Autowired
-    private AccountToAuthCode accountToAuthCode;
+    private AccountToAuthConverter accountToAuthConverter;
     @Value("${application.init.accounts.admin.email}")
     private String adminEmail;
     @Value("${application.init.accounts.admin.password}")
@@ -45,7 +45,7 @@ class AccountGetUnauthorizedTests {
         RestAssured.port = port;
         RestAssured.requestSpecification = Specifications.requestSpec();
 
-        adminAuth = accountToAuthCode.convert(adminEmail, adminPassword);
+        adminAuth = accountToAuthConverter.convert(adminEmail, adminPassword);
     }
 
     @ParameterizedTest
@@ -55,7 +55,7 @@ class AccountGetUnauthorizedTests {
     })
     void nonexistentAccountByUnauthorized() {
         AccountRequestDto account = AccountFactory.createAccountRequest(AccountRole.USER);
-        String auth = accountToAuthCode.convert(account);
+        String auth = accountToAuthConverter.convert(account);
         AccountSteps.getExpectedUnauthorized(42424242, auth);
     }
 
@@ -66,7 +66,7 @@ class AccountGetUnauthorizedTests {
         AccountResponseDto createdAccount = AccountSteps.post(account, adminAuth);
 
         AccountRequestDto requester = AccountFactory.createAccountRequest(AccountRole.USER);
-        String auth = accountToAuthCode.convert(requester);
+        String auth = accountToAuthConverter.convert(requester);
         AccountSteps.getExpectedUnauthorized(createdAccount.getId(), auth);
     }
 

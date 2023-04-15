@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
-import ru.zalimannard.dripchip.integration.AccountToAuthCode;
+import ru.zalimannard.dripchip.integration.AccountToAuthConverter;
 import ru.zalimannard.dripchip.integration.Specifications;
 import ru.zalimannard.dripchip.integration.account.AccountFactory;
 import ru.zalimannard.dripchip.integration.account.AccountSteps;
@@ -30,7 +30,7 @@ class AccountGetForbiddenTests {
     private AccountController accountController;
 
     @Autowired
-    private AccountToAuthCode accountToAuthCode;
+    private AccountToAuthConverter accountToAuthConverter;
     @Value("${application.init.accounts.admin.email}")
     private String adminEmail;
     @Value("${application.init.accounts.admin.password}")
@@ -44,7 +44,7 @@ class AccountGetForbiddenTests {
         RestAssured.port = port;
         RestAssured.requestSpecification = Specifications.requestSpec();
 
-        adminAuth = accountToAuthCode.convert(adminEmail, adminPassword);
+        adminAuth = accountToAuthConverter.convert(adminEmail, adminPassword);
     }
 
     @ParameterizedTest
@@ -61,7 +61,7 @@ class AccountGetForbiddenTests {
     void existingUserAccountByUser(AccountRole activeRole, AccountRole passiveRole) {
         AccountRequestDto activeAccount = AccountFactory.createAccountRequest(activeRole);
         AccountSteps.post(activeAccount, adminAuth);
-        String activeAccountAuth = accountToAuthCode.convert(activeAccount);
+        String activeAccountAuth = accountToAuthConverter.convert(activeAccount);
 
         AccountRequestDto passiveAccount = AccountFactory.createAccountRequest(passiveRole);
         AccountResponseDto createdPassiveAccount = AccountSteps.post(passiveAccount, adminAuth);
@@ -77,7 +77,7 @@ class AccountGetForbiddenTests {
     void nonexistentAccountByUser(AccountRole role, Integer accountId) {
         AccountRequestDto account = AccountFactory.createAccountRequest(role);
         AccountSteps.post(account, adminAuth);
-        String auth = accountToAuthCode.convert(account);
+        String auth = accountToAuthConverter.convert(account);
 
         AccountSteps.getExpectedForbidden(accountId, auth);
     }
