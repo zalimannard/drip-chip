@@ -1,15 +1,21 @@
 package ru.zalimannard.dripchip.schema.location;
 
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.*;
+import org.hibernate.Hibernate;
+
+import java.util.Objects;
 
 @Entity
 @Table(name = "locations",
         uniqueConstraints = {@UniqueConstraint(columnNames = {"longitude", "latitude"})
         })
-@Data
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@Getter
+@Setter
+@Builder(toBuilder = true)
+@ToString
+@RequiredArgsConstructor
+@AllArgsConstructor
 public class Location {
 
     @Id
@@ -24,4 +30,16 @@ public class Location {
     @Column(name = "latitude")
     private Double latitude;
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+        Location location = (Location) o;
+        return getId() != null && Objects.equals(getId(), location.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
+    }
 }

@@ -6,6 +6,8 @@ import org.springframework.stereotype.Service;
 import ru.zalimannard.dripchip.exception.BadRequestException;
 import ru.zalimannard.dripchip.exception.ConflictException;
 import ru.zalimannard.dripchip.exception.NotFoundException;
+import ru.zalimannard.dripchip.schema.location.dto.LocationRequestDto;
+import ru.zalimannard.dripchip.schema.location.dto.LocationResponseDto;
 
 @Service
 @RequiredArgsConstructor
@@ -15,8 +17,8 @@ public class LocationServiceImpl implements LocationService {
     private final LocationRepository locationRepository;
 
     @Override
-    public LocationDto create(LocationDto locationDto) {
-        Location locationRequest = locationMapper.toEntity(locationDto);
+    public LocationResponseDto create(LocationRequestDto locationRequestDto) {
+        Location locationRequest = locationMapper.toEntity(locationRequestDto);
 
         Location locationResponse = createEntity(locationRequest);
 
@@ -29,7 +31,7 @@ public class LocationServiceImpl implements LocationService {
     }
 
     @Override
-    public LocationDto read(long id) {
+    public LocationResponseDto read(long id) {
         Location locationResponse = readEntity(id);
 
         return locationMapper.toDto(locationResponse);
@@ -41,8 +43,8 @@ public class LocationServiceImpl implements LocationService {
     }
 
     @Override
-    public LocationDto update(long id, LocationDto locationDto) {
-        Location locationRequest = locationMapper.toEntity(locationDto);
+    public LocationResponseDto update(long id, LocationRequestDto locationRequestDto) {
+        Location locationRequest = locationMapper.toEntity(locationRequestDto);
 
         Location locationResponse = updateEntity(id, locationRequest);
 

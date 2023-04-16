@@ -3,6 +3,8 @@ package ru.zalimannard.dripchip.schema.location;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import ru.zalimannard.dripchip.schema.location.dto.LocationRequestDto;
+import ru.zalimannard.dripchip.schema.location.dto.LocationResponseDto;
 
 @RestController
 @RequestMapping("${application.endpoint.locations}")
@@ -12,20 +14,20 @@ public class LocationController {
     private final LocationService locationService;
 
     @GetMapping("{id}")
-    public LocationDto get(@PathVariable long id) {
+    public LocationResponseDto get(@PathVariable long id) {
         return locationService.read(id);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public LocationDto post(@RequestBody LocationDto locationDto) {
-        return locationService.create(locationDto);
+    public LocationResponseDto post(@RequestBody LocationRequestDto locationRequestDto) {
+        return locationService.create(locationRequestDto);
     }
 
     @PutMapping("{id}")
-    public LocationDto put(@PathVariable long id,
-                           @RequestBody LocationDto locationDto) {
-        return locationService.update(id, locationDto);
+    public LocationResponseDto put(@PathVariable long id,
+                                   @RequestBody LocationRequestDto locationRequestDto) {
+        return locationService.update(id, locationRequestDto);
     }
 
     @DeleteMapping("{id}")

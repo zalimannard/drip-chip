@@ -1,12 +1,12 @@
 package ru.zalimannard.dripchip.schema.location;
 
-import org.mapstruct.Mapper;
+import ru.zalimannard.dripchip.schema.location.dto.LocationRequestDto;
+import ru.zalimannard.dripchip.schema.location.dto.LocationResponseDto;
 
-@Mapper(componentModel = "spring")
 public interface LocationMapper {
 
-    Location toEntity(LocationDto dto);
+    Location toEntity(LocationRequestDto dto);
 
-    LocationDto toDto(Location entity);
+    LocationResponseDto toDto(Location entity);
 
 }

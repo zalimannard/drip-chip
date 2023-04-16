@@ -15,16 +15,20 @@ public class AccountRequestDto {
     @JsonProperty("firstName")
     @NotBlank
     String firstName;
+
     @JsonProperty("lastName")
     @NotBlank
     String lastName;
+
     @JsonProperty("email")
     @NotBlank
     @Email
     String email;
+
     @JsonProperty("password")
     @NotBlank
     String password;
+
     @JsonProperty("role")
     @NotNull
     AccountRole role;

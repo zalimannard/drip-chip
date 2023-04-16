@@ -13,7 +13,6 @@ import ru.zalimannard.dripchip.schema.animal.ownedtype.type.AnimalTypeMapper;
 import ru.zalimannard.dripchip.schema.animal.ownedtype.type.AnimalTypeService;
 import ru.zalimannard.dripchip.schema.animal.visitedlocation.VisitedLocation;
 import ru.zalimannard.dripchip.schema.location.Location;
-import ru.zalimannard.dripchip.schema.location.LocationDto;
 import ru.zalimannard.dripchip.schema.location.LocationMapper;
 import ru.zalimannard.dripchip.schema.location.LocationService;
 
@@ -66,8 +65,7 @@ public abstract class AnimalMapper {
         }
 
         if (dto.getChippingLocationId() != null) {
-            LocationDto locationDto = locationService.read(dto.getChippingLocationId());
-            Location location = locationMapper.toEntity(locationDto);
+            Location location = locationService.readEntity(dto.getChippingLocationId());
             entity.setChippingLocation(location);
         }
     }
