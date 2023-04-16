@@ -1,4 +1,4 @@
-package ru.zalimannard.dripchip.integration.animaltype.get;
+package ru.zalimannard.dripchip.integration.animaltype.post;
 
 import io.restassured.RestAssured;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,15 +14,17 @@ import ru.zalimannard.dripchip.integration.DefaultAuth;
 import ru.zalimannard.dripchip.integration.Specifications;
 import ru.zalimannard.dripchip.integration.account.AccountFactory;
 import ru.zalimannard.dripchip.integration.account.AccountSteps;
+import ru.zalimannard.dripchip.integration.animaltype.AnimalTypeFactory;
 import ru.zalimannard.dripchip.integration.animaltype.AnimalTypeSteps;
 import ru.zalimannard.dripchip.schema.account.AccountController;
 import ru.zalimannard.dripchip.schema.account.dto.AccountRequestDto;
 import ru.zalimannard.dripchip.schema.account.role.AccountRole;
+import ru.zalimannard.dripchip.schema.animal.ownedtype.type.dto.AnimalTypeRequestDto;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class AnimalTypeGetNotFoundTests {
+class AnimalTypePostConflictTests {
 
     @LocalServerPort
     private int port;
@@ -30,7 +32,7 @@ class AnimalTypeGetNotFoundTests {
     @Autowired
     private AccountController accountController;
     @Autowired
-    private AccountController locationController;
+    private AccountController animalTypeController;
 
     @Autowired
     private AccountToAuthConverter accountToAuthConverter;
@@ -40,25 +42,26 @@ class AnimalTypeGetNotFoundTests {
     @BeforeEach
     void setUp() {
         assertThat(accountController).isNotNull();
-        assertThat(locationController).isNotNull();
+        assertThat(animalTypeController).isNotNull();
 
         RestAssured.port = port;
         RestAssured.requestSpecification = Specifications.requestSpec();
     }
 
     @ParameterizedTest
-    @DisplayName("Негативный тест. Запрос несуществующего типа животных")
+    @DisplayName("Негативный тест. Тип с указанным названием уже существует")
     @CsvSource(value = {
-            "ADMIN, 42424242",
-            "CHIPPER, 42424242",
-            "USER, 42424242",
+            "ADMIN",
+            "CHIPPER",
     })
-    void nonexistentAnimalType(AccountRole role, Long locationId) {
-        AccountRequestDto account = AccountFactory.createAccountRequest(role);
-        AccountSteps.post(account, defaultAuth.adminAuth());
-        String auth = accountToAuthConverter.convert(account);
+    void coordinatesAlreadyUsed(AccountRole role) {
+        AccountRequestDto requester = AccountFactory.createAccountRequest(role);
+        AccountSteps.post(requester, defaultAuth.adminAuth());
+        String auth = accountToAuthConverter.convert(requester);
 
-        ExceptionResponse response = AnimalTypeSteps.getExpectedNotFound(locationId, auth);
+        AnimalTypeRequestDto request = AnimalTypeFactory.createAnimalTypeRequest();
+        AnimalTypeSteps.post(request, auth);
+        ExceptionResponse response = AnimalTypeSteps.postExpectedConflict(request, auth);
         assertThat(response).isNotNull();
     }
 
