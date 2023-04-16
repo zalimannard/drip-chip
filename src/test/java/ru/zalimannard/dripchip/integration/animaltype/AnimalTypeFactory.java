@@ -18,5 +18,5 @@ public class AnimalTypeFactory {
                 .type(animalTypeRequestDto.getType())
                 .build();
     }
-    
+
 }

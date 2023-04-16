@@ -76,7 +76,7 @@ public class AnimalTypeSteps {
     }
 
     public static AnimalTypeResponseDto post(AnimalTypeRequestDto animalTypeRequestDto,
-                                           String auth) {
+                                             String auth) {
         return basePost(animalTypeRequestDto, auth)
                 .statusCode(201)
                 .extract().as(AnimalTypeResponseDto.class);
@@ -129,7 +129,7 @@ public class AnimalTypeSteps {
     }
 
     public static AnimalTypeResponseDto put(Long id, AnimalTypeRequestDto animalTypeRequestDto,
-                                          String auth) {
+                                            String auth) {
         return basePut(id, animalTypeRequestDto, auth)
                 .statusCode(200)
                 .extract().as(AnimalTypeResponseDto.class);

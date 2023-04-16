@@ -1,5 +1,6 @@
 package ru.zalimannard.dripchip.schema.animal.ownedtype.type.dto;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
@@ -12,5 +13,11 @@ public class AnimalTypeRequestDto {
     @JsonProperty("type")
     @NotBlank
     String type;
+
+    // У Jackson проблема с десереализацией классов с одним полем. Поэтому конкретный метод
+    @JsonCreator
+    public AnimalTypeRequestDto(@JsonProperty("type") String type) {
+        this.type = type;
+    }
 
 }
