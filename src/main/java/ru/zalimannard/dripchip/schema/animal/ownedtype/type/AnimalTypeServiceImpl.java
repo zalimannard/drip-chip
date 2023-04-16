@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 import ru.zalimannard.dripchip.exception.BadRequestException;
 import ru.zalimannard.dripchip.exception.ConflictException;
 import ru.zalimannard.dripchip.exception.NotFoundException;
+import ru.zalimannard.dripchip.schema.animal.ownedtype.type.dto.AnimalTypeRequestDto;
+import ru.zalimannard.dripchip.schema.animal.ownedtype.type.dto.AnimalTypeResponseDto;
 
 import java.util.List;
 import java.util.Set;
@@ -19,8 +21,8 @@ public class AnimalTypeServiceImpl implements AnimalTypeService {
     private final AnimalTypeRepository animalTypeRepository;
 
     @Override
-    public AnimalTypeDto create(AnimalTypeDto animalTypeDto) {
-        AnimalType animalTypeRequest = animalTypeMapper.toEntity(animalTypeDto);
+    public AnimalTypeResponseDto create(AnimalTypeRequestDto animalTypeRequestDto) {
+        AnimalType animalTypeRequest = animalTypeMapper.toEntity(animalTypeRequestDto);
 
         AnimalType animalTypeResponse = createEntity(animalTypeRequest);
 
@@ -33,7 +35,7 @@ public class AnimalTypeServiceImpl implements AnimalTypeService {
     }
 
     @Override
-    public AnimalTypeDto read(long id) {
+    public AnimalTypeResponseDto read(long id) {
         AnimalType animalTypeResponse = readEntity(id);
 
         return animalTypeMapper.toDto(animalTypeResponse);
@@ -57,8 +59,8 @@ public class AnimalTypeServiceImpl implements AnimalTypeService {
     }
 
     @Override
-    public AnimalTypeDto update(long id, AnimalTypeDto animalTypeDto) {
-        AnimalType animalTypeRequest = animalTypeMapper.toEntity(animalTypeDto);
+    public AnimalTypeResponseDto update(long id, AnimalTypeRequestDto animalTypeRequestDto) {
+        AnimalType animalTypeRequest = animalTypeMapper.toEntity(animalTypeRequestDto);
 
         AnimalType animalTypeResponse = updateEntity(id, animalTypeRequest);
 

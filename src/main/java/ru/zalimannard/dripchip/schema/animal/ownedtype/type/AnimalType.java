@@ -1,16 +1,21 @@
 package ru.zalimannard.dripchip.schema.animal.ownedtype.type;
 
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.*;
+import org.hibernate.Hibernate;
 import ru.zalimannard.dripchip.schema.animal.Animal;
 
+import java.util.Objects;
 import java.util.Set;
 
 @Entity
 @Table(name = "animal_types")
-@Data
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@Getter
+@Setter
+@Builder(toBuilder = true)
+@ToString
+@RequiredArgsConstructor
+@AllArgsConstructor
 public class AnimalType {
 
     @Id
@@ -26,4 +31,16 @@ public class AnimalType {
     @Column(name = "animals")
     private Set<Animal> animals;
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+        AnimalType that = (AnimalType) o;
+        return getId() != null && Objects.equals(getId(), that.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
+    }
 }

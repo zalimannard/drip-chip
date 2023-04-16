@@ -3,6 +3,8 @@ package ru.zalimannard.dripchip.schema.animal.ownedtype.type;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import ru.zalimannard.dripchip.schema.animal.ownedtype.type.dto.AnimalTypeRequestDto;
+import ru.zalimannard.dripchip.schema.animal.ownedtype.type.dto.AnimalTypeResponseDto;
 
 @RestController
 @RequestMapping("${application.endpoint.animals}${application.endpoint.types}")
@@ -12,20 +14,20 @@ public class AnimalTypeController {
     private final AnimalTypeService animalTypeService;
 
     @GetMapping("{id}")
-    public AnimalTypeDto get(@PathVariable long id) {
+    public AnimalTypeResponseDto get(@PathVariable long id) {
         return animalTypeService.read(id);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public AnimalTypeDto post(@RequestBody AnimalTypeDto animalTypeDto) {
-        return animalTypeService.create(animalTypeDto);
+    public AnimalTypeResponseDto post(@RequestBody AnimalTypeRequestDto animalTypeRequestDto) {
+        return animalTypeService.create(animalTypeRequestDto);
     }
 
     @PutMapping("{id}")
-    public AnimalTypeDto put(@PathVariable long id,
-                             @RequestBody AnimalTypeDto animalTypeDto) {
-        return animalTypeService.update(id, animalTypeDto);
+    public AnimalTypeResponseDto put(@PathVariable long id,
+                                     @RequestBody AnimalTypeRequestDto animalTypeRequestDto) {
+        return animalTypeService.update(id, animalTypeRequestDto);
     }
 
     @DeleteMapping("{id}")
