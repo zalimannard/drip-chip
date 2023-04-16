@@ -11,8 +11,14 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 import ru.zalimannard.dripchip.integration.AccountToAuthConverter;
 import ru.zalimannard.dripchip.integration.DefaultAuth;
 import ru.zalimannard.dripchip.integration.Specifications;
+import ru.zalimannard.dripchip.integration.account.AccountFactory;
+import ru.zalimannard.dripchip.integration.account.AccountSteps;
+import ru.zalimannard.dripchip.integration.location.LocationFactory;
+import ru.zalimannard.dripchip.integration.location.LocationSteps;
 import ru.zalimannard.dripchip.schema.account.AccountController;
+import ru.zalimannard.dripchip.schema.account.dto.AccountRequestDto;
 import ru.zalimannard.dripchip.schema.account.role.AccountRole;
+import ru.zalimannard.dripchip.schema.location.dto.LocationRequestDto;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -42,13 +48,18 @@ class LocationPutNotFoundTests {
     }
 
     @ParameterizedTest
-    @DisplayName("Негативный тест")
+    @DisplayName("Негативный тест. Изменение несуществующей локации")
     @CsvSource(value = {
-            "ADMIN",
-            "CHIPPER",
-            "USER",
+            "ADMIN, 42424242",
+            "CHIPPER, 42424242",
     })
-    void test(AccountRole role) {
+    void nonexistentLocation(AccountRole role, Long locationId) {
+        AccountRequestDto account = AccountFactory.createAccountRequest(role);
+        AccountSteps.post(account, defaultAuth.adminAuth());
+        String auth = accountToAuthConverter.convert(account);
+
+        LocationRequestDto request = LocationFactory.createLocationRequest();
+        LocationSteps.putExpectedNotFound(locationId, request, auth);
     }
 
 }

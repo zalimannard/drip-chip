@@ -47,13 +47,13 @@ class LocationGetNotFoundTests {
     }
 
     @ParameterizedTest
-    @DisplayName("Негативный тест. Админ запрашивает несуществующий аккаунт")
+    @DisplayName("Негативный тест. Запрос несуществующего аккаунта")
     @CsvSource(value = {
             "ADMIN, 42424242",
             "CHIPPER, 42424242",
             "USER, 42424242",
     })
-    void nonexistentAccountByUser(AccountRole role, Long locationId) {
+    void nonexistentLocation(AccountRole role, Long locationId) {
         AccountRequestDto account = AccountFactory.createAccountRequest(role);
         AccountSteps.post(account, defaultAuth.adminAuth());
         String auth = accountToAuthConverter.convert(account);

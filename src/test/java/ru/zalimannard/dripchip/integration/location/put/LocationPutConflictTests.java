@@ -8,11 +8,19 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import ru.zalimannard.dripchip.exception.response.ExceptionResponse;
 import ru.zalimannard.dripchip.integration.AccountToAuthConverter;
 import ru.zalimannard.dripchip.integration.DefaultAuth;
 import ru.zalimannard.dripchip.integration.Specifications;
+import ru.zalimannard.dripchip.integration.account.AccountFactory;
+import ru.zalimannard.dripchip.integration.account.AccountSteps;
+import ru.zalimannard.dripchip.integration.location.LocationFactory;
+import ru.zalimannard.dripchip.integration.location.LocationSteps;
 import ru.zalimannard.dripchip.schema.account.AccountController;
+import ru.zalimannard.dripchip.schema.account.dto.AccountRequestDto;
 import ru.zalimannard.dripchip.schema.account.role.AccountRole;
+import ru.zalimannard.dripchip.schema.location.dto.LocationRequestDto;
+import ru.zalimannard.dripchip.schema.location.dto.LocationResponseDto;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -42,13 +50,24 @@ class LocationPutConflictTests {
     }
 
     @ParameterizedTest
-    @DisplayName("Негативный тест")
+    @DisplayName("Негативный тест. Локация с такими координатами уже существует")
     @CsvSource(value = {
             "ADMIN",
             "CHIPPER",
-            "USER",
     })
-    void test(AccountRole role) {
+    void coordinatesAlreadyUsed(AccountRole role) {
+        AccountRequestDto requester = AccountFactory.createAccountRequest(role);
+        AccountSteps.post(requester, defaultAuth.adminAuth());
+        String auth = accountToAuthConverter.convert(requester);
+
+        LocationRequestDto preRequest = LocationFactory.createLocationRequest();
+        LocationSteps.post(preRequest, defaultAuth.adminAuth());
+
+        LocationRequestDto request = LocationFactory.createLocationRequest();
+        LocationResponseDto createdLocation = LocationSteps.post(request, auth);
+
+        ExceptionResponse response = LocationSteps.putExpectedConflict(createdLocation.getId(), preRequest, auth);
+        assertThat(response).isNotNull();
     }
 
 }
