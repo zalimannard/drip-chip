@@ -1,4 +1,4 @@
-package ru.zalimannard.dripchip.integration.location.delete;
+package ru.zalimannard.dripchip.integration.animaltype.delete;
 
 import io.restassured.RestAssured;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,7 +15,7 @@ import ru.zalimannard.dripchip.integration.DefaultAuth;
 import ru.zalimannard.dripchip.integration.Specifications;
 import ru.zalimannard.dripchip.integration.account.AccountFactory;
 import ru.zalimannard.dripchip.integration.account.AccountSteps;
-import ru.zalimannard.dripchip.integration.location.LocationSteps;
+import ru.zalimannard.dripchip.integration.animaltype.AnimalTypeSteps;
 import ru.zalimannard.dripchip.schema.account.AccountController;
 import ru.zalimannard.dripchip.schema.account.dto.AccountRequestDto;
 import ru.zalimannard.dripchip.schema.account.role.AccountRole;
@@ -23,7 +23,7 @@ import ru.zalimannard.dripchip.schema.account.role.AccountRole;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class LocationDeleteBadRequestTests {
+class AnimalTypeDeleteBadRequestTests {
 
     @LocalServerPort
     private int port;
@@ -31,7 +31,7 @@ class LocationDeleteBadRequestTests {
     @Autowired
     private AccountController accountController;
     @Autowired
-    private AccountController locationController;
+    private AccountController animalTypeController;
 
     @Autowired
     private AccountToAuthConverter accountToAuthConverter;
@@ -41,14 +41,14 @@ class LocationDeleteBadRequestTests {
     @BeforeEach
     void setUp() {
         assertThat(accountController).isNotNull();
-        assertThat(locationController).isNotNull();
+        assertThat(animalTypeController).isNotNull();
 
         RestAssured.port = port;
         RestAssured.requestSpecification = Specifications.requestSpec();
     }
 
     @ParameterizedTest
-    @DisplayName("Негативный тест. Неверный locationId")
+    @DisplayName("Негативный тест. Неверный typeId")
     @CsvSource(value = {
             "ADMIN, null",
             "ADMIN, 0",
@@ -63,19 +63,19 @@ class LocationDeleteBadRequestTests {
             "USER, -1",
             "USER, -424242",
     }, nullValues = {"null"})
-    void invalidLocationId(AccountRole role, Long locationId) {
+    void invalidTypeId(AccountRole role, Long animalTypeId) {
         AccountRequestDto requester = AccountFactory.createAccountRequest(role);
         AccountSteps.post(requester, defaultAuth.adminAuth());
         String auth = accountToAuthConverter.convert(requester);
 
-        ExceptionResponse response = LocationSteps.deleteExpectedBadRequest(locationId, auth);
+        ExceptionResponse response = AnimalTypeSteps.deleteExpectedBadRequest(animalTypeId, auth);
         assertThat(response).isNotNull();
     }
 
     @Test
-    @DisplayName("Негативный тест. Точка локации связана с животным")
+    @DisplayName("Негативный тест. Есть животные связанные с типом")
     void accountIsLinkedToAnimal() {
-        // TODO: Написать тест когда локация будет связана с животным
+        // TODO: Написать тест когда тип будет связан с животным
         assertThat(false).isTrue();
     }
 

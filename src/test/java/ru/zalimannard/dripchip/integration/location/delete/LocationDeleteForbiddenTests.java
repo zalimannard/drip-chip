@@ -49,12 +49,12 @@ class LocationDeleteForbiddenTests {
     }
 
     @ParameterizedTest
-    @DisplayName("Позитивный тест. Удаление точки локации")
+    @DisplayName("Негативный тест. Удаление точки локации")
     @CsvSource(value = {
             "CHIPPER",
             "USER",
     })
-    void deleteSelfOwnAccount(AccountRole role) {
+    void deleteLocationByNonadmin(AccountRole role) {
         AccountRequestDto request = AccountFactory.createAccountRequest(role);
         AccountSteps.post(request, defaultAuth.adminAuth());
         String auth = accountToAuthConverter.convert(request);
