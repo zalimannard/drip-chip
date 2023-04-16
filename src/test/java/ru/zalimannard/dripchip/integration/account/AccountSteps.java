@@ -173,4 +173,53 @@ public class AccountSteps {
                 .extract().as(ExceptionResponse.class);
     }
 
+
+    private static ValidatableResponse baseDelete(Integer id,
+                                                  String auth) {
+        if (auth != null) {
+            return given()
+                    .headers("Authorization",
+                            "Basic " + auth)
+                    .when()
+                    .delete(endpoint + "/" + id)
+                    .then().log().all();
+        } else {
+            return given()
+                    .when()
+                    .delete(endpoint + "/" + id)
+                    .then().log().all();
+        }
+    }
+
+    public static void delete(Integer id,
+                              String auth) {
+        baseDelete(id, auth)
+                .statusCode(200);
+    }
+
+    public static ExceptionResponse deleteExpectedBadRequest(Integer id,
+                                                             String auth) {
+        return baseDelete(id, auth)
+                .statusCode(400)
+                .extract().as(ExceptionResponse.class);
+    }
+
+    public static void deleteExpectedUnauthorized(Integer id,
+                                                  String auth) {
+        baseDelete(id, auth)
+                .statusCode(401);
+    }
+
+    public static void deleteExpectedForbidden(Integer id,
+                                               String auth) {
+        baseDelete(id, auth)
+                .statusCode(403);
+    }
+
+    public static void deleteExpectedNotFound(Integer id,
+                                              String auth) {
+        baseDelete(id, auth)
+                .statusCode(404);
+    }
+
 }

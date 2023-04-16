@@ -1,9 +1,8 @@
-package ru.zalimannard.dripchip.integration.account.get;
+package ru.zalimannard.dripchip.integration.account.delete;
 
 import io.restassured.RestAssured;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +21,7 @@ import ru.zalimannard.dripchip.schema.account.role.AccountRole;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class AccountGetUnauthorizedTests {
+class AccountDeleteForbiddenTests {
 
     @LocalServerPort
     private int port;
@@ -48,26 +47,40 @@ class AccountGetUnauthorizedTests {
         adminAuth = accountToAuthConverter.convert(adminEmail, adminPassword);
     }
 
+
     @ParameterizedTest
-    @DisplayName("Негативный тест. Запрос несуществующего аккаунта от неавторизированного аккаунта")
+    @DisplayName("Негативный тест. Удаление не себя")
     @CsvSource(value = {
-            "42424242",
+            "USER, USER",
+            "USER, CHIPPER",
+            "USER, ADMIN",
+            "CHIPPER, USER",
+            "CHIPPER, CHIPPER",
+            "CHIPPER, ADMIN",
     })
-    void nonexistentAccountByUnauthorized() {
-        AccountRequestDto account = AccountFactory.createAccountRequest(AccountRole.USER);
-        String auth = accountToAuthConverter.convert(account);
-        AccountSteps.getExpectedUnauthorized(42424242, auth);
+    void deleteNotSelf(AccountRole activeRole, AccountRole passiveRole) {
+        AccountRequestDto passiveAccountRequest = AccountFactory.createAccountRequest(passiveRole);
+        AccountResponseDto createdPassiveAccount = AccountSteps.post(passiveAccountRequest, adminAuth);
+
+        AccountRequestDto activeAccountRequest = AccountFactory.createAccountRequest(activeRole);
+        AccountSteps.post(activeAccountRequest, adminAuth);
+        String auth = accountToAuthConverter.convert(activeAccountRequest);
+
+        AccountSteps.deleteExpectedForbidden(createdPassiveAccount.getId(), auth);
     }
 
-    @Test
-    @DisplayName("Негативный тест. Запрос существующего аккаунта от несуществующего аккаунта")
-    void existingAccountByUserUnauthorized() {
-        AccountRequestDto account = AccountFactory.createAccountRequest(AccountRole.USER);
-        AccountResponseDto createdAccount = AccountSteps.post(account, adminAuth);
+    @ParameterizedTest
+    @DisplayName("Негативный тест. Удаление несуществующего аккаунта")
+    @CsvSource(value = {
+            "USER, 42424242",
+            "CHIPPER, 42424242",
+    })
+    void deleteNonexistentAccount(AccountRole activeRole, Integer accountId) {
+        AccountRequestDto activeAccountRequest = AccountFactory.createAccountRequest(activeRole);
+        AccountSteps.post(activeAccountRequest, adminAuth);
+        String auth = accountToAuthConverter.convert(activeAccountRequest);
 
-        AccountRequestDto requester = AccountFactory.createAccountRequest(AccountRole.USER);
-        String auth = accountToAuthConverter.convert(requester);
-        AccountSteps.getExpectedUnauthorized(createdAccount.getId(), auth);
+        AccountSteps.deleteExpectedForbidden(accountId, auth);
     }
 
 }

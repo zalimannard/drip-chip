@@ -51,8 +51,8 @@ class AccountPutNotFoundTests {
     @CsvSource(value = {
             "42424242",
     })
-    void changesNonexistentAccount(Integer accountId) {
-        AccountRequestDto newAccount = AccountFactory.createAccountRequest(AccountRole.USER).toBuilder().build();
+    void changeNonexistentAccount(Integer accountId) {
+        AccountRequestDto newAccount = AccountFactory.createAccountRequest(AccountRole.USER);
         AccountSteps.putExpectedNotFound(accountId, newAccount, adminAuth);
     }
 

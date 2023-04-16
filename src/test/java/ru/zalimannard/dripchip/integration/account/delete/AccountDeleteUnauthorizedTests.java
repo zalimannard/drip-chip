@@ -1,11 +1,9 @@
-package ru.zalimannard.dripchip.integration.account.get;
+package ru.zalimannard.dripchip.integration.account.delete;
 
 import io.restassured.RestAssured;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -22,7 +20,7 @@ import ru.zalimannard.dripchip.schema.account.role.AccountRole;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class AccountGetUnauthorizedTests {
+class AccountDeleteUnauthorizedTests {
 
     @LocalServerPort
     private int port;
@@ -48,26 +46,25 @@ class AccountGetUnauthorizedTests {
         adminAuth = accountToAuthConverter.convert(adminEmail, adminPassword);
     }
 
-    @ParameterizedTest
-    @DisplayName("Негативный тест. Запрос несуществующего аккаунта от неавторизированного аккаунта")
-    @CsvSource(value = {
-            "42424242",
-    })
-    void nonexistentAccountByUnauthorized() {
-        AccountRequestDto account = AccountFactory.createAccountRequest(AccountRole.USER);
-        String auth = accountToAuthConverter.convert(account);
-        AccountSteps.getExpectedUnauthorized(42424242, auth);
+    @Test
+    @DisplayName("Негативный тест. Запрос без авторизационных данных")
+    void withoutAuth() {
+        AccountRequestDto request = AccountFactory.createAccountRequest(AccountRole.USER);
+        AccountResponseDto actual = AccountSteps.post(request, adminAuth);
+
+        AccountSteps.deleteExpectedUnauthorized(actual.getId(), null);
     }
 
     @Test
-    @DisplayName("Негативный тест. Запрос существующего аккаунта от несуществующего аккаунта")
-    void existingAccountByUserUnauthorized() {
-        AccountRequestDto account = AccountFactory.createAccountRequest(AccountRole.USER);
-        AccountResponseDto createdAccount = AccountSteps.post(account, adminAuth);
-
+    @DisplayName("Негативный тест. Запрос от несуществующего аккаунта")
+    void invalidAuth() {
         AccountRequestDto requester = AccountFactory.createAccountRequest(AccountRole.USER);
         String auth = accountToAuthConverter.convert(requester);
-        AccountSteps.getExpectedUnauthorized(createdAccount.getId(), auth);
+
+        AccountRequestDto request = AccountFactory.createAccountRequest(AccountRole.USER);
+        AccountResponseDto actual = AccountSteps.post(request, adminAuth);
+
+        AccountSteps.deleteExpectedUnauthorized(actual.getId(), auth);
     }
 
 }

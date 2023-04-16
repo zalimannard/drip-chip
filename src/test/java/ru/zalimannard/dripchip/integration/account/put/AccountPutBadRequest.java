@@ -52,14 +52,27 @@ class AccountPutBadRequest {
 
     @ParameterizedTest
     @DisplayName("Негативный тест. Неверный accountId")
-    @NullSource
-    @ValueSource(ints = {
-            -424242,
-            -1,
-            0})
-    void invalidAccountId(Integer id) {
+    @CsvSource(value = {
+            "ADMIN, null",
+            "ADMIN, 0",
+            "ADMIN, -1",
+            "ADMIN, -424242",
+            "CHIPPER, null",
+            "CHIPPER, 0",
+            "CHIPPER, -1",
+            "CHIPPER, -424242",
+            "USER, null",
+            "USER, 0",
+            "USER, -1",
+            "USER, -424242",
+    }, nullValues = {"null"})
+    void invalidAccountId(AccountRole role, Integer id) {
+        AccountRequestDto requester = AccountFactory.createAccountRequest(role);
+        AccountSteps.post(requester, adminAuth);
+        String auth = accountToAuthConverter.convert(requester);
+
         AccountRequestDto request = AccountFactory.createAccountRequest(AccountRole.USER);
-        ExceptionResponse response = AccountSteps.putExpectedBadRequest(id, request, adminAuth);
+        ExceptionResponse response = AccountSteps.putExpectedBadRequest(id, request, auth);
         assertThat(response).isNotNull();
     }
 

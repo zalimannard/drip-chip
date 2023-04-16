@@ -1,4 +1,4 @@
-package ru.zalimannard.dripchip.integration.account.get;
+package ru.zalimannard.dripchip.integration.account.delete;
 
 import io.restassured.RestAssured;
 import org.junit.jupiter.api.BeforeEach;
@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import ru.zalimannard.dripchip.exception.response.ExceptionResponse;
 import ru.zalimannard.dripchip.integration.AccountToAuthConverter;
 import ru.zalimannard.dripchip.integration.Specifications;
 import ru.zalimannard.dripchip.integration.account.AccountFactory;
@@ -22,7 +23,7 @@ import ru.zalimannard.dripchip.schema.account.role.AccountRole;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class AccountGetUnauthorizedTests {
+class AccountDeleteOkTests {
 
     @LocalServerPort
     private int port;
@@ -48,26 +49,42 @@ class AccountGetUnauthorizedTests {
         adminAuth = accountToAuthConverter.convert(adminEmail, adminPassword);
     }
 
-    @ParameterizedTest
-    @DisplayName("Негативный тест. Запрос несуществующего аккаунта от неавторизированного аккаунта")
-    @CsvSource(value = {
-            "42424242",
-    })
-    void nonexistentAccountByUnauthorized() {
-        AccountRequestDto account = AccountFactory.createAccountRequest(AccountRole.USER);
-        String auth = accountToAuthConverter.convert(account);
-        AccountSteps.getExpectedUnauthorized(42424242, auth);
+    @Test
+    @DisplayName("Позитивный тест. Админ удаляет аккаунт")
+    void adminDeleteAccount() {
+        AccountRequestDto request = AccountFactory.createAccountRequest(AccountRole.USER);
+        AccountResponseDto actual = AccountSteps.post(request, adminAuth);
+        AccountResponseDto expected = AccountFactory.createAccountResponse(actual.getId(), request);
+        assertThat(actual).isEqualTo(expected);
+
+        AccountResponseDto createdAccount = AccountSteps.get(actual.getId(), adminAuth);
+        assertThat(createdAccount).isEqualTo(expected);
+
+        AccountSteps.delete(actual.getId(), adminAuth);
+        ExceptionResponse response = AccountSteps.getExpectedNotFound(actual.getId(), adminAuth);
+        assertThat(response).isNotNull();
     }
 
-    @Test
-    @DisplayName("Негативный тест. Запрос существующего аккаунта от несуществующего аккаунта")
-    void existingAccountByUserUnauthorized() {
-        AccountRequestDto account = AccountFactory.createAccountRequest(AccountRole.USER);
-        AccountResponseDto createdAccount = AccountSteps.post(account, adminAuth);
+    @ParameterizedTest
+    @DisplayName("Позитивный тест. Удаление своего аккаунта")
+    @CsvSource(value = {
+            "ADMIN",
+            "CHIPPER",
+            "USER",
+    })
+    void deleteSelfOwnAccount(AccountRole role) {
+        AccountRequestDto request = AccountFactory.createAccountRequest(role);
+        AccountResponseDto actual = AccountSteps.post(request, adminAuth);
+        AccountResponseDto expected = AccountFactory.createAccountResponse(actual.getId(), request);
+        assertThat(actual).isEqualTo(expected);
+        String auth = accountToAuthConverter.convert(request);
 
-        AccountRequestDto requester = AccountFactory.createAccountRequest(AccountRole.USER);
-        String auth = accountToAuthConverter.convert(requester);
-        AccountSteps.getExpectedUnauthorized(createdAccount.getId(), auth);
+        AccountResponseDto createdAccount = AccountSteps.get(actual.getId(), adminAuth);
+        assertThat(createdAccount).isEqualTo(expected);
+
+        AccountSteps.delete(actual.getId(), auth);
+        ExceptionResponse response = AccountSteps.getExpectedNotFound(actual.getId(), adminAuth);
+        assertThat(response).isNotNull();
     }
 
 }

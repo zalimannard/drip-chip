@@ -1,4 +1,4 @@
-package ru.zalimannard.dripchip.integration.account.get;
+package ru.zalimannard.dripchip.integration.account.delete;
 
 import io.restassured.RestAssured;
 import org.junit.jupiter.api.BeforeEach;
@@ -10,19 +10,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import ru.zalimannard.dripchip.exception.response.ExceptionResponse;
 import ru.zalimannard.dripchip.integration.AccountToAuthConverter;
 import ru.zalimannard.dripchip.integration.Specifications;
 import ru.zalimannard.dripchip.integration.account.AccountFactory;
 import ru.zalimannard.dripchip.integration.account.AccountSteps;
 import ru.zalimannard.dripchip.schema.account.AccountController;
 import ru.zalimannard.dripchip.schema.account.dto.AccountRequestDto;
-import ru.zalimannard.dripchip.schema.account.dto.AccountResponseDto;
 import ru.zalimannard.dripchip.schema.account.role.AccountRole;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class AccountGetUnauthorizedTests {
+class AccountDeleteBadRequestTests {
 
     @LocalServerPort
     private int port;
@@ -49,25 +49,35 @@ class AccountGetUnauthorizedTests {
     }
 
     @ParameterizedTest
-    @DisplayName("Негативный тест. Запрос несуществующего аккаунта от неавторизированного аккаунта")
+    @DisplayName("Негативный тест. Неверный accountId")
     @CsvSource(value = {
-            "42424242",
-    })
-    void nonexistentAccountByUnauthorized() {
-        AccountRequestDto account = AccountFactory.createAccountRequest(AccountRole.USER);
-        String auth = accountToAuthConverter.convert(account);
-        AccountSteps.getExpectedUnauthorized(42424242, auth);
+            "ADMIN, null",
+            "ADMIN, 0",
+            "ADMIN, -1",
+            "ADMIN, -424242",
+            "CHIPPER, null",
+            "CHIPPER, 0",
+            "CHIPPER, -1",
+            "CHIPPER, -424242",
+            "USER, null",
+            "USER, 0",
+            "USER, -1",
+            "USER, -424242",
+    }, nullValues = {"null"})
+    void invalidAccountId(AccountRole role, Integer id) {
+        AccountRequestDto requester = AccountFactory.createAccountRequest(role);
+        AccountSteps.post(requester, adminAuth);
+        String auth = accountToAuthConverter.convert(requester);
+
+        ExceptionResponse response = AccountSteps.deleteExpectedBadRequest(id, auth);
+        assertThat(response).isNotNull();
     }
 
     @Test
-    @DisplayName("Негативный тест. Запрос существующего аккаунта от несуществующего аккаунта")
-    void existingAccountByUserUnauthorized() {
-        AccountRequestDto account = AccountFactory.createAccountRequest(AccountRole.USER);
-        AccountResponseDto createdAccount = AccountSteps.post(account, adminAuth);
-
-        AccountRequestDto requester = AccountFactory.createAccountRequest(AccountRole.USER);
-        String auth = accountToAuthConverter.convert(requester);
-        AccountSteps.getExpectedUnauthorized(createdAccount.getId(), auth);
+    @DisplayName("Негативный тест. Аккаунт связан с животным")
+    void accountIsLinkedToAnimal(AccountRole role, Integer id) {
+        // TODO: Написать тест когда животное будет связано с человеком
+        assertThat(false).isTrue();
     }
 
 }

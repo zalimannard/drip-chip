@@ -47,13 +47,26 @@ class AccountPutUnauthorizedTests {
     }
 
     @Test
-    @DisplayName("Негативный тест. Неавторизованный аккаунт")
-    void unauthorizedRequest() {
+    @DisplayName("Негативный тест. Запрос без авторизационных данных")
+    void withoutAuth() {
         AccountRequestDto account = AccountFactory.createAccountRequest(AccountRole.USER);
         AccountResponseDto createdAccount = AccountSteps.post(account, adminAuth);
 
         AccountRequestDto changedAccount = AccountFactory.createAccountRequest(AccountRole.USER);
         AccountSteps.putExpectedUnauthorized(createdAccount.getId(), changedAccount, null);
+    }
+
+    @Test
+    @DisplayName("Негативный тест. Запрос от несуществующего аккаунта")
+    void invalidAuth() {
+        AccountRequestDto requester = AccountFactory.createAccountRequest(AccountRole.USER);
+        String auth = accountToAuthConverter.convert(requester);
+
+        AccountRequestDto account = AccountFactory.createAccountRequest(AccountRole.USER);
+        AccountResponseDto createdAccount = AccountSteps.post(account, adminAuth);
+
+        AccountRequestDto changedAccount = AccountFactory.createAccountRequest(AccountRole.USER);
+        AccountSteps.putExpectedUnauthorized(createdAccount.getId(), changedAccount, auth);
     }
 
 }

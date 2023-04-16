@@ -49,7 +49,7 @@ class AccountPutConflictTests {
 
     @Test
     @DisplayName("Негативный тест. Email занят")
-    void adminChangesUser() {
+    void emailAlreadyUsed() {
         AccountRequestDto existedAccount = AccountFactory.createAccountRequest(AccountRole.USER);
         AccountSteps.post(existedAccount, adminAuth);
 

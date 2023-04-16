@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import ru.zalimannard.dripchip.integration.AccountToAuthConverter;
 import ru.zalimannard.dripchip.integration.Specifications;
 import ru.zalimannard.dripchip.integration.account.AccountFactory;
 import ru.zalimannard.dripchip.integration.account.AccountSteps;
@@ -25,6 +26,9 @@ class AccountPostUnauthorizedTests {
     @Autowired
     private AccountController accountController;
 
+    @Autowired
+    private AccountToAuthConverter accountToAuthConverter;
+
     @BeforeEach
     void setUp() {
         assertThat(accountController).isNotNull();
@@ -34,10 +38,20 @@ class AccountPostUnauthorizedTests {
     }
 
     @Test
-    @DisplayName("Негативный тест. Запрос от неавторизованного аккаунта")
+    @DisplayName("Негативный тест. Запрос без авторизационных данных")
     void withoutAuth() {
         AccountRequestDto request = AccountFactory.createAccountRequest(AccountRole.USER);
         AccountSteps.postExpectedUnauthorized(request, null);
+    }
+
+    @Test
+    @DisplayName("Негативный тест. Запрос от несуществующего аккаунта")
+    void invalidAuth() {
+        AccountRequestDto account = AccountFactory.createAccountRequest(AccountRole.USER);
+        String auth = accountToAuthConverter.convert(account);
+
+        AccountRequestDto request = AccountFactory.createAccountRequest(AccountRole.USER);
+        AccountSteps.postExpectedUnauthorized(request, auth);
     }
 
 }
