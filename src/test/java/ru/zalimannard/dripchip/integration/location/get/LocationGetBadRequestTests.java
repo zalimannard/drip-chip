@@ -62,7 +62,7 @@ class LocationGetBadRequestTests {
             "USER, -1",
             "USER, -424242",
     }, nullValues = {"null"})
-    void invalidAccountId(AccountRole role, Long pointId) {
+    void invalidPointId(AccountRole role, Long pointId) {
         AccountRequestDto account = AccountFactory.createAccountRequest(role);
         AccountSteps.post(account, defaultAuth.adminAuth());
         String auth = accountToAuthConverter.convert(account);

@@ -49,14 +49,32 @@ class AccountGetUnauthorizedTests {
     }
 
     @ParameterizedTest
-    @DisplayName("Негативный тест. Запрос несуществующего аккаунта от неавторизированного аккаунта")
+    @DisplayName("Негативный тест. Запрос несуществующего аккаунта без авторизации")
     @CsvSource(value = {
             "42424242",
     })
-    void nonexistentAccountByUnauthorized() {
+    void nonexistentAccountWithoutAuth(Integer accountId) {
+        AccountSteps.getExpectedUnauthorized(accountId, null);
+    }
+
+    @Test
+    @DisplayName("Негативный тест. Запрос существующего аккаунта без авторизации")
+    void existingAccountWithoutAuth() {
+        AccountRequestDto account = AccountFactory.createAccountRequest(AccountRole.USER);
+        AccountResponseDto createdAccount = AccountSteps.post(account, adminAuth);
+
+        AccountSteps.getExpectedUnauthorized(createdAccount.getId(), null);
+    }
+
+    @ParameterizedTest
+    @DisplayName("Негативный тест. Запрос несуществующего аккаунта от несуществующего аккаунта")
+    @CsvSource(value = {
+            "42424242",
+    })
+    void nonexistentAccountByUnauthorized(Integer accountId) {
         AccountRequestDto account = AccountFactory.createAccountRequest(AccountRole.USER);
         String auth = accountToAuthConverter.convert(account);
-        AccountSteps.getExpectedUnauthorized(42424242, auth);
+        AccountSteps.getExpectedUnauthorized(accountId, auth);
     }
 
     @Test
