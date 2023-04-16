@@ -11,8 +11,15 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 import ru.zalimannard.dripchip.integration.AccountToAuthConverter;
 import ru.zalimannard.dripchip.integration.DefaultAuth;
 import ru.zalimannard.dripchip.integration.Specifications;
+import ru.zalimannard.dripchip.integration.account.AccountFactory;
+import ru.zalimannard.dripchip.integration.account.AccountSteps;
+import ru.zalimannard.dripchip.integration.location.LocationFactory;
+import ru.zalimannard.dripchip.integration.location.LocationSteps;
 import ru.zalimannard.dripchip.schema.account.AccountController;
+import ru.zalimannard.dripchip.schema.account.dto.AccountRequestDto;
 import ru.zalimannard.dripchip.schema.account.role.AccountRole;
+import ru.zalimannard.dripchip.schema.location.dto.LocationRequestDto;
+import ru.zalimannard.dripchip.schema.location.dto.LocationResponseDto;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -42,13 +49,20 @@ class LocationDeleteForbiddenTests {
     }
 
     @ParameterizedTest
-    @DisplayName("Негативный тест")
+    @DisplayName("Позитивный тест. Удаление точки локации")
     @CsvSource(value = {
-            "ADMIN",
             "CHIPPER",
             "USER",
     })
-    void test(AccountRole role) {
+    void deleteSelfOwnAccount(AccountRole role) {
+        AccountRequestDto request = AccountFactory.createAccountRequest(role);
+        AccountSteps.post(request, defaultAuth.adminAuth());
+        String auth = accountToAuthConverter.convert(request);
+
+        LocationRequestDto location = LocationFactory.createLocationRequest();
+        LocationResponseDto createdLocation = LocationSteps.post(location, defaultAuth.adminAuth());
+
+        LocationSteps.deleteExpectedForbidden(createdLocation.getId(), auth);
     }
 
 }

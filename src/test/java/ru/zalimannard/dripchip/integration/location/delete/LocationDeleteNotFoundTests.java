@@ -11,8 +11,8 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 import ru.zalimannard.dripchip.integration.AccountToAuthConverter;
 import ru.zalimannard.dripchip.integration.DefaultAuth;
 import ru.zalimannard.dripchip.integration.Specifications;
+import ru.zalimannard.dripchip.integration.location.LocationSteps;
 import ru.zalimannard.dripchip.schema.account.AccountController;
-import ru.zalimannard.dripchip.schema.account.role.AccountRole;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -42,13 +42,12 @@ class LocationDeleteNotFoundTests {
     }
 
     @ParameterizedTest
-    @DisplayName("Негативный тест")
+    @DisplayName("Негативный тест. Удаление несуществующей локации админом")
     @CsvSource(value = {
-            "ADMIN",
-            "CHIPPER",
-            "USER",
+            "42424242",
     })
-    void test(AccountRole role) {
+    void nonexistingLocation(Long pointId) {
+        LocationSteps.deleteExpectedNotFound(pointId, defaultAuth.adminAuth());
     }
 
 }

@@ -64,18 +64,18 @@ class AccountDeleteBadRequestTests {
             "USER, -1",
             "USER, -424242",
     }, nullValues = {"null"})
-    void invalidAccountId(AccountRole role, Integer id) {
+    void invalidAccountId(AccountRole role, Integer locationId) {
         AccountRequestDto requester = AccountFactory.createAccountRequest(role);
         AccountSteps.post(requester, adminAuth);
         String auth = accountToAuthConverter.convert(requester);
 
-        ExceptionResponse response = AccountSteps.deleteExpectedBadRequest(id, auth);
+        ExceptionResponse response = AccountSteps.deleteExpectedBadRequest(locationId, auth);
         assertThat(response).isNotNull();
     }
 
     @Test
     @DisplayName("Негативный тест. Аккаунт связан с животным")
-    void accountIsLinkedToAnimal(AccountRole role, Integer id) {
+    void accountIsLinkedToAnimal() {
         // TODO: Написать тест когда животное будет связано с человеком
         assertThat(false).isTrue();
     }
