@@ -3,7 +3,6 @@ package ru.zalimannard.dripchip.integration.location.put;
 import io.restassured.RestAssured;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -91,6 +90,32 @@ class LocationPutBadRequestTests {
     }
 
     @ParameterizedTest
+    @DisplayName("Негативный тест. Неправильный locationId")
+    @CsvSource(value = {
+            "ADMIN, null",
+            "ADMIN, 0",
+            "ADMIN, -1",
+            "ADMIN, -424242",
+            "CHIPPER, null",
+            "CHIPPER, 0",
+            "CHIPPER, -1",
+            "CHIPPER, -424242",
+            "USER, null",
+            "USER, 0",
+            "USER, -1",
+            "USER, -424242",
+    }, nullValues = {"null"})
+    void invalidTypeId(AccountRole role, Long locationId) {
+        AccountRequestDto account = AccountFactory.createAccountRequest(role);
+        AccountSteps.post(account, defaultAuth.adminAuth());
+        String auth = accountToAuthConverter.convert(account);
+
+        LocationRequestDto location = LocationFactory.createLocationRequest();
+        ExceptionResponse response = LocationSteps.putExpectedBadRequest(locationId, location, auth);
+        assertThat(response).isNotNull();
+    }
+
+    @ParameterizedTest
     @DisplayName("Негативный тест. Неправильная широта")
     @CsvSource(value = {
             "ADMIN, null",
@@ -128,20 +153,6 @@ class LocationPutBadRequestTests {
                 .build();
         ExceptionResponse response = LocationSteps.putExpectedBadRequest(preResponse.getId(), request, auth);
         assertThat(response).isNotNull();
-    }
-
-    @Test
-    @DisplayName("Негативный тест. Точка используется как точка чипирования")
-    void usedAsChippingPoint() {
-        // TODO: Добавить когда можно будет получать точку чипирования
-        assertThat(true).isFalse();
-    }
-
-    @Test
-    @DisplayName("Негативный тест. Точка используется как посещёная")
-    void usedAsVisitedPoint() {
-        // TODO: Добавить когда можно будет получать посещённые точки
-        assertThat(true).isFalse();
     }
 
 }

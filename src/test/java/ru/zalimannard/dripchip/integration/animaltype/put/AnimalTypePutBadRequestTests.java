@@ -1,4 +1,4 @@
-package ru.zalimannard.dripchip.integration.animaltype.post;
+package ru.zalimannard.dripchip.integration.animaltype.put;
 
 import io.restassured.RestAssured;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,11 +20,12 @@ import ru.zalimannard.dripchip.schema.account.AccountController;
 import ru.zalimannard.dripchip.schema.account.dto.AccountRequestDto;
 import ru.zalimannard.dripchip.schema.account.role.AccountRole;
 import ru.zalimannard.dripchip.schema.animal.ownedtype.type.dto.AnimalTypeRequestDto;
+import ru.zalimannard.dripchip.schema.animal.ownedtype.type.dto.AnimalTypeResponseDto;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class AnimalTypePostBadRequestTests {
+class AnimalTypePutBadRequestTests {
 
     @LocalServerPort
     private int port;
@@ -49,7 +50,33 @@ class AnimalTypePostBadRequestTests {
     }
 
     @ParameterizedTest
-    @DisplayName("Негативный тест. Некорректное название типа")
+    @DisplayName("Негативный тест. Неправильный typeId")
+    @CsvSource(value = {
+            "ADMIN, null",
+            "ADMIN, 0",
+            "ADMIN, -1",
+            "ADMIN, -424242",
+            "CHIPPER, null",
+            "CHIPPER, 0",
+            "CHIPPER, -1",
+            "CHIPPER, -424242",
+            "USER, null",
+            "USER, 0",
+            "USER, -1",
+            "USER, -424242",
+    }, nullValues = {"null"})
+    void invalidTypeId(AccountRole role, Long typeId) {
+        AccountRequestDto account = AccountFactory.createAccountRequest(role);
+        AccountSteps.post(account, defaultAuth.adminAuth());
+        String auth = accountToAuthConverter.convert(account);
+
+        AnimalTypeRequestDto type = AnimalTypeFactory.createAnimalTypeRequest();
+        ExceptionResponse response = AnimalTypeSteps.putExpectedBadRequest(typeId, type, auth);
+        assertThat(response).isNotNull();
+    }
+
+    @ParameterizedTest
+    @DisplayName("Негативный тест. Неправильное название типа")
     @CsvSource(value = {
             "ADMIN, null",
             "ADMIN, ''",
@@ -69,10 +96,13 @@ class AnimalTypePostBadRequestTests {
         AccountSteps.post(requester, defaultAuth.adminAuth());
         String auth = accountToAuthConverter.convert(requester);
 
-        AnimalTypeRequestDto request = AnimalTypeFactory.createAnimalTypeRequest().toBuilder()
+        AnimalTypeRequestDto preRequest = AnimalTypeFactory.createAnimalTypeRequest();
+        AnimalTypeResponseDto preResponse = AnimalTypeSteps.post(preRequest, auth);
+
+        AnimalTypeRequestDto request = preRequest.toBuilder()
                 .type(typeName)
                 .build();
-        ExceptionResponse response = AnimalTypeSteps.postExpectedBadRequest(request, auth);
+        ExceptionResponse response = AnimalTypeSteps.putExpectedBadRequest(preResponse.getId(), request, auth);
         assertThat(response).isNotNull();
     }
 

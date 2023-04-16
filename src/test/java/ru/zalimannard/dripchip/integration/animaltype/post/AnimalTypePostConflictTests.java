@@ -54,7 +54,7 @@ class AnimalTypePostConflictTests {
             "ADMIN",
             "CHIPPER",
     })
-    void coordinatesAlreadyUsed(AccountRole role) {
+    void typeNameAlreadyUsed(AccountRole role) {
         AccountRequestDto requester = AccountFactory.createAccountRequest(role);
         AccountSteps.post(requester, defaultAuth.adminAuth());
         String auth = accountToAuthConverter.convert(requester);

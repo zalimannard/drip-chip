@@ -1,4 +1,4 @@
-package ru.zalimannard.dripchip.integration.animaltype.post;
+package ru.zalimannard.dripchip.integration.animaltype.put;
 
 import io.restassured.RestAssured;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,11 +20,12 @@ import ru.zalimannard.dripchip.schema.account.AccountController;
 import ru.zalimannard.dripchip.schema.account.dto.AccountRequestDto;
 import ru.zalimannard.dripchip.schema.account.role.AccountRole;
 import ru.zalimannard.dripchip.schema.animal.ownedtype.type.dto.AnimalTypeRequestDto;
+import ru.zalimannard.dripchip.schema.animal.ownedtype.type.dto.AnimalTypeResponseDto;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class AnimalTypePostBadRequestTests {
+class AnimalTypePutConflictTests {
 
     @LocalServerPort
     private int port;
@@ -49,30 +50,23 @@ class AnimalTypePostBadRequestTests {
     }
 
     @ParameterizedTest
-    @DisplayName("Негативный тест. Некорректное название типа")
+    @DisplayName("Негативный тест. Тип животного с таким названием уже существует")
     @CsvSource(value = {
-            "ADMIN, null",
-            "ADMIN, ''",
-            "ADMIN, ' '",
-            "ADMIN, '   '",
-            "CHIPPER, null",
-            "CHIPPER, ''",
-            "CHIPPER, ' '",
-            "CHIPPER, '   '",
-            "USER, null",
-            "USER, ''",
-            "USER, ' '",
-            "USER, '   '",
-    }, nullValues = {"null"})
-    void invalidTypeName(AccountRole role, String typeName) {
+            "ADMIN",
+            "CHIPPER",
+    })
+    void typeNameAlreadyUsed(AccountRole role) {
         AccountRequestDto requester = AccountFactory.createAccountRequest(role);
         AccountSteps.post(requester, defaultAuth.adminAuth());
         String auth = accountToAuthConverter.convert(requester);
 
-        AnimalTypeRequestDto request = AnimalTypeFactory.createAnimalTypeRequest().toBuilder()
-                .type(typeName)
-                .build();
-        ExceptionResponse response = AnimalTypeSteps.postExpectedBadRequest(request, auth);
+        AnimalTypeRequestDto preRequest = AnimalTypeFactory.createAnimalTypeRequest();
+        AnimalTypeSteps.post(preRequest, defaultAuth.adminAuth());
+
+        AnimalTypeRequestDto request = AnimalTypeFactory.createAnimalTypeRequest();
+        AnimalTypeResponseDto createdAnimalType = AnimalTypeSteps.post(request, auth);
+
+        ExceptionResponse response = AnimalTypeSteps.putExpectedConflict(createdAnimalType.getId(), preRequest, auth);
         assertThat(response).isNotNull();
     }
 

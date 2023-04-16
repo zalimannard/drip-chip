@@ -1,4 +1,4 @@
-package ru.zalimannard.dripchip.integration.animaltype.post;
+package ru.zalimannard.dripchip.integration.animaltype.put;
 
 import io.restassured.RestAssured;
 import org.junit.jupiter.api.BeforeEach;
@@ -8,7 +8,6 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
-import ru.zalimannard.dripchip.exception.response.ExceptionResponse;
 import ru.zalimannard.dripchip.integration.AccountToAuthConverter;
 import ru.zalimannard.dripchip.integration.DefaultAuth;
 import ru.zalimannard.dripchip.integration.Specifications;
@@ -20,11 +19,12 @@ import ru.zalimannard.dripchip.schema.account.AccountController;
 import ru.zalimannard.dripchip.schema.account.dto.AccountRequestDto;
 import ru.zalimannard.dripchip.schema.account.role.AccountRole;
 import ru.zalimannard.dripchip.schema.animal.ownedtype.type.dto.AnimalTypeRequestDto;
+import ru.zalimannard.dripchip.schema.animal.ownedtype.type.dto.AnimalTypeResponseDto;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class AnimalTypePostBadRequestTests {
+class AnimalTypePutForbiddenTests {
 
     @LocalServerPort
     private int port;
@@ -49,31 +49,22 @@ class AnimalTypePostBadRequestTests {
     }
 
     @ParameterizedTest
-    @DisplayName("Негативный тест. Некорректное название типа")
+    @DisplayName("Негативный тест. Нет роли ADMIN или CHIPPER")
     @CsvSource(value = {
-            "ADMIN, null",
-            "ADMIN, ''",
-            "ADMIN, ' '",
-            "ADMIN, '   '",
-            "CHIPPER, null",
-            "CHIPPER, ''",
-            "CHIPPER, ' '",
-            "CHIPPER, '   '",
-            "USER, null",
-            "USER, ''",
-            "USER, ' '",
-            "USER, '   '",
-    }, nullValues = {"null"})
-    void invalidTypeName(AccountRole role, String typeName) {
+            "USER",
+            "SYS",
+            "VOVA",
+    })
+    void notAdminOrChipper(AccountRole role) {
         AccountRequestDto requester = AccountFactory.createAccountRequest(role);
         AccountSteps.post(requester, defaultAuth.adminAuth());
         String auth = accountToAuthConverter.convert(requester);
 
-        AnimalTypeRequestDto request = AnimalTypeFactory.createAnimalTypeRequest().toBuilder()
-                .type(typeName)
-                .build();
-        ExceptionResponse response = AnimalTypeSteps.postExpectedBadRequest(request, auth);
-        assertThat(response).isNotNull();
+        AnimalTypeRequestDto animalType = AnimalTypeFactory.createAnimalTypeRequest();
+        AnimalTypeResponseDto createdAnimalType = AnimalTypeSteps.post(animalType, defaultAuth.adminAuth());
+
+        AnimalTypeRequestDto newAnimalType = AnimalTypeFactory.createAnimalTypeRequest();
+        AnimalTypeSteps.putExpectedForbidden(createdAnimalType.getId(), newAnimalType, auth);
     }
 
 }

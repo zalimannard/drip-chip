@@ -1,4 +1,4 @@
-package ru.zalimannard.dripchip.integration.animaltype.post;
+package ru.zalimannard.dripchip.integration.animaltype.put;
 
 import io.restassured.RestAssured;
 import org.junit.jupiter.api.BeforeEach;
@@ -8,7 +8,6 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
-import ru.zalimannard.dripchip.exception.response.ExceptionResponse;
 import ru.zalimannard.dripchip.integration.AccountToAuthConverter;
 import ru.zalimannard.dripchip.integration.DefaultAuth;
 import ru.zalimannard.dripchip.integration.Specifications;
@@ -24,7 +23,7 @@ import ru.zalimannard.dripchip.schema.animal.ownedtype.type.dto.AnimalTypeReques
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class AnimalTypePostBadRequestTests {
+class AnimalTypePutNotFoundTests {
 
     @LocalServerPort
     private int port;
@@ -49,31 +48,18 @@ class AnimalTypePostBadRequestTests {
     }
 
     @ParameterizedTest
-    @DisplayName("Негативный тест. Некорректное название типа")
+    @DisplayName("Негативный тест. Изменение несуществующего типа животного")
     @CsvSource(value = {
-            "ADMIN, null",
-            "ADMIN, ''",
-            "ADMIN, ' '",
-            "ADMIN, '   '",
-            "CHIPPER, null",
-            "CHIPPER, ''",
-            "CHIPPER, ' '",
-            "CHIPPER, '   '",
-            "USER, null",
-            "USER, ''",
-            "USER, ' '",
-            "USER, '   '",
-    }, nullValues = {"null"})
-    void invalidTypeName(AccountRole role, String typeName) {
-        AccountRequestDto requester = AccountFactory.createAccountRequest(role);
-        AccountSteps.post(requester, defaultAuth.adminAuth());
-        String auth = accountToAuthConverter.convert(requester);
+            "ADMIN, 42424242",
+            "CHIPPER, 42424242",
+    })
+    void nonexistentAnimalType(AccountRole role, Long animalTypeId) {
+        AccountRequestDto account = AccountFactory.createAccountRequest(role);
+        AccountSteps.post(account, defaultAuth.adminAuth());
+        String auth = accountToAuthConverter.convert(account);
 
-        AnimalTypeRequestDto request = AnimalTypeFactory.createAnimalTypeRequest().toBuilder()
-                .type(typeName)
-                .build();
-        ExceptionResponse response = AnimalTypeSteps.postExpectedBadRequest(request, auth);
-        assertThat(response).isNotNull();
+        AnimalTypeRequestDto request = AnimalTypeFactory.createAnimalTypeRequest();
+        AnimalTypeSteps.putExpectedNotFound(animalTypeId, request, auth);
     }
 
 }
