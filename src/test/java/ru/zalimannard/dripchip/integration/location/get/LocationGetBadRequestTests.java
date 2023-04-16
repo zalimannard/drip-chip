@@ -8,10 +8,15 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import ru.zalimannard.dripchip.exception.response.ExceptionResponse;
 import ru.zalimannard.dripchip.integration.AccountToAuthConverter;
 import ru.zalimannard.dripchip.integration.DefaultAuth;
 import ru.zalimannard.dripchip.integration.Specifications;
+import ru.zalimannard.dripchip.integration.account.AccountFactory;
+import ru.zalimannard.dripchip.integration.account.AccountSteps;
+import ru.zalimannard.dripchip.integration.location.LocationSteps;
 import ru.zalimannard.dripchip.schema.account.AccountController;
+import ru.zalimannard.dripchip.schema.account.dto.AccountRequestDto;
 import ru.zalimannard.dripchip.schema.account.role.AccountRole;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -24,6 +29,8 @@ class LocationGetBadRequestTests {
 
     @Autowired
     private AccountController accountController;
+    @Autowired
+    private AccountController locationController;
 
     @Autowired
     private AccountToAuthConverter accountToAuthConverter;
@@ -33,19 +40,35 @@ class LocationGetBadRequestTests {
     @BeforeEach
     void setUp() {
         assertThat(accountController).isNotNull();
+        assertThat(locationController).isNotNull();
 
         RestAssured.port = port;
         RestAssured.requestSpecification = Specifications.requestSpec();
     }
 
     @ParameterizedTest
-    @DisplayName("Негативный тест")
+    @DisplayName("Негативный тест. Запрос некорректного pointId")
     @CsvSource(value = {
-            "ADMIN",
-            "CHIPPER",
-            "USER",
-    })
-    void test(AccountRole role) {
+            "ADMIN, null",
+            "ADMIN, 0",
+            "ADMIN, -1",
+            "ADMIN, -424242",
+            "CHIPPER, null",
+            "CHIPPER, 0",
+            "CHIPPER, -1",
+            "CHIPPER, -424242",
+            "USER, null",
+            "USER, 0",
+            "USER, -1",
+            "USER, -424242",
+    }, nullValues = {"null"})
+    void invalidAccountId(AccountRole role, Long pointId) {
+        AccountRequestDto account = AccountFactory.createAccountRequest(role);
+        AccountSteps.post(account, defaultAuth.adminAuth());
+        String auth = accountToAuthConverter.convert(account);
+
+        ExceptionResponse response = LocationSteps.getExpectedBadRequest(pointId, auth);
+        assertThat(response).isNotNull();
     }
 
 }

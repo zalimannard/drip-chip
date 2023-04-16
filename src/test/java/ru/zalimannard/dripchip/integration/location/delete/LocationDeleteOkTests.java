@@ -24,6 +24,8 @@ class LocationDeleteOkTests {
 
     @Autowired
     private AccountController accountController;
+    @Autowired
+    private AccountController locationController;
 
     @Autowired
     private AccountToAuthConverter accountToAuthConverter;
@@ -33,6 +35,7 @@ class LocationDeleteOkTests {
     @BeforeEach
     void setUp() {
         assertThat(accountController).isNotNull();
+        assertThat(locationController).isNotNull();
 
         RestAssured.port = port;
         RestAssured.requestSpecification = Specifications.requestSpec();
