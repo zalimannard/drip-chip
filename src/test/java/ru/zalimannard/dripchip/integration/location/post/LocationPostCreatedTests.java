@@ -11,8 +11,15 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 import ru.zalimannard.dripchip.integration.AccountToAuthConverter;
 import ru.zalimannard.dripchip.integration.DefaultAuth;
 import ru.zalimannard.dripchip.integration.Specifications;
+import ru.zalimannard.dripchip.integration.account.AccountFactory;
+import ru.zalimannard.dripchip.integration.account.AccountSteps;
+import ru.zalimannard.dripchip.integration.location.LocationFactory;
+import ru.zalimannard.dripchip.integration.location.LocationSteps;
 import ru.zalimannard.dripchip.schema.account.AccountController;
+import ru.zalimannard.dripchip.schema.account.dto.AccountRequestDto;
 import ru.zalimannard.dripchip.schema.account.role.AccountRole;
+import ru.zalimannard.dripchip.schema.location.dto.LocationRequestDto;
+import ru.zalimannard.dripchip.schema.location.dto.LocationResponseDto;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -42,13 +49,20 @@ class LocationPostCreatedTests {
     }
 
     @ParameterizedTest
-    @DisplayName("Негативный тест")
+    @DisplayName("Позитивный тест. Запрос успешно выполнен")
     @CsvSource(value = {
             "ADMIN",
             "CHIPPER",
-            "USER",
     })
-    void test(AccountRole role) {
+    void positiveTest(AccountRole role) {
+        AccountRequestDto requester = AccountFactory.createAccountRequest(role);
+        AccountSteps.post(requester, defaultAuth.adminAuth());
+        String auth = accountToAuthConverter.convert(requester);
+
+        LocationRequestDto request = LocationFactory.createLocationRequest();
+        LocationResponseDto actual = LocationSteps.post(request, auth);
+        LocationResponseDto expected = LocationFactory.createLocationResponse(actual.getId(), request);
+        assertThat(actual).isEqualTo(expected);
     }
 
 }

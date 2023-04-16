@@ -11,8 +11,14 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 import ru.zalimannard.dripchip.integration.AccountToAuthConverter;
 import ru.zalimannard.dripchip.integration.DefaultAuth;
 import ru.zalimannard.dripchip.integration.Specifications;
+import ru.zalimannard.dripchip.integration.account.AccountFactory;
+import ru.zalimannard.dripchip.integration.account.AccountSteps;
+import ru.zalimannard.dripchip.integration.location.LocationFactory;
+import ru.zalimannard.dripchip.integration.location.LocationSteps;
 import ru.zalimannard.dripchip.schema.account.AccountController;
+import ru.zalimannard.dripchip.schema.account.dto.AccountRequestDto;
 import ru.zalimannard.dripchip.schema.account.role.AccountRole;
+import ru.zalimannard.dripchip.schema.location.dto.LocationRequestDto;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -42,13 +48,19 @@ class LocationPostConflictTests {
     }
 
     @ParameterizedTest
-    @DisplayName("Негативный тест")
+    @DisplayName("Негативный тест. Локация с такими координатами уже существует")
     @CsvSource(value = {
             "ADMIN",
             "CHIPPER",
-            "USER",
     })
-    void test(AccountRole role) {
+    void coordinatesAlreadyUsed(AccountRole role) {
+        AccountRequestDto requester = AccountFactory.createAccountRequest(role);
+        AccountSteps.post(requester, defaultAuth.adminAuth());
+        String auth = accountToAuthConverter.convert(requester);
+
+        LocationRequestDto request = LocationFactory.createLocationRequest();
+        LocationSteps.post(request, auth);
+        LocationSteps.postExpectedConflict(request, auth);
     }
 
 }

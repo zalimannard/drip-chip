@@ -57,4 +57,5 @@ class AccountPostCreatedTests {
         AccountResponseDto createdAccount = AccountSteps.get(actual.getId(), adminAuth);
         assertThat(createdAccount).isEqualTo(expected);
     }
+
 }
