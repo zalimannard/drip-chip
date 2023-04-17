@@ -9,6 +9,9 @@ import ru.zalimannard.dripchip.exception.BadRequestException;
 import ru.zalimannard.dripchip.exception.ConflictException;
 import ru.zalimannard.dripchip.exception.NotFoundException;
 import ru.zalimannard.dripchip.page.OffsetBasedPage;
+import ru.zalimannard.dripchip.schema.animal.dto.AnimalPostRequestDto;
+import ru.zalimannard.dripchip.schema.animal.dto.AnimalPutRequestDto;
+import ru.zalimannard.dripchip.schema.animal.dto.AnimalResponseDto;
 import ru.zalimannard.dripchip.schema.animal.lifestatus.AnimalLifeStatus;
 import ru.zalimannard.dripchip.schema.location.Location;
 
@@ -26,8 +29,8 @@ public class AnimalServiceImpl implements AnimalService {
     private final AnimalRepository repository;
 
     @Override
-    public AnimalDto create(AnimalDto animalDto) {
-        Animal animalRequest = animalMapper.toEntity(animalDto);
+    public AnimalResponseDto create(AnimalPostRequestDto animalPostRequestDto) {
+        Animal animalRequest = animalMapper.toEntity(animalPostRequestDto);
 
         Animal animalResponse = createEntity(animalRequest);
 
@@ -47,7 +50,7 @@ public class AnimalServiceImpl implements AnimalService {
     }
 
     @Override
-    public AnimalDto read(long id) {
+    public AnimalResponseDto read(long id) {
         Animal animalResponse = readEntity(id);
 
         return animalMapper.toDto(animalResponse);
@@ -64,7 +67,7 @@ public class AnimalServiceImpl implements AnimalService {
     }
 
     @Override
-    public List<AnimalDto> search(AnimalDto filterDto, Date start, Date end, int from, int size) {
+    public List<AnimalResponseDto> search(AnimalPostRequestDto filterDto, Date start, Date end, int from, int size) {
         Animal filter = animalMapper.toEntity(filterDto);
 
         List<Animal> animals = searchEntities(filter, start, end, from, size);
@@ -88,8 +91,8 @@ public class AnimalServiceImpl implements AnimalService {
     }
 
     @Override
-    public AnimalDto update(long id, AnimalDto animalDto) {
-        Animal animalRequest = animalMapper.toEntity(animalDto);
+    public AnimalResponseDto update(long id, AnimalPutRequestDto animalPutRequestDto) {
+        Animal animalRequest = animalMapper.toEntity(animalPutRequestDto);
 
         Animal animalResponse = updateEntity(id, animalRequest);
 

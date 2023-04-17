@@ -43,8 +43,8 @@ public class AccountMapperImpl implements AccountMapper {
     }
 
     @Override
-    public List<AccountResponseDto> toDtoList(List<Account> entity) {
-        return entity.stream().map(this::toDto).toList();
+    public List<AccountResponseDto> toDtoList(List<Account> accounts) {
+        return accounts.stream().map(this::toDto).toList();
     }
 
 }

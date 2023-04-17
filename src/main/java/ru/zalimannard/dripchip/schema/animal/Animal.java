@@ -1,8 +1,8 @@
 package ru.zalimannard.dripchip.schema.animal;
 
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.*;
+import org.hibernate.Hibernate;
 import ru.zalimannard.dripchip.schema.account.Account;
 import ru.zalimannard.dripchip.schema.animal.gender.AnimalGender;
 import ru.zalimannard.dripchip.schema.animal.lifestatus.AnimalLifeStatus;
@@ -11,25 +11,28 @@ import ru.zalimannard.dripchip.schema.animal.visitedlocation.VisitedLocation;
 import ru.zalimannard.dripchip.schema.location.Location;
 
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 @Entity
 @Table(name = "animals")
-@Data
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@Getter
+@Setter
+@Builder(toBuilder = true)
+@ToString
+@RequiredArgsConstructor
+@AllArgsConstructor
 public class Animal {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    @EqualsAndHashCode.Include
     private Long id;
 
     @ManyToMany
     @Column(name = "animal_types")
-    private Set<AnimalType> animalTypes = new HashSet<>();
+    private Set<AnimalType> animalTypes;
 
     @Column(name = "weight")
     private Float weight;
@@ -73,4 +76,16 @@ public class Animal {
         animalTypes.remove(animalType);
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+        Animal animal = (Animal) o;
+        return getId() != null && Objects.equals(getId(), animal.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
+    }
 }
