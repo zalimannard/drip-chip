@@ -1,4 +1,4 @@
-package ru.zalimannard.dripchip.integration.animal.post;
+package ru.zalimannard.dripchip.integration.animal.put;
 
 import io.restassured.RestAssured;
 import org.junit.jupiter.api.BeforeEach;
@@ -8,7 +8,6 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
-import ru.zalimannard.dripchip.exception.response.ExceptionResponse;
 import ru.zalimannard.dripchip.integration.AccountToAuthConverter;
 import ru.zalimannard.dripchip.integration.DefaultAuth;
 import ru.zalimannard.dripchip.integration.Specifications;
@@ -26,6 +25,8 @@ import ru.zalimannard.dripchip.schema.account.dto.AccountResponseDto;
 import ru.zalimannard.dripchip.schema.account.role.AccountRole;
 import ru.zalimannard.dripchip.schema.animal.AnimalController;
 import ru.zalimannard.dripchip.schema.animal.dto.AnimalPostRequestDto;
+import ru.zalimannard.dripchip.schema.animal.dto.AnimalPutRequestDto;
+import ru.zalimannard.dripchip.schema.animal.dto.AnimalResponseDto;
 import ru.zalimannard.dripchip.schema.animal.ownedtype.type.AnimalTypeController;
 import ru.zalimannard.dripchip.schema.animal.ownedtype.type.dto.AnimalTypeRequestDto;
 import ru.zalimannard.dripchip.schema.animal.ownedtype.type.dto.AnimalTypeResponseDto;
@@ -38,7 +39,7 @@ import java.util.Set;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class AnimalPostNotFoundTests {
+class AnimalPutOkTests {
 
     @LocalServerPort
     private int port;
@@ -69,39 +70,12 @@ class AnimalPostNotFoundTests {
     }
 
     @ParameterizedTest
-    @DisplayName("Негативный тест. Несуществующий chipperId")
+    @DisplayName("Позитивный тест. Запрос успешно выполнен")
     @CsvSource(value = {
-            "ADMIN, 424242",
-            "CHIPPER, 424242",
-            "USER, 424242",
+            "ADMIN",
+            "CHIPPER",
     })
-    void invalidChipperId(AccountRole requesterRole, Integer chipperId) {
-        AccountRequestDto requesterRequest = AccountFactory.createAccountRequest(requesterRole);
-        AccountSteps.post(requesterRequest, defaultAuth.adminAuth());
-        String auth = accountToAuthConverter.convert(requesterRequest);
-
-        AnimalTypeRequestDto animalTypeRequest = AnimalTypeFactory.createAnimalTypeRequest();
-        AnimalTypeResponseDto animalTypeResponse = AnimalTypeSteps.post(animalTypeRequest, defaultAuth.adminAuth());
-
-        LocationRequestDto chippingLocationRequest = LocationFactory.createLocationRequest();
-        LocationResponseDto chippingLocationResponse = LocationSteps.post(chippingLocationRequest, defaultAuth.adminAuth());
-
-        AnimalPostRequestDto requestAnimal = AnimalFactory.createAnimalPostRequest(
-                Set.of(animalTypeResponse.getId()),
-                chipperId,
-                chippingLocationResponse.getId());
-        ExceptionResponse response = AnimalSteps.postExpectedNotFound(requestAnimal, auth);
-        assertThat(response).isNotNull();
-    }
-
-    @ParameterizedTest
-    @DisplayName("Негативный тест. Несуществующий chippingLocationId")
-    @CsvSource(value = {
-            "ADMIN, 424242",
-            "CHIPPER, 424242",
-            "USER, 424242",
-    })
-    void invalidChippingLocationId(AccountRole requesterRole, Long chippingLocationId) {
+    void positiveTest(AccountRole requesterRole) {
         AccountRequestDto requesterRequest = AccountFactory.createAccountRequest(requesterRole);
         AccountSteps.post(requesterRequest, defaultAuth.adminAuth());
         String auth = accountToAuthConverter.convert(requesterRequest);
@@ -112,12 +86,24 @@ class AnimalPostNotFoundTests {
         AccountRequestDto chipperRequest = AccountFactory.createAccountRequest(AccountRole.CHIPPER);
         AccountResponseDto chipperResponse = AccountSteps.post(chipperRequest, defaultAuth.adminAuth());
 
+        LocationRequestDto chippingLocationRequest = LocationFactory.createLocationRequest();
+        LocationResponseDto chippingLocationResponse = LocationSteps.post(chippingLocationRequest, defaultAuth.adminAuth());
+
         AnimalPostRequestDto requestAnimal = AnimalFactory.createAnimalPostRequest(
                 Set.of(animalTypeResponse.getId()),
                 chipperResponse.getId(),
-                chippingLocationId);
-        ExceptionResponse response = AnimalSteps.postExpectedNotFound(requestAnimal, auth);
-        assertThat(response).isNotNull();
+                chippingLocationResponse.getId());
+        AnimalResponseDto responseAnimal = AnimalSteps.post(requestAnimal, defaultAuth.adminAuth());
+
+
+        AccountRequestDto chipperRequest2 = AccountFactory.createAccountRequest(AccountRole.CHIPPER);
+        AccountResponseDto chipperResponse2 = AccountSteps.post(chipperRequest2, defaultAuth.adminAuth());
+
+        LocationRequestDto chippingLocationRequest2 = LocationFactory.createLocationRequest();
+        LocationResponseDto chippingLocationResponse2 = LocationSteps.post(chippingLocationRequest2, defaultAuth.adminAuth());
+
+        AnimalPutRequestDto request = AnimalFactory.createAnimalPutRequest(chipperResponse2.getId(), chippingLocationResponse2.getId());
+        AnimalSteps.put(responseAnimal.getId(), request, auth);
     }
 
 }
