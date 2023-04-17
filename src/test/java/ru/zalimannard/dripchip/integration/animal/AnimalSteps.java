@@ -102,6 +102,13 @@ public class AnimalSteps {
                 .statusCode(403);
     }
 
+    public static ExceptionResponse postExpectedNotFound(AnimalPostRequestDto animalRequestDto,
+                                                         String auth) {
+        return basePost(animalRequestDto, auth)
+                .statusCode(404)
+                .extract().as(ExceptionResponse.class);
+    }
+
     public static ExceptionResponse postExpectedConflict(AnimalPostRequestDto animalRequestDto,
                                                          String auth) {
         return basePost(animalRequestDto, auth)
