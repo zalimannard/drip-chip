@@ -1,15 +1,16 @@
-package ru.zalimannard.dripchip.integration.location;
+package ru.zalimannard.dripchip.integration.animal;
 
 import io.restassured.response.ValidatableResponse;
 import ru.zalimannard.dripchip.exception.response.ExceptionResponse;
-import ru.zalimannard.dripchip.schema.location.dto.LocationRequestDto;
-import ru.zalimannard.dripchip.schema.location.dto.LocationResponseDto;
+import ru.zalimannard.dripchip.schema.animal.dto.AnimalPostRequestDto;
+import ru.zalimannard.dripchip.schema.animal.dto.AnimalPutRequestDto;
+import ru.zalimannard.dripchip.schema.animal.dto.AnimalResponseDto;
 
 import static io.restassured.RestAssured.given;
 
-public class LocationSteps {
+public class AnimalSteps {
 
-    private static final String endpoint = "/locations";
+    private static final String endpoint = "/animals";
 
     private static ValidatableResponse baseGet(Long id,
                                                String auth) {
@@ -28,11 +29,11 @@ public class LocationSteps {
         }
     }
 
-    public static LocationResponseDto get(Long id,
-                                          String auth) {
+    public static AnimalResponseDto get(Long id,
+                                        String auth) {
         return baseGet(id, auth)
                 .statusCode(200)
-                .extract().as(LocationResponseDto.class);
+                .extract().as(AnimalResponseDto.class);
     }
 
     public static ExceptionResponse getExpectedBadRequest(Long id,
@@ -56,11 +57,11 @@ public class LocationSteps {
     }
 
 
-    private static ValidatableResponse basePost(LocationRequestDto locationRequestDto,
+    private static ValidatableResponse basePost(AnimalPostRequestDto animalRequestDto,
                                                 String auth) {
         if (auth != null) {
             return given()
-                    .body(locationRequestDto)
+                    .body(animalRequestDto)
                     .headers("Authorization",
                             "Basic " + auth)
                     .when()
@@ -68,52 +69,52 @@ public class LocationSteps {
                     .then().log().all();
         } else {
             return given()
-                    .body(locationRequestDto)
+                    .body(animalRequestDto)
                     .when()
                     .post(endpoint)
                     .then().log().all();
         }
     }
 
-    public static LocationResponseDto post(LocationRequestDto locationRequestDto,
-                                           String auth) {
-        return basePost(locationRequestDto, auth)
+    public static AnimalResponseDto post(AnimalPostRequestDto animalRequestDto,
+                                         String auth) {
+        return basePost(animalRequestDto, auth)
                 .statusCode(201)
-                .extract().as(LocationResponseDto.class);
+                .extract().as(AnimalResponseDto.class);
     }
 
-    public static ExceptionResponse postExpectedBadRequest(LocationRequestDto locationRequestDto,
+    public static ExceptionResponse postExpectedBadRequest(AnimalPostRequestDto animalRequestDto,
                                                            String auth) {
-        return basePost(locationRequestDto, auth)
+        return basePost(animalRequestDto, auth)
                 .statusCode(400)
                 .extract().as(ExceptionResponse.class);
     }
 
-    public static void postExpectedUnauthorized(LocationRequestDto locationRequestDto,
+    public static void postExpectedUnauthorized(AnimalPostRequestDto animalRequestDto,
                                                 String auth) {
-        basePost(locationRequestDto, auth)
+        basePost(animalRequestDto, auth)
                 .statusCode(401);
     }
 
-    public static void postExpectedForbidden(LocationRequestDto locationRequestDto,
+    public static void postExpectedForbidden(AnimalPostRequestDto animalRequestDto,
                                              String auth) {
-        basePost(locationRequestDto, auth)
+        basePost(animalRequestDto, auth)
                 .statusCode(403);
     }
 
-    public static ExceptionResponse postExpectedConflict(LocationRequestDto locationRequestDto,
+    public static ExceptionResponse postExpectedConflict(AnimalPostRequestDto animalRequestDto,
                                                          String auth) {
-        return basePost(locationRequestDto, auth)
+        return basePost(animalRequestDto, auth)
                 .statusCode(409)
                 .extract().as(ExceptionResponse.class);
     }
 
 
-    private static ValidatableResponse basePut(Long id, LocationRequestDto locationRequestDto,
+    private static ValidatableResponse basePut(Long id, AnimalPutRequestDto animalRequestDto,
                                                String auth) {
         if (auth != null) {
             return given()
-                    .body(locationRequestDto)
+                    .body(animalRequestDto)
                     .headers("Authorization",
                             "Basic " + auth)
                     .when()
@@ -121,48 +122,48 @@ public class LocationSteps {
                     .then().log().all();
         } else {
             return given()
-                    .body(locationRequestDto)
+                    .body(animalRequestDto)
                     .when()
                     .put(endpoint + "/" + id)
                     .then().log().all();
         }
     }
 
-    public static LocationResponseDto put(Long id, LocationRequestDto locationRequestDto,
-                                          String auth) {
-        return basePut(id, locationRequestDto, auth)
+    public static AnimalResponseDto put(Long id, AnimalPutRequestDto animalRequestDto,
+                                        String auth) {
+        return basePut(id, animalRequestDto, auth)
                 .statusCode(200)
-                .extract().as(LocationResponseDto.class);
+                .extract().as(AnimalResponseDto.class);
     }
 
-    public static ExceptionResponse putExpectedBadRequest(Long id, LocationRequestDto locationRequestDto,
+    public static ExceptionResponse putExpectedBadRequest(Long id, AnimalPutRequestDto animalRequestDto,
                                                           String auth) {
-        return basePut(id, locationRequestDto, auth)
+        return basePut(id, animalRequestDto, auth)
                 .statusCode(400)
                 .extract().as(ExceptionResponse.class);
     }
 
-    public static void putExpectedUnauthorized(Long id, LocationRequestDto locationRequestDto,
+    public static void putExpectedUnauthorized(Long id, AnimalPutRequestDto animalRequestDto,
                                                String auth) {
-        basePut(id, locationRequestDto, auth)
+        basePut(id, animalRequestDto, auth)
                 .statusCode(401);
     }
 
-    public static void putExpectedForbidden(Long id, LocationRequestDto locationRequestDto,
+    public static void putExpectedForbidden(Long id, AnimalPutRequestDto animalRequestDto,
                                             String auth) {
-        basePut(id, locationRequestDto, auth)
+        basePut(id, animalRequestDto, auth)
                 .statusCode(403);
     }
 
-    public static void putExpectedNotFound(Long id, LocationRequestDto locationRequestDto,
+    public static void putExpectedNotFound(Long id, AnimalPutRequestDto animalRequestDto,
                                            String auth) {
-        basePut(id, locationRequestDto, auth)
+        basePut(id, animalRequestDto, auth)
                 .statusCode(404);
     }
 
-    public static ExceptionResponse putExpectedConflict(Long id, LocationRequestDto locationRequestDto,
+    public static ExceptionResponse putExpectedConflict(Long id, AnimalPutRequestDto animalRequestDto,
                                                         String auth) {
-        return basePut(id, locationRequestDto, auth)
+        return basePut(id, animalRequestDto, auth)
                 .statusCode(409)
                 .extract().as(ExceptionResponse.class);
     }

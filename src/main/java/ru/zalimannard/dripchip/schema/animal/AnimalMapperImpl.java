@@ -12,6 +12,7 @@ import ru.zalimannard.dripchip.schema.animal.ownedtype.type.AnimalTypeService;
 import ru.zalimannard.dripchip.schema.animal.visitedlocation.VisitedLocation;
 import ru.zalimannard.dripchip.schema.location.LocationService;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -66,9 +67,9 @@ public class AnimalMapperImpl implements AnimalMapper {
                 .chippingDateTime(entity.getChippingDateTime())
                 .chipperId(entity.getChipper().getId())
                 .chippingLocationId(entity.getChippingLocation().getId())
-                .visitedLocations(entity.getVisitedLocations()
-                        .stream().map(VisitedLocation::getId)
-                        .collect(Collectors.toList()))
+                .visitedLocations(entity.getVisitedLocations() == null
+                        ? new ArrayList<>()
+                        : entity.getVisitedLocations().stream().map(VisitedLocation::getId).collect(Collectors.toList()))
                 .deathDateTime(entity.getDeathDateTime())
                 .build();
     }
