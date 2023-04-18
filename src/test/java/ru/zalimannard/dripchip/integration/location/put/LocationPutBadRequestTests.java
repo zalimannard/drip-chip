@@ -19,6 +19,7 @@ import ru.zalimannard.dripchip.integration.location.LocationSteps;
 import ru.zalimannard.dripchip.schema.account.AccountController;
 import ru.zalimannard.dripchip.schema.account.dto.AccountRequestDto;
 import ru.zalimannard.dripchip.schema.account.role.AccountRole;
+import ru.zalimannard.dripchip.schema.location.LocationController;
 import ru.zalimannard.dripchip.schema.location.dto.LocationRequestDto;
 import ru.zalimannard.dripchip.schema.location.dto.LocationResponseDto;
 
@@ -33,7 +34,7 @@ class LocationPutBadRequestTests {
     @Autowired
     private AccountController accountController;
     @Autowired
-    private AccountController locationController;
+    private LocationController locationController;
 
     @Autowired
     private AccountToAuthConverter accountToAuthConverter;

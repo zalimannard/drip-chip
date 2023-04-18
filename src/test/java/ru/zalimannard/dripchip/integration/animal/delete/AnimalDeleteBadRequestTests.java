@@ -1,4 +1,4 @@
-package ru.zalimannard.dripchip.integration.location.get;
+package ru.zalimannard.dripchip.integration.animal.delete;
 
 import io.restassured.RestAssured;
 import org.junit.jupiter.api.BeforeEach;
@@ -13,19 +13,18 @@ import ru.zalimannard.dripchip.integration.DefaultAuth;
 import ru.zalimannard.dripchip.integration.Specifications;
 import ru.zalimannard.dripchip.integration.account.AccountFactory;
 import ru.zalimannard.dripchip.integration.account.AccountSteps;
-import ru.zalimannard.dripchip.integration.location.LocationFactory;
 import ru.zalimannard.dripchip.integration.location.LocationSteps;
 import ru.zalimannard.dripchip.schema.account.AccountController;
 import ru.zalimannard.dripchip.schema.account.dto.AccountRequestDto;
 import ru.zalimannard.dripchip.schema.account.role.AccountRole;
+import ru.zalimannard.dripchip.schema.animal.AnimalController;
+import ru.zalimannard.dripchip.schema.animal.ownedtype.type.AnimalTypeController;
 import ru.zalimannard.dripchip.schema.location.LocationController;
-import ru.zalimannard.dripchip.schema.location.dto.LocationRequestDto;
-import ru.zalimannard.dripchip.schema.location.dto.LocationResponseDto;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class LocationGetOkTests {
+class AnimalDeleteBadRequestTests {
 
     @LocalServerPort
     private int port;
@@ -34,6 +33,10 @@ class LocationGetOkTests {
     private AccountController accountController;
     @Autowired
     private LocationController locationController;
+    @Autowired
+    private AnimalTypeController animalTypeController;
+    @Autowired
+    private AnimalController animalController;
 
     @Autowired
     private AccountToAuthConverter accountToAuthConverter;
@@ -44,29 +47,50 @@ class LocationGetOkTests {
     void setUp() {
         assertThat(accountController).isNotNull();
         assertThat(locationController).isNotNull();
+        assertThat(animalTypeController).isNotNull();
+        assertThat(animalController).isNotNull();
 
         RestAssured.port = port;
         RestAssured.requestSpecification = Specifications.requestSpec();
     }
 
     @ParameterizedTest
-    @DisplayName("Позитивный тест. Запрос точки")
+    @DisplayName("Негативный тест. Запрос некорректного animalId")
+    @CsvSource(value = {
+            "ADMIN, null",
+            "ADMIN, 0",
+            "ADMIN, -1",
+            "ADMIN, -424242",
+            "CHIPPER, null",
+            "CHIPPER, 0",
+            "CHIPPER, -1",
+            "CHIPPER, -424242",
+            "USER, null",
+            "USER, 0",
+            "USER, -1",
+            "USER, -424242",
+    }, nullValues = {"null"})
+    void invalidAnimalId(AccountRole role, Long animalId) {
+        AccountRequestDto request = AccountFactory.createAccountRequest(role);
+        AccountSteps.post(request, defaultAuth.adminAuth());
+        String auth = accountToAuthConverter.convert(request);
+
+        LocationSteps.delete(animalId, auth);
+    }
+
+    @ParameterizedTest
+    @DisplayName("Негативный тест. Животное покинуло локацию чипирования, при этом есть другие посещенные точки\n")
     @CsvSource(value = {
             "ADMIN",
             "CHIPPER",
             "USER",
-    })
-    void positiveTest(AccountRole role) {
-        AccountRequestDto account = AccountFactory.createAccountRequest(role);
-        AccountSteps.post(account, defaultAuth.adminAuth());
-        String auth = accountToAuthConverter.convert(account);
+    }, nullValues = {"null"})
+    void existVisitedLocation(AccountRole role, Long animalId) {
+        AccountRequestDto request = AccountFactory.createAccountRequest(role);
+        AccountSteps.post(request, defaultAuth.adminAuth());
+        String auth = accountToAuthConverter.convert(request);
 
-        LocationRequestDto location = LocationFactory.createLocationRequest();
-        LocationResponseDto createdLocation = LocationSteps.post(location, defaultAuth.adminAuth());
-        LocationResponseDto responsePostLocation = LocationFactory.createLocationResponse(createdLocation.getId(), location);
-
-        LocationResponseDto gotLocation = LocationSteps.get(createdLocation.getId(), auth);
-        assertThat(gotLocation).isEqualTo(responsePostLocation);
+        LocationSteps.delete(animalId, auth);
     }
 
 }

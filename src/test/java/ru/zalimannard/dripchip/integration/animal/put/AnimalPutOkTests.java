@@ -106,4 +106,14 @@ class AnimalPutOkTests {
         AnimalSteps.put(responseAnimal.getId(), request, auth);
     }
 
+    @ParameterizedTest
+    @DisplayName("Позитивный тест. Запрос успешно выполнен")
+    @CsvSource(value = {
+            "ADMIN",
+            "CHIPPER",
+    })
+    void changeAliveToDead(AccountRole requesterRole) {
+        assertThat(true).isFalse();
+    }
+
 }

@@ -1,4 +1,4 @@
-package ru.zalimannard.dripchip.integration.location.post;
+package ru.zalimannard.dripchip.integration.animal.delete;
 
 import io.restassured.RestAssured;
 import org.junit.jupiter.api.BeforeEach;
@@ -13,19 +13,20 @@ import ru.zalimannard.dripchip.integration.DefaultAuth;
 import ru.zalimannard.dripchip.integration.Specifications;
 import ru.zalimannard.dripchip.integration.account.AccountFactory;
 import ru.zalimannard.dripchip.integration.account.AccountSteps;
-import ru.zalimannard.dripchip.integration.location.LocationFactory;
+import ru.zalimannard.dripchip.integration.animal.AnimalSteps;
 import ru.zalimannard.dripchip.integration.location.LocationSteps;
 import ru.zalimannard.dripchip.schema.account.AccountController;
 import ru.zalimannard.dripchip.schema.account.dto.AccountRequestDto;
 import ru.zalimannard.dripchip.schema.account.role.AccountRole;
+import ru.zalimannard.dripchip.schema.animal.AnimalController;
+import ru.zalimannard.dripchip.schema.animal.dto.AnimalResponseDto;
+import ru.zalimannard.dripchip.schema.animal.ownedtype.type.AnimalTypeController;
 import ru.zalimannard.dripchip.schema.location.LocationController;
-import ru.zalimannard.dripchip.schema.location.dto.LocationRequestDto;
-import ru.zalimannard.dripchip.schema.location.dto.LocationResponseDto;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class LocationPostCreatedTests {
+class AnimalDeleteOkTests {
 
     @LocalServerPort
     private int port;
@@ -34,6 +35,10 @@ class LocationPostCreatedTests {
     private AccountController accountController;
     @Autowired
     private LocationController locationController;
+    @Autowired
+    private AnimalTypeController animalTypeController;
+    @Autowired
+    private AnimalController animalController;
 
     @Autowired
     private AccountToAuthConverter accountToAuthConverter;
@@ -44,26 +49,26 @@ class LocationPostCreatedTests {
     void setUp() {
         assertThat(accountController).isNotNull();
         assertThat(locationController).isNotNull();
+        assertThat(animalTypeController).isNotNull();
+        assertThat(animalController).isNotNull();
 
         RestAssured.port = port;
         RestAssured.requestSpecification = Specifications.requestSpec();
     }
 
     @ParameterizedTest
-    @DisplayName("Позитивный тест. Запрос успешно выполнен")
+    @DisplayName("Позитивный тест. Удаление животного")
     @CsvSource(value = {
             "ADMIN",
-            "CHIPPER",
+            "CHIPPER"
     })
-    void positiveTest(AccountRole role) {
-        AccountRequestDto requester = AccountFactory.createAccountRequest(role);
-        AccountSteps.post(requester, defaultAuth.adminAuth());
-        String auth = accountToAuthConverter.convert(requester);
+    void successfullyDelete(AccountRole role) {
+        AccountRequestDto request = AccountFactory.createAccountRequest(role);
+        AccountSteps.post(request, defaultAuth.adminAuth());
+        String auth = accountToAuthConverter.convert(request);
 
-        LocationRequestDto request = LocationFactory.createLocationRequest();
-        LocationResponseDto actual = LocationSteps.post(request, auth);
-        LocationResponseDto expected = LocationFactory.createLocationResponse(actual.getId(), request);
-        assertThat(actual).isEqualTo(expected);
+        AnimalResponseDto animalResponseDto = AnimalSteps.createFromScratch(defaultAuth.adminAuth());
+        LocationSteps.delete(animalResponseDto.getId(), auth);
     }
 
 }

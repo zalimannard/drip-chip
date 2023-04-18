@@ -1,13 +1,11 @@
 package ru.zalimannard.dripchip.schema.account;
 
-import jakarta.annotation.PostConstruct;
 import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.zalimannard.dripchip.schema.account.dto.AccountRequestDto;
 import ru.zalimannard.dripchip.schema.account.dto.AccountResponseDto;
-import ru.zalimannard.dripchip.schema.account.role.AccountRole;
 
 import java.util.List;
 
@@ -45,36 +43,6 @@ public class AccountController {
     @DeleteMapping("{id}")
     public void delete(@PathVariable int id) {
         accountService.delete(id);
-    }
-
-    @PostConstruct
-    private void postConstruct() {
-        AccountRequestDto adminAccountRequestDto = AccountRequestDto.builder()
-                .firstName("adminFirstName")
-                .lastName("adminLastName")
-                .email(System.getenv("ADMIN_EMAIL"))
-                .password(System.getenv("ADMIN_PASSWORD"))
-                .role(AccountRole.ADMIN)
-                .build();
-        accountService.create(adminAccountRequestDto);
-
-        AccountRequestDto chipperAccountRequestDto = AccountRequestDto.builder()
-                .firstName("chipperFirstName")
-                .lastName("chipperLastName")
-                .email(System.getenv("CHIPPER_EMAIL"))
-                .password(System.getenv("CHIPPER_PASSWORD"))
-                .role(AccountRole.CHIPPER)
-                .build();
-        accountService.create(chipperAccountRequestDto);
-
-        AccountRequestDto userAccountRequestDto = AccountRequestDto.builder()
-                .firstName("userFirstName")
-                .lastName("userLastName")
-                .email(System.getenv("USER_EMAIL"))
-                .password(System.getenv("USER_PASSWORD"))
-                .role(AccountRole.USER)
-                .build();
-        accountService.create(userAccountRequestDto);
     }
 
 }

@@ -13,6 +13,7 @@ import ru.zalimannard.dripchip.integration.DefaultAuth;
 import ru.zalimannard.dripchip.integration.Specifications;
 import ru.zalimannard.dripchip.integration.location.LocationSteps;
 import ru.zalimannard.dripchip.schema.account.AccountController;
+import ru.zalimannard.dripchip.schema.location.LocationController;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -25,7 +26,7 @@ class LocationDeleteNotFoundTests {
     @Autowired
     private AccountController accountController;
     @Autowired
-    private AccountController locationController;
+    private LocationController locationController;
 
     @Autowired
     private AccountToAuthConverter accountToAuthConverter;

@@ -18,6 +18,7 @@ import ru.zalimannard.dripchip.integration.location.LocationSteps;
 import ru.zalimannard.dripchip.schema.account.AccountController;
 import ru.zalimannard.dripchip.schema.account.dto.AccountRequestDto;
 import ru.zalimannard.dripchip.schema.account.role.AccountRole;
+import ru.zalimannard.dripchip.schema.location.LocationController;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -30,7 +31,7 @@ class LocationGetBadRequestTests {
     @Autowired
     private AccountController accountController;
     @Autowired
-    private AccountController locationController;
+    private LocationController locationController;
 
     @Autowired
     private AccountToAuthConverter accountToAuthConverter;

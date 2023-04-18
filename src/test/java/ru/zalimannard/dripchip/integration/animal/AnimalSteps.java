@@ -2,15 +2,48 @@ package ru.zalimannard.dripchip.integration.animal;
 
 import io.restassured.response.ValidatableResponse;
 import ru.zalimannard.dripchip.exception.response.ExceptionResponse;
+import ru.zalimannard.dripchip.integration.account.AccountFactory;
+import ru.zalimannard.dripchip.integration.account.AccountSteps;
+import ru.zalimannard.dripchip.integration.animaltype.AnimalTypeFactory;
+import ru.zalimannard.dripchip.integration.animaltype.AnimalTypeSteps;
+import ru.zalimannard.dripchip.integration.location.LocationFactory;
+import ru.zalimannard.dripchip.integration.location.LocationSteps;
+import ru.zalimannard.dripchip.schema.account.dto.AccountRequestDto;
+import ru.zalimannard.dripchip.schema.account.dto.AccountResponseDto;
+import ru.zalimannard.dripchip.schema.account.role.AccountRole;
 import ru.zalimannard.dripchip.schema.animal.dto.AnimalPostRequestDto;
 import ru.zalimannard.dripchip.schema.animal.dto.AnimalPutRequestDto;
 import ru.zalimannard.dripchip.schema.animal.dto.AnimalResponseDto;
+import ru.zalimannard.dripchip.schema.animal.ownedtype.type.dto.AnimalTypeRequestDto;
+import ru.zalimannard.dripchip.schema.animal.ownedtype.type.dto.AnimalTypeResponseDto;
+import ru.zalimannard.dripchip.schema.location.dto.LocationRequestDto;
+import ru.zalimannard.dripchip.schema.location.dto.LocationResponseDto;
+
+import java.util.Set;
 
 import static io.restassured.RestAssured.given;
 
 public class AnimalSteps {
 
     private static final String endpoint = "/animals";
+
+    public static AnimalResponseDto createFromScratch(String auth) {
+        AnimalTypeRequestDto animalTypeRequest = AnimalTypeFactory.createAnimalTypeRequest();
+        AnimalTypeResponseDto animalTypeResponse = AnimalTypeSteps.post(animalTypeRequest, auth);
+
+        AccountRequestDto chipperRequest = AccountFactory.createAccountRequest(AccountRole.CHIPPER);
+        AccountResponseDto chipperResponse = AccountSteps.post(chipperRequest, auth);
+
+        LocationRequestDto chippingLocationRequest = LocationFactory.createLocationRequest();
+        LocationResponseDto chippingLocationResponse = LocationSteps.post(chippingLocationRequest, auth);
+
+        AnimalPostRequestDto requestAnimal = AnimalFactory.createAnimalPostRequest(
+                Set.of(animalTypeResponse.getId()),
+                chipperResponse.getId(),
+                chippingLocationResponse.getId());
+        AnimalResponseDto responseAnimal = AnimalSteps.post(requestAnimal, auth);
+        return responseAnimal;
+    }
 
     private static ValidatableResponse baseGet(Long id,
                                                String auth) {
