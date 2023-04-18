@@ -72,7 +72,7 @@ class AnimalTypeDeleteUnauthorizedTests {
             "42424242",
     })
     void nonexistingAnimalTypeByNonexistentUser(Long animalTypeId) {
-        AccountRequestDto account = AccountFactory.createAccountRequest(AccountRole.USER);
+        AccountRequestDto account = AccountFactory.createAccountRequest(AccountRole.USER.toString());
         String auth = accountToAuthConverter.convert(account);
 
         AnimalTypeSteps.deleteExpectedUnauthorized(animalTypeId, auth);
@@ -84,7 +84,7 @@ class AnimalTypeDeleteUnauthorizedTests {
         AnimalTypeRequestDto animalType = AnimalTypeFactory.createAnimalTypeRequest();
         AnimalTypeResponseDto createdAnimalType = AnimalTypeSteps.post(animalType, defaultAuth.adminAuth());
 
-        AccountRequestDto requester = AccountFactory.createAccountRequest(AccountRole.USER);
+        AccountRequestDto requester = AccountFactory.createAccountRequest(AccountRole.USER.toString());
         String auth = accountToAuthConverter.convert(requester);
         AnimalTypeSteps.deleteExpectedUnauthorized(createdAnimalType.getId(), auth);
     }

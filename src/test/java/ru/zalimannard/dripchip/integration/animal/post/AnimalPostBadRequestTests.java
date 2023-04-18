@@ -77,12 +77,12 @@ class AnimalPostBadRequestTests {
             "CHIPPER",
             "USER",
     })
-    void nullAnimalType(AccountRole requesterRole) {
+    void nullAnimalType(String requesterRole) {
         AccountRequestDto requesterRequest = AccountFactory.createAccountRequest(requesterRole);
         AccountSteps.post(requesterRequest, defaultAuth.adminAuth());
         String auth = accountToAuthConverter.convert(requesterRequest);
 
-        AccountRequestDto chipperRequest = AccountFactory.createAccountRequest(AccountRole.CHIPPER);
+        AccountRequestDto chipperRequest = AccountFactory.createAccountRequest(AccountRole.CHIPPER.toString());
         AccountResponseDto chipperResponse = AccountSteps.post(chipperRequest, defaultAuth.adminAuth());
 
         LocationRequestDto chippingLocationRequest = LocationFactory.createLocationRequest();
@@ -103,12 +103,12 @@ class AnimalPostBadRequestTests {
             "CHIPPER",
             "USER",
     })
-    void emptyAnimalType(AccountRole requesterRole) {
+    void emptyAnimalType(String requesterRole) {
         AccountRequestDto requesterRequest = AccountFactory.createAccountRequest(requesterRole);
         AccountSteps.post(requesterRequest, defaultAuth.adminAuth());
         String auth = accountToAuthConverter.convert(requesterRequest);
 
-        AccountRequestDto chipperRequest = AccountFactory.createAccountRequest(AccountRole.CHIPPER);
+        AccountRequestDto chipperRequest = AccountFactory.createAccountRequest(AccountRole.CHIPPER.toString());
         AccountResponseDto chipperResponse = AccountSteps.post(chipperRequest, defaultAuth.adminAuth());
 
         LocationRequestDto chippingLocationRequest = LocationFactory.createLocationRequest();
@@ -138,12 +138,12 @@ class AnimalPostBadRequestTests {
             "USER, -1",
             "USER, -424242",
     }, nullValues = {"null"})
-    void nullElementOfAnimalType(AccountRole requesterRole, Long animalType) {
+    void nullElementOfAnimalType(String requesterRole, Long animalType) {
         AccountRequestDto requesterRequest = AccountFactory.createAccountRequest(requesterRole);
         AccountSteps.post(requesterRequest, defaultAuth.adminAuth());
         String auth = accountToAuthConverter.convert(requesterRequest);
 
-        AccountRequestDto chipperRequest = AccountFactory.createAccountRequest(AccountRole.CHIPPER);
+        AccountRequestDto chipperRequest = AccountFactory.createAccountRequest(AccountRole.CHIPPER.toString());
         AccountResponseDto chipperResponse = AccountSteps.post(chipperRequest, defaultAuth.adminAuth());
 
         LocationRequestDto chippingLocationRequest = LocationFactory.createLocationRequest();
@@ -173,7 +173,7 @@ class AnimalPostBadRequestTests {
             "USER, -1.0",
             "USER, -424242.0",
     }, nullValues = {"null"})
-    void invalidWeight(AccountRole requesterRole, Float weight) {
+    void invalidWeight(String requesterRole, Float weight) {
         AccountRequestDto requesterRequest = AccountFactory.createAccountRequest(requesterRole);
         AccountSteps.post(requesterRequest, defaultAuth.adminAuth());
         String auth = accountToAuthConverter.convert(requesterRequest);
@@ -181,7 +181,7 @@ class AnimalPostBadRequestTests {
         AnimalTypeRequestDto animalTypeRequest = AnimalTypeFactory.createAnimalTypeRequest();
         AnimalTypeResponseDto animalTypeResponse = AnimalTypeSteps.post(animalTypeRequest, defaultAuth.adminAuth());
 
-        AccountRequestDto chipperRequest = AccountFactory.createAccountRequest(AccountRole.CHIPPER);
+        AccountRequestDto chipperRequest = AccountFactory.createAccountRequest(AccountRole.CHIPPER.toString());
         AccountResponseDto chipperResponse = AccountSteps.post(chipperRequest, defaultAuth.adminAuth());
 
         LocationRequestDto chippingLocationRequest = LocationFactory.createLocationRequest();
@@ -213,7 +213,7 @@ class AnimalPostBadRequestTests {
             "USER, -1.0",
             "USER, -424242.0",
     }, nullValues = {"null"})
-    void invalidLength(AccountRole requesterRole, Float length) {
+    void invalidLength(String requesterRole, Float length) {
         AccountRequestDto requesterRequest = AccountFactory.createAccountRequest(requesterRole);
         AccountSteps.post(requesterRequest, defaultAuth.adminAuth());
         String auth = accountToAuthConverter.convert(requesterRequest);
@@ -221,7 +221,7 @@ class AnimalPostBadRequestTests {
         AnimalTypeRequestDto animalTypeRequest = AnimalTypeFactory.createAnimalTypeRequest();
         AnimalTypeResponseDto animalTypeResponse = AnimalTypeSteps.post(animalTypeRequest, defaultAuth.adminAuth());
 
-        AccountRequestDto chipperRequest = AccountFactory.createAccountRequest(AccountRole.CHIPPER);
+        AccountRequestDto chipperRequest = AccountFactory.createAccountRequest(AccountRole.CHIPPER.toString());
         AccountResponseDto chipperResponse = AccountSteps.post(chipperRequest, defaultAuth.adminAuth());
 
         LocationRequestDto chippingLocationRequest = LocationFactory.createLocationRequest();
@@ -253,7 +253,7 @@ class AnimalPostBadRequestTests {
             "USER, -1.0",
             "USER, -424242.0",
     }, nullValues = {"null"})
-    void invalidHeight(AccountRole requesterRole, Float height) {
+    void invalidHeight(String requesterRole, Float height) {
         AccountRequestDto requesterRequest = AccountFactory.createAccountRequest(requesterRole);
         AccountSteps.post(requesterRequest, defaultAuth.adminAuth());
         String auth = accountToAuthConverter.convert(requesterRequest);
@@ -261,7 +261,7 @@ class AnimalPostBadRequestTests {
         AnimalTypeRequestDto animalTypeRequest = AnimalTypeFactory.createAnimalTypeRequest();
         AnimalTypeResponseDto animalTypeResponse = AnimalTypeSteps.post(animalTypeRequest, defaultAuth.adminAuth());
 
-        AccountRequestDto chipperRequest = AccountFactory.createAccountRequest(AccountRole.CHIPPER);
+        AccountRequestDto chipperRequest = AccountFactory.createAccountRequest(AccountRole.CHIPPER.toString());
         AccountResponseDto chipperResponse = AccountSteps.post(chipperRequest, defaultAuth.adminAuth());
 
         LocationRequestDto chippingLocationRequest = LocationFactory.createLocationRequest();
@@ -287,7 +287,7 @@ class AnimalPostBadRequestTests {
             "USER, null",
             "USER, CHEL",
     }, nullValues = {"null"})
-    void invalidGender(AccountRole requesterRole, AnimalGender gender) {
+    void invalidGender(String requesterRole, AnimalGender gender) {
         AccountRequestDto requesterRequest = AccountFactory.createAccountRequest(requesterRole);
         AccountSteps.post(requesterRequest, defaultAuth.adminAuth());
         String auth = accountToAuthConverter.convert(requesterRequest);
@@ -295,7 +295,7 @@ class AnimalPostBadRequestTests {
         AnimalTypeRequestDto animalTypeRequest = AnimalTypeFactory.createAnimalTypeRequest();
         AnimalTypeResponseDto animalTypeResponse = AnimalTypeSteps.post(animalTypeRequest, defaultAuth.adminAuth());
 
-        AccountRequestDto chipperRequest = AccountFactory.createAccountRequest(AccountRole.CHIPPER);
+        AccountRequestDto chipperRequest = AccountFactory.createAccountRequest(AccountRole.CHIPPER.toString());
         AccountResponseDto chipperResponse = AccountSteps.post(chipperRequest, defaultAuth.adminAuth());
 
         LocationRequestDto chippingLocationRequest = LocationFactory.createLocationRequest();
@@ -327,7 +327,7 @@ class AnimalPostBadRequestTests {
             "USER, -1",
             "USER, -424242",
     }, nullValues = {"null"})
-    void invalidChipperId(AccountRole requesterRole, Integer chipperId) {
+    void invalidChipperId(String requesterRole, Integer chipperId) {
         AccountRequestDto requesterRequest = AccountFactory.createAccountRequest(requesterRole);
         AccountSteps.post(requesterRequest, defaultAuth.adminAuth());
         String auth = accountToAuthConverter.convert(requesterRequest);
@@ -362,7 +362,7 @@ class AnimalPostBadRequestTests {
             "USER, -1",
             "USER, -424242",
     }, nullValues = {"null"})
-    void invalidChippingLocationId(AccountRole requesterRole, Long chippingLocationId) {
+    void invalidChippingLocationId(String requesterRole, Long chippingLocationId) {
         AccountRequestDto requesterRequest = AccountFactory.createAccountRequest(requesterRole);
         AccountSteps.post(requesterRequest, defaultAuth.adminAuth());
         String auth = accountToAuthConverter.convert(requesterRequest);
@@ -370,7 +370,7 @@ class AnimalPostBadRequestTests {
         AnimalTypeRequestDto animalTypeRequest = AnimalTypeFactory.createAnimalTypeRequest();
         AnimalTypeResponseDto animalTypeResponse = AnimalTypeSteps.post(animalTypeRequest, defaultAuth.adminAuth());
 
-        AccountRequestDto chipperRequest = AccountFactory.createAccountRequest(AccountRole.CHIPPER);
+        AccountRequestDto chipperRequest = AccountFactory.createAccountRequest(AccountRole.CHIPPER.toString());
         AccountResponseDto chipperResponse = AccountSteps.post(chipperRequest, defaultAuth.adminAuth());
 
         AnimalPostRequestDto requestAnimal = AnimalFactory.createAnimalPostRequest(

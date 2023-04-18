@@ -17,7 +17,6 @@ import ru.zalimannard.dripchip.integration.animaltype.AnimalTypeFactory;
 import ru.zalimannard.dripchip.integration.animaltype.AnimalTypeSteps;
 import ru.zalimannard.dripchip.schema.account.AccountController;
 import ru.zalimannard.dripchip.schema.account.dto.AccountRequestDto;
-import ru.zalimannard.dripchip.schema.account.role.AccountRole;
 import ru.zalimannard.dripchip.schema.animal.ownedtype.type.dto.AnimalTypeRequestDto;
 import ru.zalimannard.dripchip.schema.animal.ownedtype.type.dto.AnimalTypeResponseDto;
 
@@ -53,7 +52,7 @@ class AnimalTypeDeleteOkTests {
     @CsvSource(value = {
             "ADMIN",
     })
-    void deleteSelfOwnAccount(AccountRole role) {
+    void deleteSelfOwnAccount(String role) {
         AccountRequestDto request = AccountFactory.createAccountRequest(role);
         AccountSteps.post(request, defaultAuth.adminAuth());
         String auth = accountToAuthConverter.convert(request);

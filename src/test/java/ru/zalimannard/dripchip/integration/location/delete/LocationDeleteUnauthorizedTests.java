@@ -73,7 +73,7 @@ class LocationDeleteUnauthorizedTests {
             "42424242",
     })
     void nonexistingLocationByNonexistentUser(Long locationId) {
-        AccountRequestDto account = AccountFactory.createAccountRequest(AccountRole.USER);
+        AccountRequestDto account = AccountFactory.createAccountRequest(AccountRole.USER.toString());
         String auth = accountToAuthConverter.convert(account);
 
         LocationSteps.deleteExpectedUnauthorized(locationId, auth);
@@ -85,7 +85,7 @@ class LocationDeleteUnauthorizedTests {
         LocationRequestDto location = LocationFactory.createLocationRequest();
         LocationResponseDto createdLocation = LocationSteps.post(location, defaultAuth.adminAuth());
 
-        AccountRequestDto requester = AccountFactory.createAccountRequest(AccountRole.USER);
+        AccountRequestDto requester = AccountFactory.createAccountRequest(AccountRole.USER.toString());
         String auth = accountToAuthConverter.convert(requester);
         LocationSteps.deleteExpectedUnauthorized(createdLocation.getId(), auth);
     }

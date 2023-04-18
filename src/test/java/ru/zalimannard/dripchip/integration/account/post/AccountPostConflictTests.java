@@ -51,7 +51,7 @@ class AccountPostConflictTests {
     @Test
     @DisplayName("Негативный тест. Email уже использован")
     void emailAlreadyUsed() {
-        AccountRequestDto request = AccountFactory.createAccountRequest(AccountRole.USER);
+        AccountRequestDto request = AccountFactory.createAccountRequest(AccountRole.USER.toString());
         AccountResponseDto actual = AccountSteps.post(request, adminAuth);
         AccountResponseDto expected = AccountFactory.createAccountResponse(actual.getId(), request);
         assertThat(actual).isEqualTo(expected);

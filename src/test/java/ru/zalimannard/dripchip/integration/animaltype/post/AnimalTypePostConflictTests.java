@@ -18,7 +18,6 @@ import ru.zalimannard.dripchip.integration.animaltype.AnimalTypeFactory;
 import ru.zalimannard.dripchip.integration.animaltype.AnimalTypeSteps;
 import ru.zalimannard.dripchip.schema.account.AccountController;
 import ru.zalimannard.dripchip.schema.account.dto.AccountRequestDto;
-import ru.zalimannard.dripchip.schema.account.role.AccountRole;
 import ru.zalimannard.dripchip.schema.animal.ownedtype.type.dto.AnimalTypeRequestDto;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -54,7 +53,7 @@ class AnimalTypePostConflictTests {
             "ADMIN",
             "CHIPPER",
     })
-    void typeNameAlreadyUsed(AccountRole role) {
+    void typeNameAlreadyUsed(String role) {
         AccountRequestDto requester = AccountFactory.createAccountRequest(role);
         AccountSteps.post(requester, defaultAuth.adminAuth());
         String auth = accountToAuthConverter.convert(requester);

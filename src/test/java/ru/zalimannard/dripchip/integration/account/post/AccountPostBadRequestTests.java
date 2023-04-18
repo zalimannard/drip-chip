@@ -58,7 +58,7 @@ class AccountPostBadRequestTests {
             " ",
             "   "})
     void invalidFirstname(String firstName) {
-        AccountRequestDto request = AccountFactory.createAccountRequest(AccountRole.USER).toBuilder()
+        AccountRequestDto request = AccountFactory.createAccountRequest(AccountRole.USER.toString()).toBuilder()
                 .firstName(firstName)
                 .build();
         ExceptionResponse response = AccountSteps.postExpectedBadRequest(request, adminAuth);
@@ -73,7 +73,7 @@ class AccountPostBadRequestTests {
             " ",
             "   "})
     void invalidLastname(String lastName) {
-        AccountRequestDto request = AccountFactory.createAccountRequest(AccountRole.USER).toBuilder()
+        AccountRequestDto request = AccountFactory.createAccountRequest(AccountRole.USER.toString()).toBuilder()
                 .lastName(lastName)
                 .build();
         ExceptionResponse response = AccountSteps.postExpectedBadRequest(request, adminAuth);
@@ -93,7 +93,7 @@ class AccountPostBadRequestTests {
             "a@mail@ru",
             "a@mail@mail.ru"})
     void invalidEmail(String email) {
-        AccountRequestDto request = AccountFactory.createAccountRequest(AccountRole.USER).toBuilder()
+        AccountRequestDto request = AccountFactory.createAccountRequest(AccountRole.USER.toString()).toBuilder()
                 .email(email)
                 .build();
         ExceptionResponse response = AccountSteps.postExpectedBadRequest(request, adminAuth);
@@ -108,7 +108,7 @@ class AccountPostBadRequestTests {
             " ",
             "   "})
     void invalidPassword(String password) {
-        AccountRequestDto request = AccountFactory.createAccountRequest(AccountRole.USER).toBuilder()
+        AccountRequestDto request = AccountFactory.createAccountRequest(AccountRole.USER.toString()).toBuilder()
                 .password(password)
                 .build();
         ExceptionResponse response = AccountSteps.postExpectedBadRequest(request, adminAuth);
@@ -118,10 +118,10 @@ class AccountPostBadRequestTests {
     @Test
     @DisplayName("Негативный тест. Неверные авторизационные данные")
     void invalidAuth() {
-        AccountRequestDto nonexistentAccount = AccountFactory.createAccountRequest(AccountRole.USER);
+        AccountRequestDto nonexistentAccount = AccountFactory.createAccountRequest(AccountRole.USER.toString());
         String auth = accountToAuthConverter.convert(nonexistentAccount);
 
-        AccountRequestDto request = AccountFactory.createAccountRequest(AccountRole.USER);
+        AccountRequestDto request = AccountFactory.createAccountRequest(AccountRole.USER.toString());
         AccountSteps.postExpectedUnauthorized(request, auth);
     }
 
@@ -132,7 +132,7 @@ class AccountPostBadRequestTests {
             "ADM",
             "SYS",
             "VOVA"}, nullValues = {"null"})
-    void invalidRole(AccountRole role) {
+    void invalidRole(String role) {
         AccountRequestDto request = AccountFactory.createAccountRequest(role);
         ExceptionResponse response = AccountSteps.postExpectedBadRequest(request, adminAuth);
         assertThat(response).isNotNull();

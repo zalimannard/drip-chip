@@ -16,7 +16,6 @@ import ru.zalimannard.dripchip.integration.account.AccountSteps;
 import ru.zalimannard.dripchip.schema.account.AccountController;
 import ru.zalimannard.dripchip.schema.account.dto.AccountRequestDto;
 import ru.zalimannard.dripchip.schema.account.dto.AccountResponseDto;
-import ru.zalimannard.dripchip.schema.account.role.AccountRole;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -54,7 +53,7 @@ class AccountPutOkTests {
             "CHIPPER",
             "USER",
     })
-    void adminChangesUser(AccountRole role) {
+    void adminChangesUser(String role) {
         AccountRequestDto account = AccountFactory.createAccountRequest(role);
         AccountResponseDto createdAccount = AccountSteps.post(account, adminAuth);
 
@@ -71,7 +70,7 @@ class AccountPutOkTests {
             "CHIPPER",
             "USER",
     })
-    void chipperChangesChipper(AccountRole role) {
+    void chipperChangesChipper(String role) {
         AccountRequestDto account = AccountFactory.createAccountRequest(role);
         AccountResponseDto createdAccount = AccountSteps.post(account, adminAuth);
         String auth = accountToAuthConverter.convert(account);

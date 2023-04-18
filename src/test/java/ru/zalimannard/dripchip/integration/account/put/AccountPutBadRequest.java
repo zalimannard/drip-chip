@@ -66,12 +66,12 @@ class AccountPutBadRequest {
             "USER, -1",
             "USER, -424242",
     }, nullValues = {"null"})
-    void invalidAccountId(AccountRole role, Integer id) {
+    void invalidAccountId(String role, Integer id) {
         AccountRequestDto requester = AccountFactory.createAccountRequest(role);
         AccountSteps.post(requester, adminAuth);
         String auth = accountToAuthConverter.convert(requester);
 
-        AccountRequestDto request = AccountFactory.createAccountRequest(AccountRole.USER);
+        AccountRequestDto request = AccountFactory.createAccountRequest(AccountRole.USER.toString());
         ExceptionResponse response = AccountSteps.putExpectedBadRequest(id, request, auth);
         assertThat(response).isNotNull();
     }
@@ -84,7 +84,7 @@ class AccountPutBadRequest {
             " ",
             "   "})
     void invalidFirstname(String firstname) {
-        AccountRequestDto account = AccountFactory.createAccountRequest(AccountRole.USER);
+        AccountRequestDto account = AccountFactory.createAccountRequest(AccountRole.USER.toString());
         AccountResponseDto createdAccount = AccountSteps.post(account, adminAuth);
 
         AccountRequestDto changedAccount = account.toBuilder()
@@ -101,7 +101,7 @@ class AccountPutBadRequest {
             " ",
             "   "})
     void invalidLastname(String lastname) {
-        AccountRequestDto account = AccountFactory.createAccountRequest(AccountRole.USER);
+        AccountRequestDto account = AccountFactory.createAccountRequest(AccountRole.USER.toString());
         AccountResponseDto createdAccount = AccountSteps.post(account, adminAuth);
 
         AccountRequestDto changedAccount = account.toBuilder()
@@ -123,7 +123,7 @@ class AccountPutBadRequest {
             "a@mail@ru",
             "a@mail@mail.ru"})
     void invalidEmail(String email) {
-        AccountRequestDto account = AccountFactory.createAccountRequest(AccountRole.USER);
+        AccountRequestDto account = AccountFactory.createAccountRequest(AccountRole.USER.toString());
         AccountResponseDto createdAccount = AccountSteps.post(account, adminAuth);
 
         AccountRequestDto changedAccount = account.toBuilder()
@@ -140,7 +140,7 @@ class AccountPutBadRequest {
             " ",
             "   "})
     void invalidPassword(String password) {
-        AccountRequestDto account = AccountFactory.createAccountRequest(AccountRole.USER);
+        AccountRequestDto account = AccountFactory.createAccountRequest(AccountRole.USER.toString());
         AccountResponseDto createdAccount = AccountSteps.post(account, adminAuth);
 
         AccountRequestDto changedAccount = account.toBuilder()
@@ -156,8 +156,8 @@ class AccountPutBadRequest {
             "ADM",
             "SYS",
             "VOVA"}, nullValues = {"null"})
-    void invalidRole(AccountRole role) {
-        AccountRequestDto account = AccountFactory.createAccountRequest(AccountRole.USER);
+    void invalidRole(String role) {
+        AccountRequestDto account = AccountFactory.createAccountRequest(AccountRole.USER.toString());
         AccountResponseDto createdAccount = AccountSteps.post(account, adminAuth);
 
         AccountRequestDto changedAccount = account.toBuilder()

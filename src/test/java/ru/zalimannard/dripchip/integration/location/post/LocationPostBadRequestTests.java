@@ -18,7 +18,6 @@ import ru.zalimannard.dripchip.integration.location.LocationFactory;
 import ru.zalimannard.dripchip.integration.location.LocationSteps;
 import ru.zalimannard.dripchip.schema.account.AccountController;
 import ru.zalimannard.dripchip.schema.account.dto.AccountRequestDto;
-import ru.zalimannard.dripchip.schema.account.role.AccountRole;
 import ru.zalimannard.dripchip.schema.location.LocationController;
 import ru.zalimannard.dripchip.schema.location.dto.LocationRequestDto;
 
@@ -74,7 +73,7 @@ class LocationPostBadRequestTests {
             "USER, 200.0",
             "USER, 400.0",
     }, nullValues = {"null"})
-    void invalidLongitude(AccountRole role, Double longitude) {
+    void invalidLongitude(String role, Double longitude) {
         AccountRequestDto requester = AccountFactory.createAccountRequest(role);
         AccountSteps.post(requester, defaultAuth.adminAuth());
         String auth = accountToAuthConverter.convert(requester);
@@ -111,7 +110,7 @@ class LocationPostBadRequestTests {
             "USER, 100.0",
             "USER, 200.0",
     }, nullValues = {"null"})
-    void invalidLatitude(AccountRole role, Double latitude) {
+    void invalidLatitude(String role, Double latitude) {
         AccountRequestDto requester = AccountFactory.createAccountRequest(role);
         AccountSteps.post(requester, defaultAuth.adminAuth());
         String auth = accountToAuthConverter.convert(requester);

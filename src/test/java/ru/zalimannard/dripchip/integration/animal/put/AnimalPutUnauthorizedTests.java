@@ -67,7 +67,7 @@ class AnimalPutUnauthorizedTests {
             "42424242",
     })
     void nonexistingAnimalWithoutAuth(Long animalId) {
-        AccountRequestDto chipperRequest = AccountFactory.createAccountRequest(AccountRole.CHIPPER);
+        AccountRequestDto chipperRequest = AccountFactory.createAccountRequest(AccountRole.CHIPPER.toString());
         AccountResponseDto chipperResponse = AccountSteps.post(chipperRequest, defaultAuth.adminAuth());
 
         LocationRequestDto chippingLocationRequest = LocationFactory.createLocationRequest();
@@ -83,7 +83,7 @@ class AnimalPutUnauthorizedTests {
         AnimalTypeRequestDto animalTypeRequest = AnimalTypeFactory.createAnimalTypeRequest();
         AnimalTypeResponseDto animalTypeResponse = AnimalTypeSteps.post(animalTypeRequest, defaultAuth.adminAuth());
 
-        AccountRequestDto chipperRequest = AccountFactory.createAccountRequest(AccountRole.CHIPPER);
+        AccountRequestDto chipperRequest = AccountFactory.createAccountRequest(AccountRole.CHIPPER.toString());
         AccountResponseDto chipperResponse = AccountSteps.post(chipperRequest, defaultAuth.adminAuth());
 
         LocationRequestDto chippingLocationRequest = LocationFactory.createLocationRequest();
@@ -96,7 +96,7 @@ class AnimalPutUnauthorizedTests {
         AnimalResponseDto responseAnimal = AnimalSteps.post(requestAnimal, defaultAuth.adminAuth());
 
 
-        AccountRequestDto chipperRequest2 = AccountFactory.createAccountRequest(AccountRole.CHIPPER);
+        AccountRequestDto chipperRequest2 = AccountFactory.createAccountRequest(AccountRole.CHIPPER.toString());
         AccountResponseDto chipperResponse2 = AccountSteps.post(chipperRequest2, defaultAuth.adminAuth());
 
         LocationRequestDto chippingLocationRequest2 = LocationFactory.createLocationRequest();
@@ -112,10 +112,10 @@ class AnimalPutUnauthorizedTests {
             "42424242",
     })
     void nonexistingAnimalByNonexistentUser(Long animalId) {
-        AccountRequestDto account = AccountFactory.createAccountRequest(AccountRole.USER);
+        AccountRequestDto account = AccountFactory.createAccountRequest(AccountRole.USER.toString());
         String auth = accountToAuthConverter.convert(account);
 
-        AccountRequestDto chipperRequest = AccountFactory.createAccountRequest(AccountRole.CHIPPER);
+        AccountRequestDto chipperRequest = AccountFactory.createAccountRequest(AccountRole.CHIPPER.toString());
         AccountResponseDto chipperResponse = AccountSteps.post(chipperRequest, defaultAuth.adminAuth());
 
         LocationRequestDto chippingLocationRequest = LocationFactory.createLocationRequest();
@@ -128,13 +128,13 @@ class AnimalPutUnauthorizedTests {
     @Test
     @DisplayName("Негативный тест. Изменение существующего животного от несуществующего аккаунта")
     void existingAnimalByNonexistentUser() {
-        AccountRequestDto requesterRequest = AccountFactory.createAccountRequest(AccountRole.USER);
+        AccountRequestDto requesterRequest = AccountFactory.createAccountRequest(AccountRole.USER.toString());
         String auth = accountToAuthConverter.convert(requesterRequest);
 
         AnimalTypeRequestDto animalTypeRequest = AnimalTypeFactory.createAnimalTypeRequest();
         AnimalTypeResponseDto animalTypeResponse = AnimalTypeSteps.post(animalTypeRequest, defaultAuth.adminAuth());
 
-        AccountRequestDto chipperRequest = AccountFactory.createAccountRequest(AccountRole.CHIPPER);
+        AccountRequestDto chipperRequest = AccountFactory.createAccountRequest(AccountRole.CHIPPER.toString());
         AccountResponseDto chipperResponse = AccountSteps.post(chipperRequest, defaultAuth.adminAuth());
 
         LocationRequestDto chippingLocationRequest = LocationFactory.createLocationRequest();
@@ -147,7 +147,7 @@ class AnimalPutUnauthorizedTests {
         AnimalResponseDto responseAnimal = AnimalSteps.post(requestAnimal, defaultAuth.adminAuth());
 
 
-        AccountRequestDto chipperRequest2 = AccountFactory.createAccountRequest(AccountRole.CHIPPER);
+        AccountRequestDto chipperRequest2 = AccountFactory.createAccountRequest(AccountRole.CHIPPER.toString());
         AccountResponseDto chipperResponse2 = AccountSteps.post(chipperRequest2, defaultAuth.adminAuth());
 
         LocationRequestDto chippingLocationRequest2 = LocationFactory.createLocationRequest();

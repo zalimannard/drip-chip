@@ -76,7 +76,7 @@ class AnimalPutForbiddenTests {
             "SYS",
             "VOVA",
     })
-    void notAdminOrChipper(AccountRole requesterRole) {
+    void notAdminOrChipper(String requesterRole) {
         AccountRequestDto requesterRequest = AccountFactory.createAccountRequest(requesterRole);
         AccountSteps.post(requesterRequest, defaultAuth.adminAuth());
         String auth = accountToAuthConverter.convert(requesterRequest);
@@ -84,7 +84,7 @@ class AnimalPutForbiddenTests {
         AnimalTypeRequestDto animalTypeRequest = AnimalTypeFactory.createAnimalTypeRequest();
         AnimalTypeResponseDto animalTypeResponse = AnimalTypeSteps.post(animalTypeRequest, defaultAuth.adminAuth());
 
-        AccountRequestDto chipperRequest = AccountFactory.createAccountRequest(AccountRole.CHIPPER);
+        AccountRequestDto chipperRequest = AccountFactory.createAccountRequest(AccountRole.CHIPPER.toString());
         AccountResponseDto chipperResponse = AccountSteps.post(chipperRequest, defaultAuth.adminAuth());
 
         LocationRequestDto chippingLocationRequest = LocationFactory.createLocationRequest();
@@ -97,7 +97,7 @@ class AnimalPutForbiddenTests {
         AnimalResponseDto responseAnimal = AnimalSteps.post(requestAnimal, defaultAuth.adminAuth());
 
 
-        AccountRequestDto chipperRequest2 = AccountFactory.createAccountRequest(AccountRole.CHIPPER);
+        AccountRequestDto chipperRequest2 = AccountFactory.createAccountRequest(AccountRole.CHIPPER.toString());
         AccountResponseDto chipperResponse2 = AccountSteps.post(chipperRequest2, defaultAuth.adminAuth());
 
         LocationRequestDto chippingLocationRequest2 = LocationFactory.createLocationRequest();

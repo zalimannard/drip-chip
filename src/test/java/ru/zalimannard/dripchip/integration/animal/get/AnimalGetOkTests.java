@@ -75,11 +75,11 @@ class AnimalGetOkTests {
             "CHIPPER",
             "USER",
     })
-    void positiveTest(AccountRole requesterRole) {
+    void positiveTest(String requesterRole) {
         AnimalTypeRequestDto animalTypeRequest = AnimalTypeFactory.createAnimalTypeRequest();
         AnimalTypeResponseDto animalTypeResponse = AnimalTypeSteps.post(animalTypeRequest, defaultAuth.adminAuth());
 
-        AccountRequestDto chipperRequest = AccountFactory.createAccountRequest(AccountRole.CHIPPER);
+        AccountRequestDto chipperRequest = AccountFactory.createAccountRequest(AccountRole.CHIPPER.toString());
         AccountResponseDto chipperResponse = AccountSteps.post(chipperRequest, defaultAuth.adminAuth());
 
         LocationRequestDto chippingLocationRequest = LocationFactory.createLocationRequest();

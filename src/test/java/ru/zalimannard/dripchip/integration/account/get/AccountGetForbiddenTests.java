@@ -16,7 +16,6 @@ import ru.zalimannard.dripchip.integration.account.AccountSteps;
 import ru.zalimannard.dripchip.schema.account.AccountController;
 import ru.zalimannard.dripchip.schema.account.dto.AccountRequestDto;
 import ru.zalimannard.dripchip.schema.account.dto.AccountResponseDto;
-import ru.zalimannard.dripchip.schema.account.role.AccountRole;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -58,7 +57,7 @@ class AccountGetForbiddenTests {
             "USER, ADMIN",
             "USER, ADMIN",
     })
-    void existingUserAccountByUser(AccountRole activeRole, AccountRole passiveRole) {
+    void existingUserAccountByUser(String activeRole, String passiveRole) {
         AccountRequestDto activeAccount = AccountFactory.createAccountRequest(activeRole);
         AccountSteps.post(activeAccount, adminAuth);
         String activeAccountAuth = accountToAuthConverter.convert(activeAccount);
@@ -74,7 +73,7 @@ class AccountGetForbiddenTests {
             "USER, 42424242",
             "CHIPPER, 42424242",
     })
-    void nonexistentAccountByUser(AccountRole role, Integer accountId) {
+    void nonexistentAccountByUser(String role, Integer accountId) {
         AccountRequestDto account = AccountFactory.createAccountRequest(role);
         AccountSteps.post(account, adminAuth);
         String auth = accountToAuthConverter.convert(account);

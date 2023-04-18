@@ -17,7 +17,6 @@ import ru.zalimannard.dripchip.integration.account.AccountSteps;
 import ru.zalimannard.dripchip.integration.location.LocationSteps;
 import ru.zalimannard.dripchip.schema.account.AccountController;
 import ru.zalimannard.dripchip.schema.account.dto.AccountRequestDto;
-import ru.zalimannard.dripchip.schema.account.role.AccountRole;
 import ru.zalimannard.dripchip.schema.animal.AnimalController;
 import ru.zalimannard.dripchip.schema.animal.ownedtype.type.AnimalTypeController;
 import ru.zalimannard.dripchip.schema.location.LocationController;
@@ -62,7 +61,7 @@ class AnimalGetNotFoundTests {
             "CHIPPER, 42424242",
             "USER, 42424242",
     })
-    void nonexistentAnimal(AccountRole role, Long animalId) {
+    void nonexistentAnimal(String role, Long animalId) {
         AccountRequestDto account = AccountFactory.createAccountRequest(role);
         AccountSteps.post(account, defaultAuth.adminAuth());
         String auth = accountToAuthConverter.convert(account);

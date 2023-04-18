@@ -17,7 +17,6 @@ import ru.zalimannard.dripchip.integration.animal.AnimalSteps;
 import ru.zalimannard.dripchip.integration.location.LocationSteps;
 import ru.zalimannard.dripchip.schema.account.AccountController;
 import ru.zalimannard.dripchip.schema.account.dto.AccountRequestDto;
-import ru.zalimannard.dripchip.schema.account.role.AccountRole;
 import ru.zalimannard.dripchip.schema.animal.AnimalController;
 import ru.zalimannard.dripchip.schema.animal.dto.AnimalResponseDto;
 import ru.zalimannard.dripchip.schema.animal.ownedtype.type.AnimalTypeController;
@@ -62,7 +61,7 @@ class AnimalDeleteOkTests {
             "ADMIN",
             "CHIPPER"
     })
-    void successfullyDelete(AccountRole role) {
+    void successfullyDelete(String role) {
         AccountRequestDto request = AccountFactory.createAccountRequest(role);
         AccountSteps.post(request, defaultAuth.adminAuth());
         String auth = accountToAuthConverter.convert(request);

@@ -60,7 +60,7 @@ class AccountGetUnauthorizedTests {
     @Test
     @DisplayName("Негативный тест. Запрос существующего аккаунта без авторизации")
     void existingAccountWithoutAuth() {
-        AccountRequestDto account = AccountFactory.createAccountRequest(AccountRole.USER);
+        AccountRequestDto account = AccountFactory.createAccountRequest(AccountRole.USER.toString());
         AccountResponseDto createdAccount = AccountSteps.post(account, adminAuth);
 
         AccountSteps.getExpectedUnauthorized(createdAccount.getId(), null);
@@ -72,7 +72,7 @@ class AccountGetUnauthorizedTests {
             "42424242",
     })
     void nonexistentAccountByUnauthorized(Integer accountId) {
-        AccountRequestDto account = AccountFactory.createAccountRequest(AccountRole.USER);
+        AccountRequestDto account = AccountFactory.createAccountRequest(AccountRole.USER.toString());
         String auth = accountToAuthConverter.convert(account);
         AccountSteps.getExpectedUnauthorized(accountId, auth);
     }
@@ -80,10 +80,10 @@ class AccountGetUnauthorizedTests {
     @Test
     @DisplayName("Негативный тест. Запрос существующего аккаунта от несуществующего аккаунта")
     void existingAccountByUserUnauthorized() {
-        AccountRequestDto account = AccountFactory.createAccountRequest(AccountRole.USER);
+        AccountRequestDto account = AccountFactory.createAccountRequest(AccountRole.USER.toString());
         AccountResponseDto createdAccount = AccountSteps.post(account, adminAuth);
 
-        AccountRequestDto requester = AccountFactory.createAccountRequest(AccountRole.USER);
+        AccountRequestDto requester = AccountFactory.createAccountRequest(AccountRole.USER.toString());
         String auth = accountToAuthConverter.convert(requester);
         AccountSteps.getExpectedUnauthorized(createdAccount.getId(), auth);
     }

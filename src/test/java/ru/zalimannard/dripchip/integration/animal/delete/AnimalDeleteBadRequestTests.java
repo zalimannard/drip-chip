@@ -16,7 +16,6 @@ import ru.zalimannard.dripchip.integration.account.AccountSteps;
 import ru.zalimannard.dripchip.integration.location.LocationSteps;
 import ru.zalimannard.dripchip.schema.account.AccountController;
 import ru.zalimannard.dripchip.schema.account.dto.AccountRequestDto;
-import ru.zalimannard.dripchip.schema.account.role.AccountRole;
 import ru.zalimannard.dripchip.schema.animal.AnimalController;
 import ru.zalimannard.dripchip.schema.animal.ownedtype.type.AnimalTypeController;
 import ru.zalimannard.dripchip.schema.location.LocationController;
@@ -70,7 +69,7 @@ class AnimalDeleteBadRequestTests {
             "USER, -1",
             "USER, -424242",
     }, nullValues = {"null"})
-    void invalidAnimalId(AccountRole role, Long animalId) {
+    void invalidAnimalId(String role, Long animalId) {
         AccountRequestDto request = AccountFactory.createAccountRequest(role);
         AccountSteps.post(request, defaultAuth.adminAuth());
         String auth = accountToAuthConverter.convert(request);
@@ -85,7 +84,7 @@ class AnimalDeleteBadRequestTests {
             "CHIPPER",
             "USER",
     }, nullValues = {"null"})
-    void existVisitedLocation(AccountRole role, Long animalId) {
+    void existVisitedLocation(String role, Long animalId) {
         AccountRequestDto request = AccountFactory.createAccountRequest(role);
         AccountSteps.post(request, defaultAuth.adminAuth());
         String auth = accountToAuthConverter.convert(request);

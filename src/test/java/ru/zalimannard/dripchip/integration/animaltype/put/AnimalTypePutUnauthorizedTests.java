@@ -76,7 +76,7 @@ class AnimalTypePutUnauthorizedTests {
             "42424242",
     })
     void nonexistingAnimalTypeByNonexistentUser(Long animalTypeId) {
-        AccountRequestDto account = AccountFactory.createAccountRequest(AccountRole.USER);
+        AccountRequestDto account = AccountFactory.createAccountRequest(AccountRole.USER.toString());
         String auth = accountToAuthConverter.convert(account);
 
         AnimalTypeRequestDto newAnimalType = AnimalTypeFactory.createAnimalTypeRequest();
@@ -92,7 +92,7 @@ class AnimalTypePutUnauthorizedTests {
 
         AnimalTypeRequestDto newAnimalType = AnimalTypeFactory.createAnimalTypeRequest();
 
-        AccountRequestDto requester = AccountFactory.createAccountRequest(AccountRole.USER);
+        AccountRequestDto requester = AccountFactory.createAccountRequest(AccountRole.USER.toString());
         String auth = accountToAuthConverter.convert(requester);
         AnimalTypeSteps.putExpectedUnauthorized(createdAnimalType.getId(), newAnimalType, auth);
     }

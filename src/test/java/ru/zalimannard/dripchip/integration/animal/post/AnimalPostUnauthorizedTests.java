@@ -72,7 +72,7 @@ class AnimalPostUnauthorizedTests {
         AnimalTypeRequestDto animalTypeRequest = AnimalTypeFactory.createAnimalTypeRequest();
         AnimalTypeResponseDto animalTypeResponse = AnimalTypeSteps.post(animalTypeRequest, defaultAuth.adminAuth());
 
-        AccountRequestDto chipperRequest = AccountFactory.createAccountRequest(AccountRole.CHIPPER);
+        AccountRequestDto chipperRequest = AccountFactory.createAccountRequest(AccountRole.CHIPPER.toString());
         AccountResponseDto chipperResponse = AccountSteps.post(chipperRequest, defaultAuth.adminAuth());
 
         LocationRequestDto chippingLocationRequest = LocationFactory.createLocationRequest();
@@ -88,13 +88,13 @@ class AnimalPostUnauthorizedTests {
     @Test
     @DisplayName("Негативный тест. Запрос от несуществующего аккаунта")
     void invalidAuth() {
-        AccountRequestDto requesterRequest = AccountFactory.createAccountRequest(AccountRole.USER);
+        AccountRequestDto requesterRequest = AccountFactory.createAccountRequest(AccountRole.USER.toString());
         String auth = accountToAuthConverter.convert(requesterRequest);
 
         AnimalTypeRequestDto animalTypeRequest = AnimalTypeFactory.createAnimalTypeRequest();
         AnimalTypeResponseDto animalTypeResponse = AnimalTypeSteps.post(animalTypeRequest, defaultAuth.adminAuth());
 
-        AccountRequestDto chipperRequest = AccountFactory.createAccountRequest(AccountRole.CHIPPER);
+        AccountRequestDto chipperRequest = AccountFactory.createAccountRequest(AccountRole.CHIPPER.toString());
         AccountResponseDto chipperResponse = AccountSteps.post(chipperRequest, defaultAuth.adminAuth());
 
         LocationRequestDto chippingLocationRequest = LocationFactory.createLocationRequest();

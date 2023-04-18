@@ -40,17 +40,17 @@ class AccountPostUnauthorizedTests {
     @Test
     @DisplayName("Негативный тест. Запрос без авторизационных данных")
     void withoutAuth() {
-        AccountRequestDto request = AccountFactory.createAccountRequest(AccountRole.USER);
+        AccountRequestDto request = AccountFactory.createAccountRequest(AccountRole.USER.toString());
         AccountSteps.postExpectedUnauthorized(request, null);
     }
 
     @Test
     @DisplayName("Негативный тест. Запрос от несуществующего аккаунта")
     void invalidAuth() {
-        AccountRequestDto account = AccountFactory.createAccountRequest(AccountRole.USER);
+        AccountRequestDto account = AccountFactory.createAccountRequest(AccountRole.USER.toString());
         String auth = accountToAuthConverter.convert(account);
 
-        AccountRequestDto request = AccountFactory.createAccountRequest(AccountRole.USER);
+        AccountRequestDto request = AccountFactory.createAccountRequest(AccountRole.USER.toString());
         AccountSteps.postExpectedUnauthorized(request, auth);
     }
 

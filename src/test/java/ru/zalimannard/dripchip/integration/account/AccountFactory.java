@@ -7,7 +7,7 @@ import ru.zalimannard.dripchip.schema.account.role.AccountRole;
 
 public class AccountFactory {
 
-    public static AccountRequestDto createAccountRequest(AccountRole role) {
+    public static AccountRequestDto createAccountRequest(String role) {
         return AccountRequestDto.builder()
                 .firstName(Faker.instance().name().firstName())
                 .lastName(Faker.instance().name().lastName())
@@ -23,7 +23,7 @@ public class AccountFactory {
                 .firstName(accountRequestDto.getFirstName())
                 .lastName(accountRequestDto.getLastName())
                 .email(accountRequestDto.getEmail())
-                .role(accountRequestDto.getRole())
+                .role(AccountRole.valueOf(accountRequestDto.getRole()))
                 .build();
     }
 

@@ -73,7 +73,7 @@ class LocationGetUnauthorizedTests {
             "42424242",
     })
     void nonexistingLocationByNonexistentUser(Long locationId) {
-        AccountRequestDto account = AccountFactory.createAccountRequest(AccountRole.USER);
+        AccountRequestDto account = AccountFactory.createAccountRequest(AccountRole.USER.toString());
         String auth = accountToAuthConverter.convert(account);
         LocationSteps.getExpectedUnauthorized(locationId, auth);
     }
@@ -84,7 +84,7 @@ class LocationGetUnauthorizedTests {
         LocationRequestDto location = LocationFactory.createLocationRequest();
         LocationResponseDto createdLocation = LocationSteps.post(location, defaultAuth.adminAuth());
 
-        AccountRequestDto requester = AccountFactory.createAccountRequest(AccountRole.USER);
+        AccountRequestDto requester = AccountFactory.createAccountRequest(AccountRole.USER.toString());
         String auth = accountToAuthConverter.convert(requester);
         LocationSteps.getExpectedUnauthorized(createdLocation.getId(), auth);
     }

@@ -56,7 +56,7 @@ class LocationPostUnauthorizedTests {
     @Test
     @DisplayName("Негативный тест. Запрос от несуществующего аккаунта")
     void invalidAuth() {
-        AccountRequestDto account = AccountFactory.createAccountRequest(AccountRole.USER);
+        AccountRequestDto account = AccountFactory.createAccountRequest(AccountRole.USER.toString());
         String auth = accountToAuthConverter.convert(account);
 
         LocationRequestDto request = LocationFactory.createLocationRequest();

@@ -16,7 +16,6 @@ import ru.zalimannard.dripchip.integration.account.AccountFactory;
 import ru.zalimannard.dripchip.integration.account.AccountSteps;
 import ru.zalimannard.dripchip.schema.account.AccountController;
 import ru.zalimannard.dripchip.schema.account.dto.AccountRequestDto;
-import ru.zalimannard.dripchip.schema.account.role.AccountRole;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -52,7 +51,7 @@ class AccountGetNotFoundTests {
     @CsvSource(value = {
             "ADMIN, 42424242",
     })
-    void nonexistentAccountByUser(AccountRole role, Integer accountId) {
+    void nonexistentAccountByUser(String role, Integer accountId) {
         AccountRequestDto account = AccountFactory.createAccountRequest(role);
         AccountSteps.post(account, adminAuth);
         String auth = accountToAuthConverter.convert(account);

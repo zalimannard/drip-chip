@@ -17,7 +17,6 @@ import ru.zalimannard.dripchip.integration.account.AccountSteps;
 import ru.zalimannard.dripchip.integration.location.LocationSteps;
 import ru.zalimannard.dripchip.schema.account.AccountController;
 import ru.zalimannard.dripchip.schema.account.dto.AccountRequestDto;
-import ru.zalimannard.dripchip.schema.account.role.AccountRole;
 import ru.zalimannard.dripchip.schema.location.LocationController;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -63,7 +62,7 @@ class LocationGetBadRequestTests {
             "USER, -1",
             "USER, -424242",
     }, nullValues = {"null"})
-    void invalidPointId(AccountRole role, Long pointId) {
+    void invalidPointId(String role, Long pointId) {
         AccountRequestDto account = AccountFactory.createAccountRequest(role);
         AccountSteps.post(account, defaultAuth.adminAuth());
         String auth = accountToAuthConverter.convert(account);

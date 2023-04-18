@@ -49,7 +49,7 @@ class AccountDeleteUnauthorizedTests {
     @Test
     @DisplayName("Негативный тест. Запрос без авторизационных данных")
     void withoutAuth() {
-        AccountRequestDto request = AccountFactory.createAccountRequest(AccountRole.USER);
+        AccountRequestDto request = AccountFactory.createAccountRequest(AccountRole.USER.toString());
         AccountResponseDto actual = AccountSteps.post(request, adminAuth);
 
         AccountSteps.deleteExpectedUnauthorized(actual.getId(), null);
@@ -58,10 +58,10 @@ class AccountDeleteUnauthorizedTests {
     @Test
     @DisplayName("Негативный тест. Запрос от несуществующего аккаунта")
     void invalidAuth() {
-        AccountRequestDto requester = AccountFactory.createAccountRequest(AccountRole.USER);
+        AccountRequestDto requester = AccountFactory.createAccountRequest(AccountRole.USER.toString());
         String auth = accountToAuthConverter.convert(requester);
 
-        AccountRequestDto request = AccountFactory.createAccountRequest(AccountRole.USER);
+        AccountRequestDto request = AccountFactory.createAccountRequest(AccountRole.USER.toString());
         AccountResponseDto actual = AccountSteps.post(request, adminAuth);
 
         AccountSteps.deleteExpectedUnauthorized(actual.getId(), auth);

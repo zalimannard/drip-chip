@@ -17,7 +17,6 @@ import ru.zalimannard.dripchip.integration.account.AccountFactory;
 import ru.zalimannard.dripchip.integration.account.AccountSteps;
 import ru.zalimannard.dripchip.schema.account.AccountController;
 import ru.zalimannard.dripchip.schema.account.dto.AccountRequestDto;
-import ru.zalimannard.dripchip.schema.account.role.AccountRole;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -55,21 +54,13 @@ class AccountDeleteBadRequestTests {
             "ADMIN, 0",
             "ADMIN, -1",
             "ADMIN, -424242",
-            "CHIPPER, null",
-            "CHIPPER, 0",
-            "CHIPPER, -1",
-            "CHIPPER, -424242",
-            "USER, null",
-            "USER, 0",
-            "USER, -1",
-            "USER, -424242",
     }, nullValues = {"null"})
-    void invalidAccountId(AccountRole role, Integer locationId) {
+    void invalidAccountId(String role, Integer accountId) {
         AccountRequestDto requester = AccountFactory.createAccountRequest(role);
         AccountSteps.post(requester, adminAuth);
         String auth = accountToAuthConverter.convert(requester);
 
-        ExceptionResponse response = AccountSteps.deleteExpectedBadRequest(locationId, auth);
+        ExceptionResponse response = AccountSteps.deleteExpectedBadRequest(accountId, auth);
         assertThat(response).isNotNull();
     }
 

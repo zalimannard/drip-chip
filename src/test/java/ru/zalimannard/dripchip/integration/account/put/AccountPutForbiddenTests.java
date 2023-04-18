@@ -57,7 +57,7 @@ class AccountPutForbiddenTests {
             "CHIPPER, CHIPPER",
             "CHIPPER, ADMIN",
     })
-    void changesNotSelf(AccountRole activeRole, AccountRole passiveRole) {
+    void changesNotSelf(String activeRole, String passiveRole) {
         AccountRequestDto passiveAccountRequest = AccountFactory.createAccountRequest(passiveRole);
         AccountResponseDto createdPassiveAccount = AccountSteps.post(passiveAccountRequest, adminAuth);
 
@@ -75,12 +75,12 @@ class AccountPutForbiddenTests {
             "USER, 42424242",
             "CHIPPER, 42424242",
     })
-    void changesNonexistentAccount(AccountRole activeRole, Integer accountId) {
+    void changesNonexistentAccount(String activeRole, Integer accountId) {
         AccountRequestDto activeAccountRequest = AccountFactory.createAccountRequest(activeRole);
         AccountSteps.post(activeAccountRequest, adminAuth);
         String auth = accountToAuthConverter.convert(activeAccountRequest);
 
-        AccountRequestDto newAccount = AccountFactory.createAccountRequest(AccountRole.USER).toBuilder().build();
+        AccountRequestDto newAccount = AccountFactory.createAccountRequest(AccountRole.USER.toString()).toBuilder().build();
         AccountSteps.putExpectedForbidden(accountId, newAccount, auth);
     }
 

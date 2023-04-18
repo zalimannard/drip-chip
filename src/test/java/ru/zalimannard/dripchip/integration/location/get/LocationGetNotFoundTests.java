@@ -17,7 +17,6 @@ import ru.zalimannard.dripchip.integration.account.AccountSteps;
 import ru.zalimannard.dripchip.integration.location.LocationSteps;
 import ru.zalimannard.dripchip.schema.account.AccountController;
 import ru.zalimannard.dripchip.schema.account.dto.AccountRequestDto;
-import ru.zalimannard.dripchip.schema.account.role.AccountRole;
 import ru.zalimannard.dripchip.schema.location.LocationController;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -54,7 +53,7 @@ class LocationGetNotFoundTests {
             "CHIPPER, 42424242",
             "USER, 42424242",
     })
-    void nonexistentLocation(AccountRole role, Long locationId) {
+    void nonexistentLocation(String role, Long locationId) {
         AccountRequestDto account = AccountFactory.createAccountRequest(role);
         AccountSteps.post(account, defaultAuth.adminAuth());
         String auth = accountToAuthConverter.convert(account);

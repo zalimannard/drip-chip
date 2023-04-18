@@ -17,7 +17,6 @@ import ru.zalimannard.dripchip.integration.account.AccountSteps;
 import ru.zalimannard.dripchip.integration.animaltype.AnimalTypeSteps;
 import ru.zalimannard.dripchip.schema.account.AccountController;
 import ru.zalimannard.dripchip.schema.account.dto.AccountRequestDto;
-import ru.zalimannard.dripchip.schema.account.role.AccountRole;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -53,7 +52,7 @@ class AnimalTypeGetNotFoundTests {
             "CHIPPER, 42424242",
             "USER, 42424242",
     })
-    void nonexistentAnimalType(AccountRole role, Long locationId) {
+    void nonexistentAnimalType(String role, Long locationId) {
         AccountRequestDto account = AccountFactory.createAccountRequest(role);
         AccountSteps.post(account, defaultAuth.adminAuth());
         String auth = accountToAuthConverter.convert(account);

@@ -16,7 +16,6 @@ import ru.zalimannard.dripchip.integration.account.AccountSteps;
 import ru.zalimannard.dripchip.schema.account.AccountController;
 import ru.zalimannard.dripchip.schema.account.dto.AccountRequestDto;
 import ru.zalimannard.dripchip.schema.account.dto.AccountResponseDto;
-import ru.zalimannard.dripchip.schema.account.role.AccountRole;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -58,7 +57,7 @@ class AccountDeleteForbiddenTests {
             "CHIPPER, CHIPPER",
             "CHIPPER, ADMIN",
     })
-    void deleteNotSelf(AccountRole activeRole, AccountRole passiveRole) {
+    void deleteNotSelf(String activeRole, String passiveRole) {
         AccountRequestDto passiveAccountRequest = AccountFactory.createAccountRequest(passiveRole);
         AccountResponseDto createdPassiveAccount = AccountSteps.post(passiveAccountRequest, adminAuth);
 
@@ -75,7 +74,7 @@ class AccountDeleteForbiddenTests {
             "USER, 42424242",
             "CHIPPER, 42424242",
     })
-    void deleteNonexistentAccount(AccountRole activeRole, Integer accountId) {
+    void deleteNonexistentAccount(String activeRole, Integer accountId) {
         AccountRequestDto activeAccountRequest = AccountFactory.createAccountRequest(activeRole);
         AccountSteps.post(activeAccountRequest, adminAuth);
         String auth = accountToAuthConverter.convert(activeAccountRequest);

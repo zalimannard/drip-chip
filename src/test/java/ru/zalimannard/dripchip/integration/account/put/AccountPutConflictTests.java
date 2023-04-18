@@ -50,13 +50,13 @@ class AccountPutConflictTests {
     @Test
     @DisplayName("Негативный тест. Email занят")
     void emailAlreadyUsed() {
-        AccountRequestDto existedAccount = AccountFactory.createAccountRequest(AccountRole.USER);
+        AccountRequestDto existedAccount = AccountFactory.createAccountRequest(AccountRole.USER.toString());
         AccountSteps.post(existedAccount, adminAuth);
 
-        AccountRequestDto account = AccountFactory.createAccountRequest(AccountRole.USER);
+        AccountRequestDto account = AccountFactory.createAccountRequest(AccountRole.USER.toString());
         AccountResponseDto createdAccount = AccountSteps.post(account, adminAuth);
 
-        AccountRequestDto changedAccount = AccountFactory.createAccountRequest(AccountRole.USER).toBuilder()
+        AccountRequestDto changedAccount = AccountFactory.createAccountRequest(AccountRole.USER.toString()).toBuilder()
                 .email(existedAccount.getEmail())
                 .build();
         ExceptionResponse response = AccountSteps.putExpectedConflict(createdAccount.getId(), changedAccount, adminAuth);

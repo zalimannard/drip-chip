@@ -52,7 +52,7 @@ class AccountDeleteOkTests {
     @Test
     @DisplayName("Позитивный тест. Админ удаляет аккаунт")
     void adminDeleteAccount() {
-        AccountRequestDto request = AccountFactory.createAccountRequest(AccountRole.USER);
+        AccountRequestDto request = AccountFactory.createAccountRequest(AccountRole.USER.toString());
         AccountResponseDto actual = AccountSteps.post(request, adminAuth);
         AccountResponseDto expected = AccountFactory.createAccountResponse(actual.getId(), request);
         assertThat(actual).isEqualTo(expected);
@@ -72,7 +72,7 @@ class AccountDeleteOkTests {
             "CHIPPER",
             "USER",
     })
-    void deleteSelfOwnAccount(AccountRole role) {
+    void deleteSelfOwnAccount(String role) {
         AccountRequestDto request = AccountFactory.createAccountRequest(role);
         AccountResponseDto actual = AccountSteps.post(request, adminAuth);
         AccountResponseDto expected = AccountFactory.createAccountResponse(actual.getId(), request);

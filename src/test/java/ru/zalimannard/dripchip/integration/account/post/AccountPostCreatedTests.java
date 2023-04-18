@@ -49,7 +49,7 @@ class AccountPostCreatedTests {
     @Test
     @DisplayName("Позитивный тест. Запрос успешно выполнен")
     void positiveTest() {
-        AccountRequestDto request = AccountFactory.createAccountRequest(AccountRole.USER);
+        AccountRequestDto request = AccountFactory.createAccountRequest(AccountRole.USER.toString());
         AccountResponseDto actual = AccountSteps.post(request, adminAuth);
         AccountResponseDto expected = AccountFactory.createAccountResponse(actual.getId(), request);
         assertThat(actual).isEqualTo(expected);

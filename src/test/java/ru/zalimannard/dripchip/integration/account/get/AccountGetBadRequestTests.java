@@ -16,7 +16,6 @@ import ru.zalimannard.dripchip.integration.account.AccountFactory;
 import ru.zalimannard.dripchip.integration.account.AccountSteps;
 import ru.zalimannard.dripchip.schema.account.AccountController;
 import ru.zalimannard.dripchip.schema.account.dto.AccountRequestDto;
-import ru.zalimannard.dripchip.schema.account.role.AccountRole;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -54,16 +53,8 @@ class AccountGetBadRequestTests {
             "ADMIN, 0",
             "ADMIN, -1",
             "ADMIN, -424242",
-            "CHIPPER, null",
-            "CHIPPER, 0",
-            "CHIPPER, -1",
-            "CHIPPER, -424242",
-            "USER, null",
-            "USER, 0",
-            "USER, -1",
-            "USER, -424242",
     }, nullValues = {"null"})
-    void invalidAccountId(AccountRole role, Integer accountId) {
+    void invalidAccountId(String role, Integer accountId) {
         AccountRequestDto account = AccountFactory.createAccountRequest(role);
         AccountSteps.post(account, adminAuth);
         String auth = accountToAuthConverter.convert(account);

@@ -52,7 +52,7 @@ class AccountPutNotFoundTests {
             "42424242",
     })
     void changeNonexistentAccount(Integer accountId) {
-        AccountRequestDto newAccount = AccountFactory.createAccountRequest(AccountRole.USER);
+        AccountRequestDto newAccount = AccountFactory.createAccountRequest(AccountRole.USER.toString());
         AccountSteps.putExpectedNotFound(accountId, newAccount, adminAuth);
     }
 

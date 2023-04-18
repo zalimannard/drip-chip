@@ -17,7 +17,6 @@ import ru.zalimannard.dripchip.integration.location.LocationFactory;
 import ru.zalimannard.dripchip.integration.location.LocationSteps;
 import ru.zalimannard.dripchip.schema.account.AccountController;
 import ru.zalimannard.dripchip.schema.account.dto.AccountRequestDto;
-import ru.zalimannard.dripchip.schema.account.role.AccountRole;
 import ru.zalimannard.dripchip.schema.location.LocationController;
 import ru.zalimannard.dripchip.schema.location.dto.LocationRequestDto;
 import ru.zalimannard.dripchip.schema.location.dto.LocationResponseDto;
@@ -54,7 +53,7 @@ class LocationDeleteOkTests {
     @CsvSource(value = {
             "ADMIN",
     })
-    void deleteSelfOwnAccount(AccountRole role) {
+    void deleteSelfOwnAccount(String role) {
         AccountRequestDto request = AccountFactory.createAccountRequest(role);
         AccountSteps.post(request, defaultAuth.adminAuth());
         String auth = accountToAuthConverter.convert(request);

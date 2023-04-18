@@ -18,7 +18,6 @@ import ru.zalimannard.dripchip.integration.animaltype.AnimalTypeFactory;
 import ru.zalimannard.dripchip.integration.animaltype.AnimalTypeSteps;
 import ru.zalimannard.dripchip.schema.account.AccountController;
 import ru.zalimannard.dripchip.schema.account.dto.AccountRequestDto;
-import ru.zalimannard.dripchip.schema.account.role.AccountRole;
 import ru.zalimannard.dripchip.schema.animal.ownedtype.type.dto.AnimalTypeRequestDto;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -64,7 +63,7 @@ class AnimalTypePostBadRequestTests {
             "USER, ' '",
             "USER, '   '",
     }, nullValues = {"null"})
-    void invalidTypeName(AccountRole role, String typeName) {
+    void invalidTypeName(String role, String typeName) {
         AccountRequestDto requester = AccountFactory.createAccountRequest(role);
         AccountSteps.post(requester, defaultAuth.adminAuth());
         String auth = accountToAuthConverter.convert(requester);

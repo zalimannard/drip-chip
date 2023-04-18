@@ -18,7 +18,6 @@ import ru.zalimannard.dripchip.integration.animaltype.AnimalTypeFactory;
 import ru.zalimannard.dripchip.integration.animaltype.AnimalTypeSteps;
 import ru.zalimannard.dripchip.schema.account.AccountController;
 import ru.zalimannard.dripchip.schema.account.dto.AccountRequestDto;
-import ru.zalimannard.dripchip.schema.account.role.AccountRole;
 import ru.zalimannard.dripchip.schema.animal.ownedtype.type.dto.AnimalTypeRequestDto;
 import ru.zalimannard.dripchip.schema.animal.ownedtype.type.dto.AnimalTypeResponseDto;
 
@@ -65,7 +64,7 @@ class AnimalTypePutBadRequestTests {
             "USER, -1",
             "USER, -424242",
     }, nullValues = {"null"})
-    void invalidTypeId(AccountRole role, Long typeId) {
+    void invalidTypeId(String role, Long typeId) {
         AccountRequestDto account = AccountFactory.createAccountRequest(role);
         AccountSteps.post(account, defaultAuth.adminAuth());
         String auth = accountToAuthConverter.convert(account);
@@ -91,7 +90,7 @@ class AnimalTypePutBadRequestTests {
             "USER, ' '",
             "USER, '   '",
     }, nullValues = {"null"})
-    void invalidTypeName(AccountRole role, String typeName) {
+    void invalidTypeName(String role, String typeName) {
         AccountRequestDto requester = AccountFactory.createAccountRequest(role);
         AccountSteps.post(requester, defaultAuth.adminAuth());
         String auth = accountToAuthConverter.convert(requester);

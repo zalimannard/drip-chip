@@ -75,14 +75,14 @@ class AnimalPostCreatedTests {
             "CHIPPER",
     })
     void positiveTest(AccountRole requesterRole) {
-        AccountRequestDto requesterRequest = AccountFactory.createAccountRequest(requesterRole);
+        AccountRequestDto requesterRequest = AccountFactory.createAccountRequest(requesterRole.toString());
         AccountSteps.post(requesterRequest, defaultAuth.adminAuth());
         String auth = accountToAuthConverter.convert(requesterRequest);
 
         AnimalTypeRequestDto animalTypeRequest = AnimalTypeFactory.createAnimalTypeRequest();
         AnimalTypeResponseDto animalTypeResponse = AnimalTypeSteps.post(animalTypeRequest, defaultAuth.adminAuth());
 
-        AccountRequestDto chipperRequest = AccountFactory.createAccountRequest(AccountRole.CHIPPER);
+        AccountRequestDto chipperRequest = AccountFactory.createAccountRequest(AccountRole.CHIPPER.toString());
         AccountResponseDto chipperResponse = AccountSteps.post(chipperRequest, defaultAuth.adminAuth());
 
         LocationRequestDto chippingLocationRequest = LocationFactory.createLocationRequest();
@@ -104,7 +104,7 @@ class AnimalPostCreatedTests {
             "ADMIN",
             "CHIPPER",
     })
-    void positiveTestManyAnimalType(AccountRole requesterRole) {
+    void positiveTestManyAnimalType(String requesterRole) {
         AccountRequestDto requesterRequest = AccountFactory.createAccountRequest(requesterRole);
         AccountSteps.post(requesterRequest, defaultAuth.adminAuth());
         String auth = accountToAuthConverter.convert(requesterRequest);
@@ -114,7 +114,7 @@ class AnimalPostCreatedTests {
         AnimalTypeRequestDto animalTypeRequest2 = AnimalTypeFactory.createAnimalTypeRequest();
         AnimalTypeResponseDto animalTypeResponse2 = AnimalTypeSteps.post(animalTypeRequest2, defaultAuth.adminAuth());
 
-        AccountRequestDto chipperRequest = AccountFactory.createAccountRequest(AccountRole.CHIPPER);
+        AccountRequestDto chipperRequest = AccountFactory.createAccountRequest(AccountRole.CHIPPER.toString());
         AccountResponseDto chipperResponse = AccountSteps.post(chipperRequest, defaultAuth.adminAuth());
 
         LocationRequestDto chippingLocationRequest = LocationFactory.createLocationRequest();

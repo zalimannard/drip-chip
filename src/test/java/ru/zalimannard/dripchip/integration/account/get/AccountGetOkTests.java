@@ -54,8 +54,8 @@ class AccountGetOkTests {
             "CHIPPER",
             "USER",
     })
-    void positiveTestAccountByAdmin(AccountRole role) {
-        AccountRequestDto admin = AccountFactory.createAccountRequest(AccountRole.ADMIN);
+    void positiveTestAccountByAdmin(String role) {
+        AccountRequestDto admin = AccountFactory.createAccountRequest(AccountRole.ADMIN.toString());
         AccountSteps.post(admin, adminAuth);
         String auth = accountToAuthConverter.convert(admin);
 
@@ -75,7 +75,7 @@ class AccountGetOkTests {
             "CHIPPER",
             "USER",
     })
-    void positiveTestAccountBySelf(AccountRole role) {
+    void positiveTestAccountBySelf(String role) {
         AccountRequestDto account = AccountFactory.createAccountRequest(role);
         AccountResponseDto createdAccount = AccountSteps.post(account, adminAuth);
         String auth = accountToAuthConverter.convert(account);

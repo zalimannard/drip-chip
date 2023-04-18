@@ -17,7 +17,6 @@ import ru.zalimannard.dripchip.integration.location.LocationFactory;
 import ru.zalimannard.dripchip.integration.location.LocationSteps;
 import ru.zalimannard.dripchip.schema.account.AccountController;
 import ru.zalimannard.dripchip.schema.account.dto.AccountRequestDto;
-import ru.zalimannard.dripchip.schema.account.role.AccountRole;
 import ru.zalimannard.dripchip.schema.location.LocationController;
 import ru.zalimannard.dripchip.schema.location.dto.LocationRequestDto;
 import ru.zalimannard.dripchip.schema.location.dto.LocationResponseDto;
@@ -56,7 +55,7 @@ class LocationGetOkTests {
             "CHIPPER",
             "USER",
     })
-    void positiveTest(AccountRole role) {
+    void positiveTest(String role) {
         AccountRequestDto account = AccountFactory.createAccountRequest(role);
         AccountSteps.post(account, defaultAuth.adminAuth());
         String auth = accountToAuthConverter.convert(account);
