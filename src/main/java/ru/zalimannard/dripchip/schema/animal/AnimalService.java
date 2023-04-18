@@ -21,9 +21,23 @@ public interface AnimalService {
 
     Animal readEntity(@Positive long id);
 
-    List<AnimalResponseDto> search(AnimalPostRequestDto filterDto, Date start, Date end, @PositiveOrZero int from, @Positive int size);
+    List<AnimalResponseDto> search(Date startDateTime,
+                                   Date endDateTime,
+                                   Integer chipperId,
+                                   Integer chippingLocationId,
+                                   String lifeStatus,
+                                   String gender,
+                                   @PositiveOrZero int from,
+                                   @Positive int size);
 
-    List<Animal> searchEntities(Animal filter, Date start, Date end, @PositiveOrZero int from, @Positive int size);
+    List<Animal> searchEntities(Date start,
+                                Date end,
+                                Integer chipperId,
+                                Integer chippingLocationId,
+                                String lifeStatus,
+                                String gender,
+                                @PositiveOrZero int from,
+                                @Positive int size);
 
 
     AnimalResponseDto update(@Positive long id, @Valid AnimalPutRequestDto animalPutRequestDto);

@@ -37,11 +37,10 @@ public abstract class RegistrationSteps {
                 .extract().as(AccountResponseDto.class);
     }
 
-    public static ExceptionResponse registrationExpectedBadRequest(AuthenticationDto authenticationDto,
-                                                                   String auth) {
-        return baseRegistration(authenticationDto, auth)
-                .statusCode(400)
-                .extract().as(ExceptionResponse.class);
+    public static void registrationExpectedBadRequest(AuthenticationDto authenticationDto,
+                                                      String auth) {
+        baseRegistration(authenticationDto, auth)
+                .statusCode(400);
     }
 
     public static void registrationExpectedForbidden(AuthenticationDto authenticationDto,

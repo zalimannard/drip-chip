@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
+import ru.zalimannard.dripchip.exception.BadRequestException;
 import ru.zalimannard.dripchip.exception.ConflictException;
 import ru.zalimannard.dripchip.exception.NotFoundException;
 import ru.zalimannard.dripchip.page.OffsetBasedPage;
@@ -85,19 +86,20 @@ public class AccountServiceImpl implements AccountService {
                 .orElseThrow(() -> new NotFoundException("acc-04", "id", String.valueOf(id)));
 
         String password = encodePassword(account.getEmail(), account.getPassword());
-        account = account.toBuilder()
+        Account accountToSave = account.toBuilder()
                 .id(id)
                 .password(password)
                 .build();
-        return repository.save(account);
+        return repository.save(accountToSave);
     }
 
     @Override
     public void delete(int id) {
-        if (repository.existsById(id)) {
-            repository.deleteById(id);
-        } else {
-            throw new NotFoundException("acc-05", "id", String.valueOf(id));
+        try {
+            Account account = readEntity(id);
+            repository.delete(account);
+        } catch (DataIntegrityViolationException e) {
+            throw new BadRequestException("acc-05", "id", String.valueOf(id));
         }
     }
 

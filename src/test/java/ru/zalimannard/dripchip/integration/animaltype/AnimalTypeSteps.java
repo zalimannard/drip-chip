@@ -35,11 +35,10 @@ public class AnimalTypeSteps {
                 .extract().as(AnimalTypeResponseDto.class);
     }
 
-    public static ExceptionResponse getExpectedBadRequest(Long id,
-                                                          String auth) {
-        return baseGet(id, auth)
-                .statusCode(400)
-                .extract().as(ExceptionResponse.class);
+    public static void getExpectedBadRequest(Long id,
+                                             String auth) {
+        baseGet(id, auth)
+                .statusCode(400);
     }
 
     public static void getExpectedUnauthorized(Long id,
@@ -82,11 +81,10 @@ public class AnimalTypeSteps {
                 .extract().as(AnimalTypeResponseDto.class);
     }
 
-    public static ExceptionResponse postExpectedBadRequest(AnimalTypeRequestDto animalTypeRequestDto,
-                                                           String auth) {
-        return basePost(animalTypeRequestDto, auth)
-                .statusCode(400)
-                .extract().as(ExceptionResponse.class);
+    public static void postExpectedBadRequest(AnimalTypeRequestDto animalTypeRequestDto,
+                                              String auth) {
+        basePost(animalTypeRequestDto, auth)
+                .statusCode(400);
     }
 
     public static void postExpectedUnauthorized(AnimalTypeRequestDto animalTypeRequestDto,
@@ -135,11 +133,10 @@ public class AnimalTypeSteps {
                 .extract().as(AnimalTypeResponseDto.class);
     }
 
-    public static ExceptionResponse putExpectedBadRequest(Long id, AnimalTypeRequestDto animalTypeRequestDto,
-                                                          String auth) {
-        return basePut(id, animalTypeRequestDto, auth)
-                .statusCode(400)
-                .extract().as(ExceptionResponse.class);
+    public static void putExpectedBadRequest(Long id, AnimalTypeRequestDto animalTypeRequestDto,
+                                             String auth) {
+        basePut(id, animalTypeRequestDto, auth)
+                .statusCode(400);
     }
 
     public static void putExpectedUnauthorized(Long id, AnimalTypeRequestDto animalTypeRequestDto,
@@ -191,11 +188,10 @@ public class AnimalTypeSteps {
                 .statusCode(200);
     }
 
-    public static ExceptionResponse deleteExpectedBadRequest(Long id,
-                                                             String auth) {
-        return baseDelete(id, auth)
-                .statusCode(400)
-                .extract().as(ExceptionResponse.class);
+    public static void deleteExpectedBadRequest(Long id,
+                                                String auth) {
+        baseDelete(id, auth)
+                .statusCode(400);
     }
 
     public static void deleteExpectedUnauthorized(Long id,

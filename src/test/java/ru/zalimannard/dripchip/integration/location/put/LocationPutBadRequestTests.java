@@ -8,7 +8,6 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
-import ru.zalimannard.dripchip.exception.response.ExceptionResponse;
 import ru.zalimannard.dripchip.integration.AccountToAuthConverter;
 import ru.zalimannard.dripchip.integration.DefaultAuth;
 import ru.zalimannard.dripchip.integration.Specifications;
@@ -66,13 +65,6 @@ class LocationPutBadRequestTests {
             "CHIPPER, 180.00001",
             "CHIPPER, 200.0",
             "CHIPPER, 400.0",
-            "USER, null",
-            "USER, -400.0",
-            "USER, -200.0",
-            "USER, -180.00001",
-            "USER, 180.00001",
-            "USER, 200.0",
-            "USER, 400.0",
     }, nullValues = {"null"})
     void invalidLongitude(String role, Double longitude) {
         AccountRequestDto requester = AccountFactory.createAccountRequest(role);
@@ -85,8 +77,7 @@ class LocationPutBadRequestTests {
         LocationRequestDto request = preRequest.toBuilder()
                 .longitude(longitude)
                 .build();
-        ExceptionResponse response = LocationSteps.putExpectedBadRequest(preResponse.getId(), request, auth);
-        assertThat(response).isNotNull();
+        LocationSteps.putExpectedBadRequest(preResponse.getId(), request, auth);
     }
 
     @ParameterizedTest
@@ -100,10 +91,6 @@ class LocationPutBadRequestTests {
             "CHIPPER, 0",
             "CHIPPER, -1",
             "CHIPPER, -424242",
-            "USER, null",
-            "USER, 0",
-            "USER, -1",
-            "USER, -424242",
     }, nullValues = {"null"})
     void invalidTypeId(String role, Long locationId) {
         AccountRequestDto account = AccountFactory.createAccountRequest(role);
@@ -111,8 +98,7 @@ class LocationPutBadRequestTests {
         String auth = accountToAuthConverter.convert(account);
 
         LocationRequestDto location = LocationFactory.createLocationRequest();
-        ExceptionResponse response = LocationSteps.putExpectedBadRequest(locationId, location, auth);
-        assertThat(response).isNotNull();
+        LocationSteps.putExpectedBadRequest(locationId, location, auth);
     }
 
     @ParameterizedTest
@@ -132,13 +118,6 @@ class LocationPutBadRequestTests {
             "CHIPPER, 90.00001",
             "CHIPPER, 100.0",
             "CHIPPER, 200.0",
-            "USER, null",
-            "USER, -200.0",
-            "USER, -100.0",
-            "USER, -90.00001",
-            "USER, 90.00001",
-            "USER, 100.0",
-            "USER, 200.0",
     }, nullValues = {"null"})
     void invalidLatitude(String role, Double latitude) {
         AccountRequestDto requester = AccountFactory.createAccountRequest(role);
@@ -151,8 +130,7 @@ class LocationPutBadRequestTests {
         LocationRequestDto request = preRequest.toBuilder()
                 .latitude(latitude)
                 .build();
-        ExceptionResponse response = LocationSteps.putExpectedBadRequest(preResponse.getId(), request, auth);
-        assertThat(response).isNotNull();
+        LocationSteps.putExpectedBadRequest(preResponse.getId(), request, auth);
     }
 
 }

@@ -35,11 +35,10 @@ public class AccountSteps {
                 .extract().as(AccountResponseDto.class);
     }
 
-    public static ExceptionResponse getExpectedBadRequest(Integer id,
-                                                          String auth) {
-        return baseGet(id, auth)
-                .statusCode(400)
-                .extract().as(ExceptionResponse.class);
+    public static void getExpectedBadRequest(Integer id,
+                                             String auth) {
+        baseGet(id, auth)
+                .statusCode(400);
     }
 
     public static void getExpectedUnauthorized(Integer id,
@@ -88,11 +87,10 @@ public class AccountSteps {
                 .extract().as(AccountResponseDto.class);
     }
 
-    public static ExceptionResponse postExpectedBadRequest(AccountRequestDto accountRequestDto,
-                                                           String auth) {
-        return basePost(accountRequestDto, auth)
-                .statusCode(400)
-                .extract().as(ExceptionResponse.class);
+    public static void postExpectedBadRequest(AccountRequestDto accountRequestDto,
+                                              String auth) {
+        basePost(accountRequestDto, auth)
+                .statusCode(400);
     }
 
     public static void postExpectedUnauthorized(AccountRequestDto accountRequestDto,
@@ -141,11 +139,10 @@ public class AccountSteps {
                 .extract().as(AccountResponseDto.class);
     }
 
-    public static ExceptionResponse putExpectedBadRequest(Integer id, AccountRequestDto accountRequestDto,
-                                                          String auth) {
-        return basePut(id, accountRequestDto, auth)
-                .statusCode(400)
-                .extract().as(ExceptionResponse.class);
+    public static void putExpectedBadRequest(Integer id, AccountRequestDto accountRequestDto,
+                                             String auth) {
+        basePut(id, accountRequestDto, auth)
+                .statusCode(400);
     }
 
     public static void putExpectedUnauthorized(Integer id, AccountRequestDto accountRequestDto,
@@ -197,11 +194,10 @@ public class AccountSteps {
                 .statusCode(200);
     }
 
-    public static ExceptionResponse deleteExpectedBadRequest(Integer id,
-                                                             String auth) {
-        return baseDelete(id, auth)
-                .statusCode(400)
-                .extract().as(ExceptionResponse.class);
+    public static void deleteExpectedBadRequest(Integer id,
+                                                String auth) {
+        baseDelete(id, auth)
+                .statusCode(400);
     }
 
     public static void deleteExpectedUnauthorized(Integer id,

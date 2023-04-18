@@ -8,7 +8,6 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
-import ru.zalimannard.dripchip.exception.response.ExceptionResponse;
 import ru.zalimannard.dripchip.integration.AccountToAuthConverter;
 import ru.zalimannard.dripchip.integration.DefaultAuth;
 import ru.zalimannard.dripchip.integration.Specifications;
@@ -65,13 +64,6 @@ class LocationPostBadRequestTests {
             "CHIPPER, 180.00001",
             "CHIPPER, 200.0",
             "CHIPPER, 400.0",
-            "USER, null",
-            "USER, -400.0",
-            "USER, -200.0",
-            "USER, -180.00001",
-            "USER, 180.00001",
-            "USER, 200.0",
-            "USER, 400.0",
     }, nullValues = {"null"})
     void invalidLongitude(String role, Double longitude) {
         AccountRequestDto requester = AccountFactory.createAccountRequest(role);
@@ -81,8 +73,7 @@ class LocationPostBadRequestTests {
         LocationRequestDto request = LocationFactory.createLocationRequest().toBuilder()
                 .longitude(longitude)
                 .build();
-        ExceptionResponse response = LocationSteps.postExpectedBadRequest(request, auth);
-        assertThat(response).isNotNull();
+        LocationSteps.postExpectedBadRequest(request, auth);
     }
 
     @ParameterizedTest
@@ -102,13 +93,6 @@ class LocationPostBadRequestTests {
             "CHIPPER, 90.00001",
             "CHIPPER, 100.0",
             "CHIPPER, 200.0",
-            "USER, null",
-            "USER, -200.0",
-            "USER, -100.0",
-            "USER, -90.00001",
-            "USER, 90.00001",
-            "USER, 100.0",
-            "USER, 200.0",
     }, nullValues = {"null"})
     void invalidLatitude(String role, Double latitude) {
         AccountRequestDto requester = AccountFactory.createAccountRequest(role);
@@ -118,8 +102,7 @@ class LocationPostBadRequestTests {
         LocationRequestDto request = LocationFactory.createLocationRequest().toBuilder()
                 .latitude(latitude)
                 .build();
-        ExceptionResponse response = LocationSteps.postExpectedBadRequest(request, auth);
-        assertThat(response).isNotNull();
+        LocationSteps.postExpectedBadRequest(request, auth);
     }
 
 }

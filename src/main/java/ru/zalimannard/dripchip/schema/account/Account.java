@@ -12,7 +12,6 @@ import java.util.Objects;
 @Getter
 @Setter
 @Builder(toBuilder = true)
-@ToString
 @RequiredArgsConstructor
 @AllArgsConstructor
 public class Account {

@@ -10,7 +10,6 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
-import ru.zalimannard.dripchip.exception.response.ExceptionResponse;
 import ru.zalimannard.dripchip.integration.AccountToAuthConverter;
 import ru.zalimannard.dripchip.integration.Specifications;
 import ru.zalimannard.dripchip.integration.registration.RegistrationDefaultDtos;
@@ -55,8 +54,7 @@ class RegistrationPostBadRequestTests {
         AuthenticationDto request = RegistrationDefaultDtos.defaultAuthentication.toBuilder()
                 .firstName(firstName)
                 .build();
-        ExceptionResponse response = RegistrationSteps.registrationExpectedBadRequest(request, null);
-        assertThat(response).isNotNull();
+        RegistrationSteps.registrationExpectedBadRequest(request, null);
     }
 
     @ParameterizedTest
@@ -70,8 +68,7 @@ class RegistrationPostBadRequestTests {
         AuthenticationDto request = RegistrationDefaultDtos.defaultAuthentication.toBuilder()
                 .lastName(lastName)
                 .build();
-        ExceptionResponse response = RegistrationSteps.registrationExpectedBadRequest(request, null);
-        assertThat(response).isNotNull();
+        RegistrationSteps.registrationExpectedBadRequest(request, null);
     }
 
     @ParameterizedTest
@@ -90,8 +87,7 @@ class RegistrationPostBadRequestTests {
         AuthenticationDto request = RegistrationDefaultDtos.defaultAuthentication.toBuilder()
                 .email(email)
                 .build();
-        ExceptionResponse response = RegistrationSteps.registrationExpectedBadRequest(request, null);
-        assertThat(response).isNotNull();
+        RegistrationSteps.registrationExpectedBadRequest(request, null);
     }
 
     @ParameterizedTest
@@ -105,8 +101,7 @@ class RegistrationPostBadRequestTests {
         AuthenticationDto request = RegistrationDefaultDtos.defaultAuthentication.toBuilder()
                 .email(password)
                 .build();
-        ExceptionResponse response = RegistrationSteps.registrationExpectedBadRequest(request, null);
-        assertThat(response).isNotNull();
+        RegistrationSteps.registrationExpectedBadRequest(request, null);
     }
 
     @Test
@@ -116,8 +111,7 @@ class RegistrationPostBadRequestTests {
 
         AuthenticationDto request = RegistrationDefaultDtos.defaultAuthentication.toBuilder()
                 .build();
-        ExceptionResponse response = RegistrationSteps.registrationExpectedBadRequest(request, auth);
-        assertThat(response).isNotNull();
+        RegistrationSteps.registrationExpectedBadRequest(request, auth);
     }
 
 }

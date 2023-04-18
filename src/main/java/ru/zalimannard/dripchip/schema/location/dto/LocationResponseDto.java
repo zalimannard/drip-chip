@@ -10,8 +10,10 @@ public class LocationResponseDto {
 
     @JsonProperty("id")
     Long id;
+
     @JsonProperty("longitude")
     Double longitude;
+
     @JsonProperty("latitude")
     Double latitude;
 

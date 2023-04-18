@@ -14,6 +14,7 @@ import ru.zalimannard.dripchip.schema.account.AccountService;
 import ru.zalimannard.dripchip.schema.animal.dto.AnimalPostRequestDto;
 import ru.zalimannard.dripchip.schema.animal.dto.AnimalPutRequestDto;
 import ru.zalimannard.dripchip.schema.animal.dto.AnimalResponseDto;
+import ru.zalimannard.dripchip.schema.animal.gender.AnimalGender;
 import ru.zalimannard.dripchip.schema.animal.lifestatus.AnimalLifeStatus;
 import ru.zalimannard.dripchip.schema.animal.ownedtype.type.AnimalType;
 import ru.zalimannard.dripchip.schema.animal.ownedtype.type.AnimalTypeService;
@@ -80,25 +81,45 @@ public class AnimalServiceImpl implements AnimalService {
     }
 
     @Override
-    public List<AnimalResponseDto> search(AnimalPostRequestDto filterDto, Date start, Date end, int from, int size) {
-        Animal filter = mapper.toEntity(filterDto, null, null, null);
-
-        List<Animal> animals = searchEntities(filter, start, end, from, size);
-
+    public List<AnimalResponseDto> search(Date startDateTime, Date endDateTime, Integer chipperId, Integer chippingLocationId, String lifeStatus, String gender, int from, int size) {
+        List<Animal> animals = searchEntities(startDateTime, endDateTime, chipperId, chippingLocationId, lifeStatus, gender, from, size);
         return mapper.toDtoList(animals);
     }
 
     @Override
-    public List<Animal> searchEntities(Animal filter, Date start, Date end, int from, int size) {
+    public List<Animal> searchEntities(Date start, Date end, Integer chipperId, Integer chippingLocationId, String lifeStatus, String gender, int from, int size) {
         Pageable pageable = new OffsetBasedPage(from, size);
-
+        Account chipper = null;
+        Location chippingLocation = null;
+        AnimalLifeStatus lifeStatusEnum = null;
+        AnimalGender genderEnum = null;
+        if (chipperId != null) {
+            chipper = accountService.readEntity(chipperId);
+        }
+        if (chippingLocationId != null) {
+            chippingLocation = locationService.readEntity(chippingLocationId);
+        }
+        if (lifeStatus != null) {
+            try {
+                lifeStatusEnum = AnimalLifeStatus.valueOf(lifeStatus);
+            } catch (IllegalArgumentException e) {
+                throw new BadRequestException("ans-07", "lifeStatus", lifeStatus);
+            }
+        }
+        if (gender != null) {
+            try {
+                genderEnum = AnimalGender.valueOf(gender);
+            } catch (IllegalArgumentException e) {
+                throw new BadRequestException("ans-08", "gender", gender);
+            }
+        }
         return repository.search(
                 start,
                 end,
-                filter.getChipper(),
-                filter.getChippingLocation(),
-                filter.getLifeStatus(),
-                filter.getGender(),
+                chipper,
+                chippingLocation,
+                lifeStatusEnum,
+                genderEnum,
                 pageable
         );
     }
@@ -118,25 +139,33 @@ public class AnimalServiceImpl implements AnimalService {
     @Override
     public Animal updateEntity(long id, Animal animal) {
         Animal existedAnimal = readEntity(id);
+        Animal animalToUpdate = animal.toBuilder()
+                .id(id)
+                .animalTypes(existedAnimal.getAnimalTypes())
+                .build();
 
-        // Animal has died since the last request
+        // Животное не может стать живым, если было мёртвым
+        if ((existedAnimal.getLifeStatus().equals(AnimalLifeStatus.DEAD)) &&
+                (animalToUpdate.getLifeStatus().equals(AnimalLifeStatus.ALIVE))) {
+            throw new BadRequestException("ans-06", "lifeStatus", "DEAD -> ALIVE");
+        }
+
+        // Животное было живым и стало мёртвым
         if ((existedAnimal.getLifeStatus().equals(AnimalLifeStatus.ALIVE)) &&
-                (animal.getLifeStatus().equals(AnimalLifeStatus.DEAD))) {
-            animal.setDeathDateTime(Date.from(Instant.now()));
+                (animalToUpdate.getLifeStatus().equals(AnimalLifeStatus.DEAD))) {
+            animalToUpdate.setDeathDateTime(Date.from(Instant.now()));
         }
 
         if (!existedAnimal.getVisitedLocations().isEmpty()) {
-            Location newChipherLocation = animal.getChippingLocation();
+            Location newChipherLocation = animalToUpdate.getChippingLocation();
             Location firstVisitedLocation = existedAnimal.getVisitedLocations().get(0).getLocation();
             if (newChipherLocation.equals(firstVisitedLocation)) {
-                throw new BadRequestException("ans-03", "Chipping location coincides with the first visited location", String.valueOf(firstVisitedLocation.getId()));
+                throw new BadRequestException("ans-03", "Точка чипирования не должна совпадать с первой посещённой точкой", String.valueOf(firstVisitedLocation.getId()));
             }
         }
-        animal.setId(id);
-        animal.setAnimalTypes(existedAnimal.getAnimalTypes());
 
         try {
-            return repository.save(animal);
+            return repository.save(animalToUpdate);
         } catch (DataIntegrityViolationException e) {
             throw new ConflictException("ans-04", "id", String.valueOf(id));
         }
@@ -144,10 +173,11 @@ public class AnimalServiceImpl implements AnimalService {
 
     @Override
     public void delete(long id) {
-        if (repository.existsById(id)) {
-            repository.deleteById(id);
-        } else {
-            throw new NotFoundException("aps-05", "id", String.valueOf(id));
+        try {
+            Animal animal = readEntity(id);
+            repository.delete(animal);
+        } catch (DataIntegrityViolationException e) {
+            throw new BadRequestException("ans-05", "id", String.valueOf(id));
         }
     }
 

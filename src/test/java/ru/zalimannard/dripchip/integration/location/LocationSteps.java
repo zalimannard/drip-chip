@@ -35,11 +35,10 @@ public class LocationSteps {
                 .extract().as(LocationResponseDto.class);
     }
 
-    public static ExceptionResponse getExpectedBadRequest(Long id,
-                                                          String auth) {
-        return baseGet(id, auth)
-                .statusCode(400)
-                .extract().as(ExceptionResponse.class);
+    public static void getExpectedBadRequest(Long id,
+                                             String auth) {
+        baseGet(id, auth)
+                .statusCode(400);
     }
 
     public static void getExpectedUnauthorized(Long id,
@@ -82,11 +81,10 @@ public class LocationSteps {
                 .extract().as(LocationResponseDto.class);
     }
 
-    public static ExceptionResponse postExpectedBadRequest(LocationRequestDto locationRequestDto,
-                                                           String auth) {
-        return basePost(locationRequestDto, auth)
-                .statusCode(400)
-                .extract().as(ExceptionResponse.class);
+    public static void postExpectedBadRequest(LocationRequestDto locationRequestDto,
+                                              String auth) {
+        basePost(locationRequestDto, auth)
+                .statusCode(400);
     }
 
     public static void postExpectedUnauthorized(LocationRequestDto locationRequestDto,
@@ -135,11 +133,10 @@ public class LocationSteps {
                 .extract().as(LocationResponseDto.class);
     }
 
-    public static ExceptionResponse putExpectedBadRequest(Long id, LocationRequestDto locationRequestDto,
-                                                          String auth) {
-        return basePut(id, locationRequestDto, auth)
-                .statusCode(400)
-                .extract().as(ExceptionResponse.class);
+    public static void putExpectedBadRequest(Long id, LocationRequestDto locationRequestDto,
+                                             String auth) {
+        basePut(id, locationRequestDto, auth)
+                .statusCode(400);
     }
 
     public static void putExpectedUnauthorized(Long id, LocationRequestDto locationRequestDto,
@@ -191,11 +188,10 @@ public class LocationSteps {
                 .statusCode(200);
     }
 
-    public static ExceptionResponse deleteExpectedBadRequest(Long id,
-                                                             String auth) {
-        return baseDelete(id, auth)
-                .statusCode(400)
-                .extract().as(ExceptionResponse.class);
+    public static void deleteExpectedBadRequest(Long id,
+                                                String auth) {
+        baseDelete(id, auth)
+                .statusCode(400);
     }
 
     public static void deleteExpectedUnauthorized(Long id,

@@ -54,7 +54,7 @@ class AccountPostForbiddenTests {
     })
     void requestByUser(String role) {
         AccountRequestDto requester = AccountFactory.createAccountRequest(role);
-        AccountSteps.postExpectedForbidden(requester, adminAuth);
+        AccountSteps.post(requester, adminAuth);
         String auth = accountToAuthConverter.convert(requester);
 
         AccountRequestDto request = AccountFactory.createAccountRequest(AccountRole.USER.toString());

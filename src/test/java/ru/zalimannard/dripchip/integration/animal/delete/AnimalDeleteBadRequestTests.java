@@ -60,21 +60,13 @@ class AnimalDeleteBadRequestTests {
             "ADMIN, 0",
             "ADMIN, -1",
             "ADMIN, -424242",
-            "CHIPPER, null",
-            "CHIPPER, 0",
-            "CHIPPER, -1",
-            "CHIPPER, -424242",
-            "USER, null",
-            "USER, 0",
-            "USER, -1",
-            "USER, -424242",
     }, nullValues = {"null"})
     void invalidAnimalId(String role, Long animalId) {
         AccountRequestDto request = AccountFactory.createAccountRequest(role);
         AccountSteps.post(request, defaultAuth.adminAuth());
         String auth = accountToAuthConverter.convert(request);
 
-        LocationSteps.delete(animalId, auth);
+        LocationSteps.deleteExpectedBadRequest(animalId, auth);
     }
 
     @ParameterizedTest
@@ -89,7 +81,7 @@ class AnimalDeleteBadRequestTests {
         AccountSteps.post(request, defaultAuth.adminAuth());
         String auth = accountToAuthConverter.convert(request);
 
-        LocationSteps.delete(animalId, auth);
+        LocationSteps.deleteExpectedBadRequest(animalId, auth);
     }
 
 }

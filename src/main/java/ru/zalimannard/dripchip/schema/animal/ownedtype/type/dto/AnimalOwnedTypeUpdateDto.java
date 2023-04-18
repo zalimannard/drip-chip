@@ -1,4 +1,4 @@
-package ru.zalimannard.dripchip.schema.animal.ownedtype.update;
+package ru.zalimannard.dripchip.schema.animal.ownedtype.type.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotNull;

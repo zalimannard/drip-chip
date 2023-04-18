@@ -10,6 +10,7 @@ public class AnimalTypeResponseDto {
 
     @JsonProperty("id")
     Long id;
+
     @JsonProperty("type")
     String type;
 

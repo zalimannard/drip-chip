@@ -2,10 +2,12 @@ package ru.zalimannard.dripchip.schema.animal;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import ru.zalimannard.dripchip.exception.BadRequestException;
 import ru.zalimannard.dripchip.schema.account.Account;
 import ru.zalimannard.dripchip.schema.animal.dto.AnimalPostRequestDto;
 import ru.zalimannard.dripchip.schema.animal.dto.AnimalPutRequestDto;
 import ru.zalimannard.dripchip.schema.animal.dto.AnimalResponseDto;
+import ru.zalimannard.dripchip.schema.animal.gender.AnimalGender;
 import ru.zalimannard.dripchip.schema.animal.lifestatus.AnimalLifeStatus;
 import ru.zalimannard.dripchip.schema.animal.ownedtype.type.AnimalType;
 import ru.zalimannard.dripchip.schema.animal.visitedlocation.VisitedLocation;
@@ -29,7 +31,7 @@ public class AnimalMapperImpl implements AnimalMapper {
                 .weight(dto.getWeight())
                 .length(dto.getLength())
                 .height(dto.getHeight())
-                .gender(dto.getGender())
+                .gender(animalGenderFromString(dto.getGender()))
                 .lifeStatus(AnimalLifeStatus.ALIVE)
                 .chipper(chipper)
                 .chippingLocation(chippingLocation)
@@ -44,8 +46,8 @@ public class AnimalMapperImpl implements AnimalMapper {
                 .weight(dto.getWeight())
                 .length(dto.getLength())
                 .height(dto.getHeight())
-                .gender(dto.getGender())
-                .lifeStatus(AnimalLifeStatus.ALIVE)
+                .gender(animalGenderFromString(dto.getGender()))
+                .lifeStatus(animalLifeStatusFromString(dto.getLifeStatus()))
                 .chipper(chipper)
                 .chippingLocation(chippingLocation)
                 .build();
@@ -76,6 +78,22 @@ public class AnimalMapperImpl implements AnimalMapper {
     @Override
     public List<AnimalResponseDto> toDtoList(List<Animal> animals) {
         return animals.stream().map(this::toDto).toList();
+    }
+
+    private AnimalGender animalGenderFromString(String gender) {
+        try {
+            return AnimalGender.valueOf(gender);
+        } catch (IllegalArgumentException e) {
+            throw new BadRequestException("anm-01", "gender", gender);
+        }
+    }
+
+    private AnimalLifeStatus animalLifeStatusFromString(String lifeStatus) {
+        try {
+            return AnimalLifeStatus.valueOf(lifeStatus);
+        } catch (IllegalArgumentException e) {
+            throw new BadRequestException("anm-02", "lifeStatus", lifeStatus);
+        }
     }
 
 }

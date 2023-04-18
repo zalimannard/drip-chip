@@ -17,63 +17,65 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class AnimalTypeServiceImpl implements AnimalTypeService {
 
-    private final AnimalTypeMapper animalTypeMapper;
-    private final AnimalTypeRepository animalTypeRepository;
+    private final AnimalTypeMapper mapper;
+    private final AnimalTypeRepository repository;
 
     @Override
     public AnimalTypeResponseDto create(AnimalTypeRequestDto animalTypeRequestDto) {
-        AnimalType animalTypeRequest = animalTypeMapper.toEntity(animalTypeRequestDto);
-
+        AnimalType animalTypeRequest = mapper.toEntity(animalTypeRequestDto);
         AnimalType animalTypeResponse = createEntity(animalTypeRequest);
-
-        return animalTypeMapper.toDto(animalTypeResponse);
+        return mapper.toDto(animalTypeResponse);
     }
 
     @Override
     public AnimalType createEntity(AnimalType animalType) {
-        return saveToDatabase(animalType);
+        try {
+            return repository.save(animalType);
+        } catch (DataIntegrityViolationException e) {
+            throw new ConflictException("ant-01", "animalType", e.getLocalizedMessage());
+        }
     }
 
     @Override
     public AnimalTypeResponseDto read(long id) {
         AnimalType animalTypeResponse = readEntity(id);
-
-        return animalTypeMapper.toDto(animalTypeResponse);
+        return mapper.toDto(animalTypeResponse);
     }
 
     @Override
     public AnimalType readEntity(long id) {
-        return animalTypeRepository.findById(id).
-                orElseThrow();
+        return repository.findById(id)
+                .orElseThrow(() -> new NotFoundException("ant-02", "id", String.valueOf(id)));
     }
 
     @Override
     public List<AnimalType> readAllEntitiesById(Set<@Positive Long> ids) {
-        List<AnimalType> animalTypes = animalTypeRepository.findAllById(ids);
-
+        List<AnimalType> animalTypes = repository.findAllById(ids);
         if (ids.size() != animalTypes.size()) {
-            throw new NotFoundException("", "", "");
+            throw new NotFoundException("ant-03", "animalType", "some of the list: " + ids);
         }
-
         return animalTypes;
     }
 
     @Override
     public AnimalTypeResponseDto update(long id, AnimalTypeRequestDto animalTypeRequestDto) {
-        AnimalType animalTypeRequest = animalTypeMapper.toEntity(animalTypeRequestDto);
-
+        AnimalType animalTypeRequest = mapper.toEntity(animalTypeRequestDto);
         AnimalType animalTypeResponse = updateEntity(id, animalTypeRequest);
-
-        return animalTypeMapper.toDto(animalTypeResponse);
+        return mapper.toDto(animalTypeResponse);
     }
 
     @Override
     public AnimalType updateEntity(long id, AnimalType animalType) {
-        if (animalTypeRepository.existsById(id)) {
-            animalType.setId(id);
-            return saveToDatabase(animalType);
-        } else {
-            throw new NotFoundException("", "", "");
+        repository.findById(id)
+                .orElseThrow(() -> new NotFoundException("ant-04", "id", String.valueOf(id)));
+        AnimalType animalTypeToSave = animalType.toBuilder()
+                .id(id)
+                .build();
+
+        try {
+            return repository.save(animalTypeToSave);
+        } catch (DataIntegrityViolationException e) {
+            throw new ConflictException("ans-04", "id", String.valueOf(id));
         }
     }
 
@@ -81,17 +83,9 @@ public class AnimalTypeServiceImpl implements AnimalTypeService {
     public void delete(long id) {
         try {
             AnimalType animalType = readEntity(id);
-            animalTypeRepository.delete(animalType);
+            repository.delete(animalType);
         } catch (DataIntegrityViolationException e) {
-            throw new BadRequestException("", "", "");
-        }
-    }
-
-    private AnimalType saveToDatabase(AnimalType animalType) {
-        try {
-            return animalTypeRepository.save(animalType);
-        } catch (DataIntegrityViolationException e) {
-            throw new ConflictException("", "", "");
+            throw new BadRequestException("ant-05", "id", String.valueOf(id));
         }
     }
 

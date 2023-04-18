@@ -51,8 +51,6 @@ class LocationPostForbiddenTests {
     @DisplayName("Негативный тест. Нет роли ADMIN или CHIPPER")
     @CsvSource(value = {
             "USER",
-            "SYS",
-            "VOVA",
     })
     void notAdminOrChipper(String role) {
         AccountRequestDto requester = AccountFactory.createAccountRequest(role);

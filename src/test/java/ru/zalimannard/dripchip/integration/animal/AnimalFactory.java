@@ -16,11 +16,13 @@ public class AnimalFactory {
                                                                int chipperId,
                                                                long chippingLocationId) {
         return AnimalPostRequestDto.builder()
-                .animalTypeIds(new HashSet<>(animalTypeIds))
+                .animalTypeIds(animalTypeIds != null
+                        ? new HashSet<>(animalTypeIds)
+                        : new HashSet<>())
                 .weight(new Random().nextFloat())
                 .length(new Random().nextFloat())
                 .height(new Random().nextFloat())
-                .gender(AnimalGender.MALE)
+                .gender(AnimalGender.MALE.toString())
                 .chipperId(chipperId)
                 .chippingLocationId(chippingLocationId)
                 .build();
@@ -32,8 +34,8 @@ public class AnimalFactory {
                 .weight(new Random().nextFloat())
                 .length(new Random().nextFloat())
                 .height(new Random().nextFloat())
-                .gender(AnimalGender.MALE)
-                .lifeStatus(AnimalLifeStatus.ALIVE)
+                .gender(AnimalGender.MALE.toString())
+                .lifeStatus(AnimalLifeStatus.ALIVE.toString())
                 .chipperId(chipperId)
                 .chippingLocationId(chippingLocationId)
                 .build();
@@ -47,7 +49,7 @@ public class AnimalFactory {
                 .weight(request.getWeight())
                 .length(request.getLength())
                 .height(request.getHeight())
-                .gender(request.getGender())
+                .gender(AnimalGender.valueOf(request.getGender()))
                 .lifeStatus(AnimalLifeStatus.ALIVE)
                 .chippingDateTime(response.getChippingDateTime())
                 .chipperId(request.getChipperId())
@@ -65,8 +67,8 @@ public class AnimalFactory {
                 .weight(request.getWeight())
                 .length(request.getLength())
                 .height(request.getHeight())
-                .gender(request.getGender())
-                .lifeStatus(request.getLifeStatus())
+                .gender(AnimalGender.valueOf(request.getGender()))
+                .lifeStatus(AnimalLifeStatus.valueOf(request.getLifeStatus()))
                 .chippingDateTime(response.getChippingDateTime())
                 .chipperId(request.getChipperId())
                 .chippingLocationId(request.getChippingLocationId())

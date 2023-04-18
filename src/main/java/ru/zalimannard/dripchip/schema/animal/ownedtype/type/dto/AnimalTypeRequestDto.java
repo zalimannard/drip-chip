@@ -14,7 +14,7 @@ public class AnimalTypeRequestDto {
     @NotBlank
     String type;
 
-    // У Jackson проблема с десереализацией классов с одним полем. Поэтому конкретный метод
+    // У Jackson проблема с десериализацией классов с одним полем. Поэтому конкретный метод
     @JsonCreator
     public AnimalTypeRequestDto(@JsonProperty("type") String type) {
         this.type = type;

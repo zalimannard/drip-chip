@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
-import ru.zalimannard.dripchip.exception.response.ExceptionResponse;
 import ru.zalimannard.dripchip.integration.AccountToAuthConverter;
 import ru.zalimannard.dripchip.integration.Specifications;
 import ru.zalimannard.dripchip.integration.account.AccountFactory;
@@ -60,8 +59,7 @@ class AccountDeleteBadRequestTests {
         AccountSteps.post(requester, adminAuth);
         String auth = accountToAuthConverter.convert(requester);
 
-        ExceptionResponse response = AccountSteps.deleteExpectedBadRequest(accountId, auth);
-        assertThat(response).isNotNull();
+        AccountSteps.deleteExpectedBadRequest(accountId, auth);
     }
 
     @Test

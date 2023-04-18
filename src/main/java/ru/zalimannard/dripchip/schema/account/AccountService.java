@@ -25,9 +25,14 @@ public interface AccountService {
     List<AccountResponseDto> search(String firstName,
                                     String lastName,
                                     String email,
-                                    @PositiveOrZero int from, @Positive int size);
+                                    @PositiveOrZero int from,
+                                    @Positive int size);
 
-    List<Account> searchEntities(String firstName, String lastName, String email, int from, int size);
+    List<Account> searchEntities(String firstName,
+                                 String lastName,
+                                 String email,
+                                 int from,
+                                 int size);
 
 
     AccountResponseDto update(@Positive int id, @Valid AccountRequestDto accountRequestDto);

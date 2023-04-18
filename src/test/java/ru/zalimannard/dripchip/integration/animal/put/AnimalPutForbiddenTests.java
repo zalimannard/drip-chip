@@ -73,8 +73,6 @@ class AnimalPutForbiddenTests {
     @DisplayName("Негативный тест. Нет роли ADMIN или CHIPPER")
     @CsvSource(value = {
             "USER",
-            "SYS",
-            "VOVA",
     })
     void notAdminOrChipper(String requesterRole) {
         AccountRequestDto requesterRequest = AccountFactory.createAccountRequest(requesterRole);

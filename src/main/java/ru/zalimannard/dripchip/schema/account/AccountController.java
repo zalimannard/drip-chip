@@ -1,5 +1,6 @@
 package ru.zalimannard.dripchip.schema.account;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
@@ -25,9 +26,9 @@ public class AccountController {
     }
 
     @GetMapping("${application.endpoint.search}")
-    public List<AccountResponseDto> search(@RequestParam String firstName,
-                                           @RequestParam String lastName,
-                                           @RequestParam String email,
+    public List<AccountResponseDto> search(@RequestParam(required = false) String firstName,
+                                           @RequestParam(required = false) String lastName,
+                                           @RequestParam(required = false) String email,
                                            @RequestParam(defaultValue = "0") int from,
                                            @RequestParam(defaultValue = "10") int size) {
         return accountService.search(firstName, lastName, email, from, size);
@@ -35,13 +36,13 @@ public class AccountController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public AccountResponseDto post(@RequestBody AccountRequestDto accountRequestDto) {
+    public AccountResponseDto post(@RequestBody @Valid AccountRequestDto accountRequestDto) {
         return accountService.create(accountRequestDto);
     }
 
     @PutMapping("{id}")
     public AccountResponseDto put(@PathVariable @Positive @NotNull int id,
-                                  @RequestBody AccountRequestDto accountRequestDto) {
+                                  @RequestBody @Valid AccountRequestDto accountRequestDto) {
         return accountService.update(id, accountRequestDto);
     }
 

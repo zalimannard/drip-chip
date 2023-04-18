@@ -5,7 +5,7 @@ import jakarta.validation.constraints.Positive;
 import org.springframework.validation.annotation.Validated;
 import ru.zalimannard.dripchip.schema.animal.Animal;
 import ru.zalimannard.dripchip.schema.animal.dto.AnimalResponseDto;
-import ru.zalimannard.dripchip.schema.animal.ownedtype.update.AnimalOwnedTypeUpdateDto;
+import ru.zalimannard.dripchip.schema.animal.ownedtype.type.dto.AnimalOwnedTypeUpdateDto;
 
 @Validated
 public interface AnimalOwnedTypeService {

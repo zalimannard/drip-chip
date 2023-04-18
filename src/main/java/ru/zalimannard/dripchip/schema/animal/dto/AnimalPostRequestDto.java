@@ -6,7 +6,6 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.Builder;
 import lombok.Value;
-import ru.zalimannard.dripchip.schema.animal.gender.AnimalGender;
 
 import java.util.Set;
 
@@ -36,7 +35,7 @@ public class AnimalPostRequestDto {
 
     @JsonProperty("gender")
     @NotNull
-    AnimalGender gender;
+    String gender;
 
     @JsonProperty("chipperId")
     @NotNull

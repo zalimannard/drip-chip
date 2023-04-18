@@ -8,7 +8,6 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
-import ru.zalimannard.dripchip.exception.response.ExceptionResponse;
 import ru.zalimannard.dripchip.integration.AccountToAuthConverter;
 import ru.zalimannard.dripchip.integration.DefaultAuth;
 import ru.zalimannard.dripchip.integration.Specifications;
@@ -66,8 +65,7 @@ class AnimalTypeGetBadRequestTests {
         AccountSteps.post(account, defaultAuth.adminAuth());
         String auth = accountToAuthConverter.convert(account);
 
-        ExceptionResponse response = AnimalTypeSteps.getExpectedBadRequest(typeId, auth);
-        assertThat(response).isNotNull();
+        AnimalTypeSteps.getExpectedBadRequest(typeId, auth);
     }
 
 }

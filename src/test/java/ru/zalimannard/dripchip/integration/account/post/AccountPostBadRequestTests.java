@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
-import ru.zalimannard.dripchip.exception.response.ExceptionResponse;
 import ru.zalimannard.dripchip.integration.AccountToAuthConverter;
 import ru.zalimannard.dripchip.integration.Specifications;
 import ru.zalimannard.dripchip.integration.account.AccountFactory;
@@ -61,8 +60,7 @@ class AccountPostBadRequestTests {
         AccountRequestDto request = AccountFactory.createAccountRequest(AccountRole.USER.toString()).toBuilder()
                 .firstName(firstName)
                 .build();
-        ExceptionResponse response = AccountSteps.postExpectedBadRequest(request, adminAuth);
-        assertThat(response).isNotNull();
+        AccountSteps.postExpectedBadRequest(request, adminAuth);
     }
 
     @ParameterizedTest
@@ -76,8 +74,7 @@ class AccountPostBadRequestTests {
         AccountRequestDto request = AccountFactory.createAccountRequest(AccountRole.USER.toString()).toBuilder()
                 .lastName(lastName)
                 .build();
-        ExceptionResponse response = AccountSteps.postExpectedBadRequest(request, adminAuth);
-        assertThat(response).isNotNull();
+        AccountSteps.postExpectedBadRequest(request, adminAuth);
     }
 
     @ParameterizedTest
@@ -96,8 +93,7 @@ class AccountPostBadRequestTests {
         AccountRequestDto request = AccountFactory.createAccountRequest(AccountRole.USER.toString()).toBuilder()
                 .email(email)
                 .build();
-        ExceptionResponse response = AccountSteps.postExpectedBadRequest(request, adminAuth);
-        assertThat(response).isNotNull();
+        AccountSteps.postExpectedBadRequest(request, adminAuth);
     }
 
     @ParameterizedTest
@@ -111,8 +107,7 @@ class AccountPostBadRequestTests {
         AccountRequestDto request = AccountFactory.createAccountRequest(AccountRole.USER.toString()).toBuilder()
                 .password(password)
                 .build();
-        ExceptionResponse response = AccountSteps.postExpectedBadRequest(request, adminAuth);
-        assertThat(response).isNotNull();
+        AccountSteps.postExpectedBadRequest(request, adminAuth);
     }
 
     @Test
@@ -134,8 +129,7 @@ class AccountPostBadRequestTests {
             "VOVA"}, nullValues = {"null"})
     void invalidRole(String role) {
         AccountRequestDto request = AccountFactory.createAccountRequest(role);
-        ExceptionResponse response = AccountSteps.postExpectedBadRequest(request, adminAuth);
-        assertThat(response).isNotNull();
+        AccountSteps.postExpectedBadRequest(request, adminAuth);
     }
 
 }

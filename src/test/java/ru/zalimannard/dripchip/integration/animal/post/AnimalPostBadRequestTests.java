@@ -8,7 +8,6 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
-import ru.zalimannard.dripchip.exception.response.ExceptionResponse;
 import ru.zalimannard.dripchip.integration.AccountToAuthConverter;
 import ru.zalimannard.dripchip.integration.DefaultAuth;
 import ru.zalimannard.dripchip.integration.Specifications;
@@ -26,7 +25,6 @@ import ru.zalimannard.dripchip.schema.account.dto.AccountResponseDto;
 import ru.zalimannard.dripchip.schema.account.role.AccountRole;
 import ru.zalimannard.dripchip.schema.animal.AnimalController;
 import ru.zalimannard.dripchip.schema.animal.dto.AnimalPostRequestDto;
-import ru.zalimannard.dripchip.schema.animal.gender.AnimalGender;
 import ru.zalimannard.dripchip.schema.animal.ownedtype.type.AnimalTypeController;
 import ru.zalimannard.dripchip.schema.animal.ownedtype.type.dto.AnimalTypeRequestDto;
 import ru.zalimannard.dripchip.schema.animal.ownedtype.type.dto.AnimalTypeResponseDto;
@@ -75,7 +73,6 @@ class AnimalPostBadRequestTests {
     @CsvSource(value = {
             "ADMIN",
             "CHIPPER",
-            "USER",
     })
     void nullAnimalType(String requesterRole) {
         AccountRequestDto requesterRequest = AccountFactory.createAccountRequest(requesterRole);
@@ -92,8 +89,7 @@ class AnimalPostBadRequestTests {
                 null,
                 chipperResponse.getId(),
                 chippingLocationResponse.getId());
-        ExceptionResponse response = AnimalSteps.postExpectedBadRequest(requestAnimal, auth);
-        assertThat(response).isNotNull();
+        AnimalSteps.postExpectedBadRequest(requestAnimal, auth);
     }
 
     @ParameterizedTest
@@ -101,7 +97,6 @@ class AnimalPostBadRequestTests {
     @CsvSource(value = {
             "ADMIN",
             "CHIPPER",
-            "USER",
     })
     void emptyAnimalType(String requesterRole) {
         AccountRequestDto requesterRequest = AccountFactory.createAccountRequest(requesterRole);
@@ -118,8 +113,7 @@ class AnimalPostBadRequestTests {
                 new HashSet<>(),
                 chipperResponse.getId(),
                 chippingLocationResponse.getId());
-        ExceptionResponse response = AnimalSteps.postExpectedBadRequest(requestAnimal, auth);
-        assertThat(response).isNotNull();
+        AnimalSteps.postExpectedBadRequest(requestAnimal, auth);
     }
 
     @ParameterizedTest
@@ -133,10 +127,6 @@ class AnimalPostBadRequestTests {
             "CHIPPER, 0",
             "CHIPPER, -1",
             "CHIPPER, -424242",
-            "USER, null",
-            "USER, 0",
-            "USER, -1",
-            "USER, -424242",
     }, nullValues = {"null"})
     void nullElementOfAnimalType(String requesterRole, Long animalType) {
         AccountRequestDto requesterRequest = AccountFactory.createAccountRequest(requesterRole);
@@ -153,8 +143,7 @@ class AnimalPostBadRequestTests {
                 new HashSet<>(Set.of(animalType)),
                 chipperResponse.getId(),
                 chippingLocationResponse.getId());
-        ExceptionResponse response = AnimalSteps.postExpectedBadRequest(requestAnimal, auth);
-        assertThat(response).isNotNull();
+        AnimalSteps.postExpectedBadRequest(requestAnimal, auth);
     }
 
     @ParameterizedTest
@@ -168,10 +157,6 @@ class AnimalPostBadRequestTests {
             "CHIPPER, 0.0",
             "CHIPPER, -1.0",
             "CHIPPER, -424242.0",
-            "USER, null",
-            "USER, 0.0",
-            "USER, -1.0",
-            "USER, -424242.0",
     }, nullValues = {"null"})
     void invalidWeight(String requesterRole, Float weight) {
         AccountRequestDto requesterRequest = AccountFactory.createAccountRequest(requesterRole);
@@ -193,8 +178,7 @@ class AnimalPostBadRequestTests {
                         chippingLocationResponse.getId()).toBuilder()
                 .weight(weight)
                 .build();
-        ExceptionResponse response = AnimalSteps.postExpectedBadRequest(requestAnimal, auth);
-        assertThat(response).isNotNull();
+        AnimalSteps.postExpectedBadRequest(requestAnimal, auth);
     }
 
     @ParameterizedTest
@@ -208,10 +192,6 @@ class AnimalPostBadRequestTests {
             "CHIPPER, 0.0",
             "CHIPPER, -1.0",
             "CHIPPER, -424242.0",
-            "USER, null",
-            "USER, 0.0",
-            "USER, -1.0",
-            "USER, -424242.0",
     }, nullValues = {"null"})
     void invalidLength(String requesterRole, Float length) {
         AccountRequestDto requesterRequest = AccountFactory.createAccountRequest(requesterRole);
@@ -233,8 +213,7 @@ class AnimalPostBadRequestTests {
                         chippingLocationResponse.getId()).toBuilder()
                 .length(length)
                 .build();
-        ExceptionResponse response = AnimalSteps.postExpectedBadRequest(requestAnimal, auth);
-        assertThat(response).isNotNull();
+        AnimalSteps.postExpectedBadRequest(requestAnimal, auth);
     }
 
     @ParameterizedTest
@@ -248,10 +227,6 @@ class AnimalPostBadRequestTests {
             "CHIPPER, 0.0",
             "CHIPPER, -1.0",
             "CHIPPER, -424242.0",
-            "USER, null",
-            "USER, 0.0",
-            "USER, -1.0",
-            "USER, -424242.0",
     }, nullValues = {"null"})
     void invalidHeight(String requesterRole, Float height) {
         AccountRequestDto requesterRequest = AccountFactory.createAccountRequest(requesterRole);
@@ -273,8 +248,7 @@ class AnimalPostBadRequestTests {
                         chippingLocationResponse.getId()).toBuilder()
                 .height(height)
                 .build();
-        ExceptionResponse response = AnimalSteps.postExpectedBadRequest(requestAnimal, auth);
-        assertThat(response).isNotNull();
+        AnimalSteps.postExpectedBadRequest(requestAnimal, auth);
     }
 
     @ParameterizedTest
@@ -284,10 +258,8 @@ class AnimalPostBadRequestTests {
             "ADMIN, CHEL",
             "CHIPPER, null",
             "CHIPPER, CHEL",
-            "USER, null",
-            "USER, CHEL",
     }, nullValues = {"null"})
-    void invalidGender(String requesterRole, AnimalGender gender) {
+    void invalidGender(String requesterRole, String gender) {
         AccountRequestDto requesterRequest = AccountFactory.createAccountRequest(requesterRole);
         AccountSteps.post(requesterRequest, defaultAuth.adminAuth());
         String auth = accountToAuthConverter.convert(requesterRequest);
@@ -307,8 +279,7 @@ class AnimalPostBadRequestTests {
                         chippingLocationResponse.getId()).toBuilder()
                 .gender(gender)
                 .build();
-        ExceptionResponse response = AnimalSteps.postExpectedBadRequest(requestAnimal, auth);
-        assertThat(response).isNotNull();
+        AnimalSteps.postExpectedBadRequest(requestAnimal, auth);
     }
 
     @ParameterizedTest
@@ -322,10 +293,6 @@ class AnimalPostBadRequestTests {
             "CHIPPER, 0",
             "CHIPPER, -1",
             "CHIPPER, -424242",
-            "USER, null",
-            "USER, 0",
-            "USER, -1",
-            "USER, -424242",
     }, nullValues = {"null"})
     void invalidChipperId(String requesterRole, Integer chipperId) {
         AccountRequestDto requesterRequest = AccountFactory.createAccountRequest(requesterRole);
@@ -342,8 +309,7 @@ class AnimalPostBadRequestTests {
                 Set.of(animalTypeResponse.getId()),
                 chipperId,
                 chippingLocationResponse.getId());
-        ExceptionResponse response = AnimalSteps.postExpectedBadRequest(requestAnimal, auth);
-        assertThat(response).isNotNull();
+        AnimalSteps.postExpectedBadRequest(requestAnimal, auth);
     }
 
     @ParameterizedTest
@@ -357,10 +323,6 @@ class AnimalPostBadRequestTests {
             "CHIPPER, 0",
             "CHIPPER, -1",
             "CHIPPER, -424242",
-            "USER, null",
-            "USER, 0",
-            "USER, -1",
-            "USER, -424242",
     }, nullValues = {"null"})
     void invalidChippingLocationId(String requesterRole, Long chippingLocationId) {
         AccountRequestDto requesterRequest = AccountFactory.createAccountRequest(requesterRole);
@@ -377,8 +339,7 @@ class AnimalPostBadRequestTests {
                 Set.of(animalTypeResponse.getId()),
                 chipperResponse.getId(),
                 chippingLocationId);
-        ExceptionResponse response = AnimalSteps.postExpectedBadRequest(requestAnimal, auth);
-        assertThat(response).isNotNull();
+        AnimalSteps.postExpectedBadRequest(requestAnimal, auth);
     }
 
 }

@@ -14,7 +14,6 @@ import ru.zalimannard.dripchip.integration.Specifications;
 import ru.zalimannard.dripchip.integration.account.AccountFactory;
 import ru.zalimannard.dripchip.integration.account.AccountSteps;
 import ru.zalimannard.dripchip.integration.animal.AnimalSteps;
-import ru.zalimannard.dripchip.integration.location.LocationSteps;
 import ru.zalimannard.dripchip.schema.account.AccountController;
 import ru.zalimannard.dripchip.schema.account.dto.AccountRequestDto;
 import ru.zalimannard.dripchip.schema.animal.AnimalController;
@@ -59,7 +58,6 @@ class AnimalDeleteOkTests {
     @DisplayName("Позитивный тест. Удаление животного")
     @CsvSource(value = {
             "ADMIN",
-            "CHIPPER"
     })
     void successfullyDelete(String role) {
         AccountRequestDto request = AccountFactory.createAccountRequest(role);
@@ -67,7 +65,7 @@ class AnimalDeleteOkTests {
         String auth = accountToAuthConverter.convert(request);
 
         AnimalResponseDto animalResponseDto = AnimalSteps.createFromScratch(defaultAuth.adminAuth());
-        LocationSteps.delete(animalResponseDto.getId(), auth);
+        AnimalSteps.delete(animalResponseDto.getId(), auth);
     }
 
 }

@@ -104,8 +104,8 @@ public class WebSecurityConfig {
                                 AccountRole.ADMIN.toString(), AccountRole.CHIPPER.toString())
                         .requestMatchers(HttpMethod.PUT, animalsPath + "/{animalId}" + typesPath).hasAnyAuthority(
                                 AccountRole.ADMIN.toString(), AccountRole.CHIPPER.toString())
-                        .requestMatchers(HttpMethod.DELETE, animalsPath + "/{animalId}" + typesPath + "/{typeId}").hasAuthority(
-                                AccountRole.ADMIN.toString())
+                        .requestMatchers(HttpMethod.DELETE, animalsPath + "/{animalId}" + typesPath + "/{typeId}").hasAnyAuthority(
+                                AccountRole.ADMIN.toString(), AccountRole.CHIPPER.toString())
 
                         .requestMatchers(HttpMethod.GET, animalsPath + "/{animalId}" + locationsPath).authenticated()
                         .requestMatchers(HttpMethod.POST, animalsPath + "/{animalId}" + locationsPath + "/{pointId}").hasAnyAuthority(

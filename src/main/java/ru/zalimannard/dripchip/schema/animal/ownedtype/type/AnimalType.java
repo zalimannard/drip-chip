@@ -13,7 +13,6 @@ import java.util.Set;
 @Getter
 @Setter
 @Builder(toBuilder = true)
-@ToString
 @RequiredArgsConstructor
 @AllArgsConstructor
 public class AnimalType {

@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.zalimannard.dripchip.schema.animal.dto.AnimalResponseDto;
-import ru.zalimannard.dripchip.schema.animal.ownedtype.update.AnimalOwnedTypeUpdateDto;
+import ru.zalimannard.dripchip.schema.animal.ownedtype.type.dto.AnimalOwnedTypeUpdateDto;
 
 @RestController
 @RequestMapping("${application.endpoint.animals}/{animalId}")

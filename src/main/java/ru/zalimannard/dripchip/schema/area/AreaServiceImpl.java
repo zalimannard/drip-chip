@@ -21,19 +21,18 @@ import java.util.List;
 @Validated
 public class AreaServiceImpl implements AreaService {
 
-    private final AreaMapper areaMapper;
-    private final AreaRepository areaRepository;
+    private final AreaMapper mapper;
+    private final AreaRepository repository;
+
     private final PointService pointService;
     private final PointMapper pointMapper;
 
     @Override
     public AreaDto create(AreaDto areaDto) {
-        Area areaRequest = areaMapper.toEntity(areaDto);
+        Area areaRequest = mapper.toEntity(areaDto);
         List<Point> points = pointMapper.toEntityList(areaDto.getPoints());
-
         Area areaResponse = createEntity(areaRequest, points);
-
-        return areaMapper.toDto(areaResponse);
+        return mapper.toDto(areaResponse);
     }
 
     @Override
@@ -46,7 +45,13 @@ public class AreaServiceImpl implements AreaService {
 
         checkAvailability(existedAreas, area);
 
-        Area createdArea = saveToDatabase(area);
+        Area createdArea;
+        try {
+            createdArea = repository.save(area);
+        } catch (DataIntegrityViolationException e) {
+            throw new ConflictException("ars-01", "area", e.getLocalizedMessage());
+        }
+
         List<Point> createdPoints = pointService.createAllEntities(createdArea, points);
         createdArea.setPoints(createdPoints);
         return createdArea;
@@ -55,11 +60,11 @@ public class AreaServiceImpl implements AreaService {
     private void checkAvailability(List<Area> existedAreas, Area targetArea) {
         for (Area existedArea : existedAreas) {
             if (!isConsistent(existedArea, targetArea)) {
-                throw new BadRequestException("", "", "");
+                throw new BadRequestException("ars-02", "area", "Конфликт с другими");
             } else if (!isConsistent(targetArea, targetArea)) {
-                throw new BadRequestException("", "", "");
+                throw new BadRequestException("ars-03", "area", "Конфликт с собой");
             } else if (Double.compare(targetArea.calcAreaValue(), 0.0) == 0) {
-                throw new BadRequestException("", "", "");
+                throw new BadRequestException("ars-04", "area", "Нулевая площадь");
             }
         }
     }
@@ -67,54 +72,57 @@ public class AreaServiceImpl implements AreaService {
     @Override
     public AreaDto read(long id) {
         Area areaResponse = readEntity(id);
-
-        return areaMapper.toDto(areaResponse);
+        return mapper.toDto(areaResponse);
     }
 
     @Override
     public Area readEntity(long id) {
-        return areaRepository.findById(id).
-                orElseThrow();
+        return repository.findById(id)
+                .orElseThrow(() -> new NotFoundException("ars-05", "id", String.valueOf(id)));
     }
 
     @Override
     public List<Area> readAllEntities() {
-        return areaRepository.findAll();
+        return repository.findAll();
     }
 
     @Override
     public AreaDto update(long id, AreaDto areaDto) {
-        Area areaRequest = areaMapper.toEntity(areaDto);
+        Area areaRequest = mapper.toEntity(areaDto);
         List<Point> points = pointMapper.toEntityList(areaDto.getPoints());
 
         Area areaResponse = updateEntity(id, areaRequest, points);
 
-        return areaMapper.toDto(areaResponse);
+        return mapper.toDto(areaResponse);
     }
 
     @Override
     @Transactional
     public Area updateEntity(long id, Area area, List<Point> points) {
-        if (areaRepository.existsById(id)) {
-            Area existedArea = readEntity(id);
-            List<Area> existedAreas = readAllEntities();
-            for (int i = 0; i < points.size(); ++i) {
-                points.get(i).setNumberInArea((long) i);
-            }
+        repository.findById(id)
+                .orElseThrow(() -> new NotFoundException("ant-06", "id", String.valueOf(id)));
 
-            area.setId(id);
-            area.setPoints(points);
-            existedAreas.remove(existedArea);
-            checkAvailability(existedAreas, area);
-            pointService.deleteAll(area);
-
-            Area updatedArea = saveToDatabase(area);
-            List<Point> createdPoints = pointService.createAllEntities(updatedArea, points);
-            updatedArea.setPoints(createdPoints);
-            return updatedArea;
-        } else {
-            throw new NotFoundException("", "", "");
+        Area existedArea = readEntity(id);
+        List<Area> existedAreas = readAllEntities();
+        for (int i = 0; i < points.size(); ++i) {
+            points.get(i).setNumberInArea((long) i);
         }
+
+        area.setId(id);
+        area.setPoints(points);
+        existedAreas.remove(existedArea);
+        checkAvailability(existedAreas, area);
+        pointService.deleteAll(area);
+
+        Area updatedArea;
+        try {
+            updatedArea = repository.save(area);
+        } catch (DataIntegrityViolationException e) {
+            throw new ConflictException("ars-07", "area", e.getLocalizedMessage());
+        }
+        List<Point> createdPoints = pointService.createAllEntities(updatedArea, points);
+        updatedArea.setPoints(createdPoints);
+        return updatedArea;
     }
 
     @Override
@@ -123,17 +131,9 @@ public class AreaServiceImpl implements AreaService {
         try {
             Area area = readEntity(id);
             pointService.deleteAll(area);
-            areaRepository.deleteById(id);
+            repository.deleteById(id);
         } catch (DataIntegrityViolationException e) {
-            throw new BadRequestException("", "", "");
-        }
-    }
-
-    private Area saveToDatabase(Area area) {
-        try {
-            return areaRepository.save(area);
-        } catch (DataIntegrityViolationException e) {
-            throw new ConflictException("", "", "");
+            throw new BadRequestException("ars-08", "id", String.valueOf(id));
         }
     }
 
