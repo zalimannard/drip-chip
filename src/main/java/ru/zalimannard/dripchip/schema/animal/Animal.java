@@ -13,7 +13,6 @@ import ru.zalimannard.dripchip.schema.location.Location;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
 @Entity
 @Table(name = "animals")
@@ -32,7 +31,7 @@ public class Animal {
 
     @ManyToMany
     @Column(name = "animal_types")
-    private Set<AnimalType> animalTypes;
+    private List<AnimalType> animalTypes;
 
     @Column(name = "weight")
     private Float weight;

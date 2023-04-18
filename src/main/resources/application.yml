@@ -11,9 +11,9 @@ spring:
 
 application:
   endpoint:
-    authentication: /registration
     search: /search
     types: /types
+    authentication: /registration
     accounts: /accounts
     animals: /animals
     locations: /locations

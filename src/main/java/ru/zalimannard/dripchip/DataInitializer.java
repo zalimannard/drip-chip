@@ -26,7 +26,7 @@ public class DataInitializer {
                     .lastName("adminLastName")
                     .email(env.getProperty("application.init.accounts.admin.email"))
                     .password(env.getProperty("application.init.accounts.admin.password"))
-                    .role(AccountRole.ADMIN)
+                    .role(AccountRole.ADMIN.toString())
                     .build();
             accountService.create(adminAccountRequestDto);
         } catch (ConflictException e) {
@@ -39,7 +39,7 @@ public class DataInitializer {
                     .lastName("chipperLastName")
                     .email(env.getProperty("application.init.accounts.chipper.email"))
                     .password(env.getProperty("application.init.accounts.chipper.password"))
-                    .role(AccountRole.CHIPPER)
+                    .role(AccountRole.CHIPPER.toString())
                     .build();
             accountService.create(chipperAccountRequestDto);
         } catch (ConflictException e) {
@@ -52,7 +52,7 @@ public class DataInitializer {
                     .lastName("userLastName")
                     .email(env.getProperty("application.init.accounts.user.email"))
                     .password(env.getProperty("application.init.accounts.user.password"))
-                    .role(AccountRole.USER)
+                    .role(AccountRole.USER.toString())
                     .build();
             accountService.create(userAccountRequestDto);
         } catch (ConflictException e) {

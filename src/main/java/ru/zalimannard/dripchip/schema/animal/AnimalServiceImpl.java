@@ -9,11 +9,16 @@ import ru.zalimannard.dripchip.exception.BadRequestException;
 import ru.zalimannard.dripchip.exception.ConflictException;
 import ru.zalimannard.dripchip.exception.NotFoundException;
 import ru.zalimannard.dripchip.page.OffsetBasedPage;
+import ru.zalimannard.dripchip.schema.account.Account;
+import ru.zalimannard.dripchip.schema.account.AccountService;
 import ru.zalimannard.dripchip.schema.animal.dto.AnimalPostRequestDto;
 import ru.zalimannard.dripchip.schema.animal.dto.AnimalPutRequestDto;
 import ru.zalimannard.dripchip.schema.animal.dto.AnimalResponseDto;
 import ru.zalimannard.dripchip.schema.animal.lifestatus.AnimalLifeStatus;
+import ru.zalimannard.dripchip.schema.animal.ownedtype.type.AnimalType;
+import ru.zalimannard.dripchip.schema.animal.ownedtype.type.AnimalTypeService;
 import ru.zalimannard.dripchip.schema.location.Location;
+import ru.zalimannard.dripchip.schema.location.LocationService;
 
 import java.time.Instant;
 import java.util.Date;
@@ -25,16 +30,24 @@ import java.util.Optional;
 @Validated
 public class AnimalServiceImpl implements AnimalService {
 
-    private final AnimalMapper animalMapper;
+    private final AnimalMapper mapper;
     private final AnimalRepository repository;
+
+    private final AnimalTypeService animalTypeService;
+    private final AccountService accountService;
+    private final LocationService locationService;
 
     @Override
     public AnimalResponseDto create(AnimalPostRequestDto animalPostRequestDto) {
-        Animal animalRequest = animalMapper.toEntity(animalPostRequestDto);
+        List<AnimalType> animalTypes = animalTypeService.readAllEntitiesById(animalPostRequestDto.getAnimalTypeIds());
+        Account chipper = accountService.readEntity(animalPostRequestDto.getChipperId());
+        Location chippingLocation = locationService.readEntity(animalPostRequestDto.getChippingLocationId());
+        Animal animalRequest = mapper.toEntity(animalPostRequestDto,
+                animalTypes, chipper, chippingLocation);
 
         Animal animalResponse = createEntity(animalRequest);
 
-        return animalMapper.toDto(animalResponse);
+        return mapper.toDto(animalResponse);
     }
 
     @Override
@@ -53,7 +66,7 @@ public class AnimalServiceImpl implements AnimalService {
     public AnimalResponseDto read(long id) {
         Animal animalResponse = readEntity(id);
 
-        return animalMapper.toDto(animalResponse);
+        return mapper.toDto(animalResponse);
     }
 
     @Override
@@ -68,11 +81,11 @@ public class AnimalServiceImpl implements AnimalService {
 
     @Override
     public List<AnimalResponseDto> search(AnimalPostRequestDto filterDto, Date start, Date end, int from, int size) {
-        Animal filter = animalMapper.toEntity(filterDto);
+        Animal filter = mapper.toEntity(filterDto, null, null, null);
 
         List<Animal> animals = searchEntities(filter, start, end, from, size);
 
-        return animalMapper.toDtoList(animals);
+        return mapper.toDtoList(animals);
     }
 
     @Override
@@ -92,11 +105,14 @@ public class AnimalServiceImpl implements AnimalService {
 
     @Override
     public AnimalResponseDto update(long id, AnimalPutRequestDto animalPutRequestDto) {
-        Animal animalRequest = animalMapper.toEntity(animalPutRequestDto);
+        Account chipper = accountService.readEntity(animalPutRequestDto.getChipperId());
+        Location chippingLocation = locationService.readEntity(animalPutRequestDto.getChippingLocationId());
+        Animal animalRequest = mapper.toEntity(animalPutRequestDto,
+                chipper, chippingLocation);
 
         Animal animalResponse = updateEntity(id, animalRequest);
 
-        return animalMapper.toDto(animalResponse);
+        return mapper.toDto(animalResponse);
     }
 
     @Override

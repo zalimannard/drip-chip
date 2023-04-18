@@ -22,14 +22,15 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     @Override
     @Transactional
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        Account account = accountService.readEntityByEmail(email);
-        if (account != null) {
+        List<Account> accounts = accountService.searchEntities(null, null, email, 0, 1);
+        if (!accounts.isEmpty()) {
+            Account account = accounts.get(0);
             List<SimpleGrantedAuthority> authorities = List.of(
                     new SimpleGrantedAuthority(account.getRole().toString()),
                     new SimpleGrantedAuthority(account.getId().toString()));
             return new User(account.getEmail(), account.getPassword(), authorities);
         } else {
-            throw new UsernameNotFoundException("User not found with email: " + email);
+            throw new UsernameNotFoundException("Пользователь с email: " + email + " не найден.");
         }
     }
 

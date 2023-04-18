@@ -21,25 +21,21 @@ public class Account {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Integer id;
+
     @Column(name = "first_name")
     private String firstName;
+
     @Column(name = "last_name")
     private String lastName;
+
     @Column(name = "email", unique = true)
     private String email;
+
     @Column(name = "password")
     private String password;
+
     @Column(name = "role")
     private AccountRole role;
-
-    public Account(Account other) {
-        id = other.getId();
-        firstName = other.getFirstName();
-        lastName = other.getLastName();
-        email = other.getEmail();
-        password = other.getPassword();
-        role = other.getRole();
-    }
 
     @Override
     public boolean equals(Object o) {

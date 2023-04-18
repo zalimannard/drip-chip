@@ -15,13 +15,16 @@ public class AuthenticationDto {
     @JsonProperty("firstName")
     @NotBlank
     String firstName;
+
     @JsonProperty("lastName")
     @NotBlank
     String lastName;
+
     @JsonProperty("email")
     @NotBlank
     @Email
     String email;
+
     @JsonProperty("password")
     @NotBlank
     String password;

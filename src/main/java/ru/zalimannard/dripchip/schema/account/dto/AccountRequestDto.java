@@ -6,7 +6,6 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Value;
-import ru.zalimannard.dripchip.schema.account.role.AccountRole;
 
 @Value
 @Builder(toBuilder = true)
@@ -31,6 +30,6 @@ public class AccountRequestDto {
 
     @JsonProperty("role")
     @NotNull
-    AccountRole role;
+    String role;
 
 }

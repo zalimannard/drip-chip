@@ -11,12 +11,16 @@ public class AccountResponseDto {
 
     @JsonProperty("id")
     Integer id;
+
     @JsonProperty("firstName")
     String firstName;
+
     @JsonProperty("lastName")
     String lastName;
+
     @JsonProperty("email")
     String email;
+
     @JsonProperty("role")
     AccountRole role;
 

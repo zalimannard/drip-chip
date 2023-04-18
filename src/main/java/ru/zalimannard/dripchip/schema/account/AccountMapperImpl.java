@@ -1,9 +1,11 @@
 package ru.zalimannard.dripchip.schema.account;
 
 import org.springframework.stereotype.Component;
+import ru.zalimannard.dripchip.exception.BadRequestException;
 import ru.zalimannard.dripchip.schema.account.authentication.AuthenticationDto;
 import ru.zalimannard.dripchip.schema.account.dto.AccountRequestDto;
 import ru.zalimannard.dripchip.schema.account.dto.AccountResponseDto;
+import ru.zalimannard.dripchip.schema.account.role.AccountRole;
 
 import java.util.List;
 
@@ -17,7 +19,7 @@ public class AccountMapperImpl implements AccountMapper {
                 .lastName(dto.getLastName())
                 .email(dto.getEmail())
                 .password(dto.getPassword())
-                .role(dto.getRole())
+                .role(accountRoleFromString(dto.getRole()))
                 .build();
     }
 
@@ -45,6 +47,14 @@ public class AccountMapperImpl implements AccountMapper {
     @Override
     public List<AccountResponseDto> toDtoList(List<Account> accounts) {
         return accounts.stream().map(this::toDto).toList();
+    }
+
+    private AccountRole accountRoleFromString(String role) {
+        try {
+            return AccountRole.valueOf(role);
+        } catch (IllegalArgumentException e) {
+            throw new BadRequestException("rol-01", "role", role);
+        }
     }
 
 }

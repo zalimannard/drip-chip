@@ -30,8 +30,8 @@ public interface AccountRepository extends JpaRepository<Account, Integer> {
             ORDER BY
                 a.id
             """)
-    List<Account> search(@Param("lastName") String lastName,
-                         @Param("firstName") String firstName,
+    List<Account> search(@Param("firstName") String firstName,
+                         @Param("lastName") String lastName,
                          @Param("email") String email,
                          Pageable pageable);
 
