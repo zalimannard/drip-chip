@@ -62,11 +62,13 @@ public class AreaServiceImpl implements AreaService {
     private void checkAvailability(List<Area> existedAreas, Area targetArea) {
         for (Area existedArea : existedAreas) {
             if (!isConsistent(existedArea, targetArea)) {
-                throw new BadRequestException("ars-02", "area", "Конфликт с другими");
+                throw new BadRequestException("ars-02", "area", "Пересечение с другими");
             } else if (!isConsistent(targetArea, targetArea)) {
-                throw new BadRequestException("ars-03", "area", "Конфликт с собой");
-            } else if (Double.compare(targetArea.calcAreaValue(), 0.0) == 0) {
+                throw new BadRequestException("ars-03", "area", "Пересечение с собой");
+            } else if (Double.compare(targetArea.calcArea(), 0.0) == 0) {
                 throw new BadRequestException("ars-04", "area", "Нулевая площадь");
+            } else if (existedArea.haveIdenticallyPoints(targetArea)) {
+                throw new ConflictException("ars-09", "area", "Уже есть такая область");
             }
         }
     }
