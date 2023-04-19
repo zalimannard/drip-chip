@@ -3,6 +3,8 @@ package ru.zalimannard.dripchip.schema.area;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import ru.zalimannard.dripchip.schema.area.dto.AreaRequestDto;
+import ru.zalimannard.dripchip.schema.area.dto.AreaResponseDto;
 
 @RestController
 @RequestMapping("${application.endpoint.areas}")
@@ -12,19 +14,19 @@ public class AreaController {
     private final AreaService areaService;
 
     @GetMapping("{id}")
-    public AreaDto get(@PathVariable long id) {
+    public AreaResponseDto get(@PathVariable long id) {
         return areaService.read(id);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public AreaDto post(@RequestBody AreaDto areaDto) {
-        return areaService.create(areaDto);
+    public AreaResponseDto post(@RequestBody AreaRequestDto areaRequestDto) {
+        return areaService.create(areaRequestDto);
     }
 
     @PutMapping("{id}")
-    public AreaDto put(@PathVariable long id,
-                       @RequestBody AreaDto accountDto) {
+    public AreaResponseDto put(@PathVariable long id,
+                               @RequestBody AreaRequestDto accountDto) {
         return areaService.update(id, accountDto);
     }
 

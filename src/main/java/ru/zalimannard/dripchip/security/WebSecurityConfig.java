@@ -115,6 +115,14 @@ public class WebSecurityConfig {
                         .requestMatchers(HttpMethod.DELETE, animalsPath + "/{animalId}" + locationsPath + "/{visitedPointId}").hasAuthority(
                                 AccountRole.ADMIN.toString())
 
+                        .requestMatchers(HttpMethod.GET, areasPath + "/{areaId}").authenticated()
+                        .requestMatchers(HttpMethod.POST, areasPath).hasAuthority(
+                                AccountRole.ADMIN.toString())
+                        .requestMatchers(HttpMethod.PUT, areasPath + "/{areaId}").hasAuthority(
+                                AccountRole.ADMIN.toString())
+                        .requestMatchers(HttpMethod.DELETE, areasPath + "/{areaId}").hasAuthority(
+                                AccountRole.ADMIN.toString())
+
                         .anyRequest().authenticated()
                 )
                 .httpBasic(Customizer.withDefaults())

@@ -8,6 +8,8 @@ import org.springframework.validation.annotation.Validated;
 import ru.zalimannard.dripchip.exception.BadRequestException;
 import ru.zalimannard.dripchip.exception.ConflictException;
 import ru.zalimannard.dripchip.exception.NotFoundException;
+import ru.zalimannard.dripchip.schema.area.dto.AreaRequestDto;
+import ru.zalimannard.dripchip.schema.area.dto.AreaResponseDto;
 import ru.zalimannard.dripchip.schema.area.point.Point;
 import ru.zalimannard.dripchip.schema.area.point.PointMapper;
 import ru.zalimannard.dripchip.schema.area.point.PointService;
@@ -28,9 +30,9 @@ public class AreaServiceImpl implements AreaService {
     private final PointMapper pointMapper;
 
     @Override
-    public AreaDto create(AreaDto areaDto) {
-        Area areaRequest = mapper.toEntity(areaDto);
-        List<Point> points = pointMapper.toEntityList(areaDto.getPoints());
+    public AreaResponseDto create(AreaRequestDto areaRequestDto) {
+        Area areaRequest = mapper.toEntity(areaRequestDto);
+        List<Point> points = pointMapper.toEntityList(areaRequestDto.getPoints(), areaRequest);
         Area areaResponse = createEntity(areaRequest, points);
         return mapper.toDto(areaResponse);
     }
@@ -47,7 +49,7 @@ public class AreaServiceImpl implements AreaService {
 
         Area createdArea;
         try {
-            createdArea = repository.save(area);
+            createdArea = repository.saveAndFlush(area);
         } catch (DataIntegrityViolationException e) {
             throw new ConflictException("ars-01", "area", e.getLocalizedMessage());
         }
@@ -70,7 +72,7 @@ public class AreaServiceImpl implements AreaService {
     }
 
     @Override
-    public AreaDto read(long id) {
+    public AreaResponseDto read(long id) {
         Area areaResponse = readEntity(id);
         return mapper.toDto(areaResponse);
     }
@@ -87,9 +89,9 @@ public class AreaServiceImpl implements AreaService {
     }
 
     @Override
-    public AreaDto update(long id, AreaDto areaDto) {
-        Area areaRequest = mapper.toEntity(areaDto);
-        List<Point> points = pointMapper.toEntityList(areaDto.getPoints());
+    public AreaResponseDto update(long id, AreaRequestDto areaRequestDto) {
+        Area areaRequest = mapper.toEntity(areaRequestDto);
+        List<Point> points = pointMapper.toEntityList(areaRequestDto.getPoints(), areaRequest);
 
         Area areaResponse = updateEntity(id, areaRequest, points);
 

@@ -1,24 +1,25 @@
 package ru.zalimannard.dripchip.schema.area.point;
 
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import lombok.experimental.SuperBuilder;
+import lombok.*;
+import org.hibernate.Hibernate;
 import ru.zalimannard.dripchip.schema.area.Area;
+
+import java.util.Objects;
 
 @Entity
 @Table(name = "points")
-@Data
-@SuperBuilder(toBuilder = true)
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
-@NoArgsConstructor
+@Getter
+@Setter
+@Builder(toBuilder = true)
+@ToString
+@RequiredArgsConstructor
+@AllArgsConstructor
 public class Point {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    @EqualsAndHashCode.Include
     private Long id;
 
     @Column(name = "longitude")
@@ -34,4 +35,16 @@ public class Point {
     @Column(name = "number_in_area")
     private Long numberInArea;
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+        Point point = (Point) o;
+        return getId() != null && Objects.equals(getId(), point.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
+    }
 }

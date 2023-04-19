@@ -1,18 +1,16 @@
 package ru.zalimannard.dripchip.schema.area;
 
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
+import ru.zalimannard.dripchip.schema.area.dto.AreaRequestDto;
+import ru.zalimannard.dripchip.schema.area.dto.AreaResponseDto;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring")
 public interface AreaMapper {
 
-    @Mapping(target = "points", ignore = true)
-    Area toEntity(AreaDto dto);
+    Area toEntity(AreaRequestDto dto);
 
-    AreaDto toDto(Area entity);
+    AreaResponseDto toDto(Area entity);
 
-    List<AreaDto> toDtoList(List<Area> entity);
+    List<AreaResponseDto> toDtoList(List<Area> entity);
 
 }

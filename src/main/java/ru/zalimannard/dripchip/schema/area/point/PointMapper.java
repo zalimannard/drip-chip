@@ -1,22 +1,22 @@
 package ru.zalimannard.dripchip.schema.area.point;
 
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
+import ru.zalimannard.dripchip.schema.area.Area;
+import ru.zalimannard.dripchip.schema.area.point.dto.PointRequestDto;
+import ru.zalimannard.dripchip.schema.area.point.dto.PointResponseDto;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring")
 public interface PointMapper {
 
-    @Mapping(target = "id", ignore = true)
-    @Mapping(target = "area", ignore = true)
-    @Mapping(target = "numberInArea", ignore = true)
-    Point toEntity(PointDto dto);
+    Point toEntity(PointRequestDto dto,
+                   Area area,
+                   long numberInArea);
 
-    PointDto toDto(Point entity);
+    PointResponseDto toDto(Point entity);
 
-    List<Point> toEntityList(List<PointDto> dto);
+    List<Point> toEntityList(List<PointRequestDto> dto,
+                             Area area);
 
-    List<PointDto> toDtoList(List<Point> entity);
+    List<PointResponseDto> toDtoList(List<Point> entity);
 
 }
