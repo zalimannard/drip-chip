@@ -11,7 +11,7 @@ import java.util.List;
 @Builder(toBuilder = true)
 public class AreaResponseDto {
 
-    @JsonProperty(value = "id", access = JsonProperty.Access.READ_ONLY)
+    @JsonProperty("id")
     Long id;
 
     @JsonProperty("name")

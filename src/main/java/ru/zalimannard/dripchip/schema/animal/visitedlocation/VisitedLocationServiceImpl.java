@@ -11,7 +11,8 @@ import ru.zalimannard.dripchip.page.OffsetBasedPage;
 import ru.zalimannard.dripchip.schema.animal.Animal;
 import ru.zalimannard.dripchip.schema.animal.AnimalService;
 import ru.zalimannard.dripchip.schema.animal.lifestatus.AnimalLifeStatus;
-import ru.zalimannard.dripchip.schema.animal.visitedlocation.update.VisitedLocationUpdateDto;
+import ru.zalimannard.dripchip.schema.animal.visitedlocation.dto.VisitedLocationResponseDto;
+import ru.zalimannard.dripchip.schema.animal.visitedlocation.dto.VisitedLocationUpdateDto;
 import ru.zalimannard.dripchip.schema.location.Location;
 import ru.zalimannard.dripchip.schema.location.LocationService;
 
@@ -24,17 +25,17 @@ import java.util.List;
 @RequiredArgsConstructor
 public class VisitedLocationServiceImpl implements VisitedLocationService {
 
-    private final VisitedLocationMapper visitedLocationMapper;
-    private final VisitedLocationRepository visitedLocationRepository;
+    private final VisitedLocationMapper mapper;
+    private final VisitedLocationRepository repository;
 
     private final AnimalService animalService;
     private final LocationService locationService;
 
     @Override
-    public VisitedLocationDto create(long animalId, long locationId) {
+    public VisitedLocationResponseDto create(long animalId, long locationId) {
         VisitedLocation visitedLocationResponse = createEntity(animalId, locationId);
 
-        return visitedLocationMapper.toDto(visitedLocationResponse);
+        return mapper.toDto(visitedLocationResponse);
     }
 
     @Override
@@ -47,57 +48,55 @@ public class VisitedLocationServiceImpl implements VisitedLocationService {
         newVisitedLocation.setDateTimeOfVisitLocationPoint(Date.from(Instant.now()));
 
         if (animal.getLifeStatus().equals(AnimalLifeStatus.DEAD)) {
-            throw new BadRequestException("", "", "");
+            throw new BadRequestException("vls-01", "lifeStatus", AnimalLifeStatus.DEAD.toString());
         }
         ArrayList<VisitedLocation> allAnimalVisitedLocations = getAllVisitedLocation(animal);
         allAnimalVisitedLocations.add(newVisitedLocation);
         checkCorrectnessOrder(allAnimalVisitedLocations);
 
-        return saveToDatabase(newVisitedLocation);
+        try {
+            return repository.save(newVisitedLocation);
+        } catch (DataIntegrityViolationException e) {
+            throw new ConflictException("vls-02", "visitedLocation", null);
+        }
     }
 
     @Override
-    public VisitedLocationDto read(long id) {
+    public VisitedLocationResponseDto read(long id) {
         VisitedLocation visitedLocationResponse = readEntity(id);
-
-        return visitedLocationMapper.toDto(visitedLocationResponse);
+        return mapper.toDto(visitedLocationResponse);
     }
 
     @Override
     public VisitedLocation readEntity(long id) {
-        return visitedLocationRepository.findById(id).
-                orElseThrow();
+        return repository.findById(id)
+                .orElseThrow(() -> new NotFoundException("vls-03", "id", String.valueOf(id)));
     }
 
     @Override
-    public List<VisitedLocationDto> search(long animalId, Date start, Date end, int from, int size) {
+    public List<VisitedLocationResponseDto> search(long animalId, Date start, Date end, int from, int size) {
+        List<VisitedLocation> visitedLocations = searchEntities(animalId, start, end, from, size);
+        return mapper.toDtoList(visitedLocations);
+    }
+
+    @Override
+    public List<VisitedLocation> searchEntities(long animalId, Date start, Date end, int from, int size) {
         Animal animal = animalService.readEntity(animalId);
-        VisitedLocation filter = new VisitedLocation();
-        filter.setAnimal(animal);
-
-        List<VisitedLocation> visitedLocations = searchEntities(filter, start, end, from, size);
-
-        return visitedLocationMapper.toDtoList(visitedLocations);
-    }
-
-    @Override
-    public List<VisitedLocation> searchEntities(VisitedLocation filter, Date start, Date end, int from, int size) {
         Pageable pageable = new OffsetBasedPage(from, size);
-
-        return visitedLocationRepository.search(
+        return repository.search(
                 start,
                 end,
-                filter.getAnimal(),
+                animal,
                 pageable
         );
     }
 
     @Override
-    public VisitedLocationDto update(long animalId, VisitedLocationUpdateDto visitedLocationUpdateDto) {
+    public VisitedLocationResponseDto update(long animalId, VisitedLocationUpdateDto visitedLocationUpdateDto) {
         VisitedLocation visitedLocationResponse = updateEntity(animalId,
                 visitedLocationUpdateDto.getVisitedLocationPointId(), visitedLocationUpdateDto.getLocationPointId());
 
-        return visitedLocationMapper.toDto(visitedLocationResponse);
+        return mapper.toDto(visitedLocationResponse);
     }
 
     @Override
@@ -109,7 +108,7 @@ public class VisitedLocationServiceImpl implements VisitedLocationService {
 
         // Replacing the location with the same one
         if (visitedLocation.getLocation().equals(location)) {
-            throw new BadRequestException("", "", "");
+            throw new BadRequestException("vls-04", "visitedLocation", "Замена на такую же точку");
         }
         checkHasAnimalVisitedLocation(animal, visitedLocation);
         int indexOfVisitedLocationForUpdate = allAnimalVisitedLocations.indexOf(visitedLocation);
@@ -118,7 +117,11 @@ public class VisitedLocationServiceImpl implements VisitedLocationService {
         checkCorrectnessOrder(allAnimalVisitedLocations);
         visitedLocation.setLocation(location);
 
-        return saveToDatabase(visitedLocation);
+        try {
+            return repository.save(visitedLocation);
+        } catch (DataIntegrityViolationException e) {
+            throw new ConflictException("vls-05", "visitedLocation", null);
+        }
     }
 
     @Override
@@ -131,26 +134,18 @@ public class VisitedLocationServiceImpl implements VisitedLocationService {
         int indexOfVisitedLocationToDelete = allAnimalVisitedLocations.indexOf(visitedLocation);
         allAnimalVisitedLocations.remove(indexOfVisitedLocationToDelete);
 
-        // If the chip point coincides with the first, delete first
+        // Если точка чипирования совпадает с первой посещённой - удалить первую посещённую
         if ((indexOfVisitedLocationToDelete == 1) && (allAnimalVisitedLocations.size() > 1)) {
             Location chippingLocation = animal.getChippingLocation();
             Location firstVisitedLocation = allAnimalVisitedLocations.get(1).getLocation();
             if (chippingLocation.equals(firstVisitedLocation)) {
-                visitedLocationRepository.deleteById(allAnimalVisitedLocations.get(1).getId());
+                repository.deleteById(allAnimalVisitedLocations.get(1).getId());
                 allAnimalVisitedLocations.remove(1);
             }
         }
         checkCorrectnessOrder(allAnimalVisitedLocations);
 
-        visitedLocationRepository.deleteById(visitedLocationId);
-    }
-
-    private VisitedLocation saveToDatabase(VisitedLocation visitedLocation) {
-        try {
-            return visitedLocationRepository.save(visitedLocation);
-        } catch (DataIntegrityViolationException e) {
-            throw new ConflictException("", "", "");
-        }
+        repository.deleteById(visitedLocationId);
     }
 
     private ArrayList<VisitedLocation> getAllVisitedLocation(Animal animal) {
@@ -158,13 +153,13 @@ public class VisitedLocationServiceImpl implements VisitedLocationService {
         chippingVisitedLocation.setLocation(animal.getChippingLocation());
 
         ArrayList<VisitedLocation> visitedLocations = new ArrayList<>(List.of(chippingVisitedLocation));
-        visitedLocations.addAll(visitedLocationRepository.findAllByAnimalIdOrderByDateTimeOfVisitLocationPoint(animal.getId()));
+        visitedLocations.addAll(repository.findAllByAnimalIdOrderByDateTimeOfVisitLocationPoint(animal.getId()));
         return visitedLocations;
     }
 
     private void checkCorrectnessOrder(List<VisitedLocation> visitedLocations) {
         if (!isCorrectOrder(visitedLocations)) {
-            throw new BadRequestException("", "", "");
+            throw new BadRequestException("vls-06", "visitedLocationOrder", null);
         }
     }
 
@@ -182,7 +177,7 @@ public class VisitedLocationServiceImpl implements VisitedLocationService {
     private void checkHasAnimalVisitedLocation(Animal animal, VisitedLocation visitedLocation) {
         List<VisitedLocation> visitedLocations = animal.getVisitedLocations();
         if (!visitedLocations.contains(visitedLocation)) {
-            throw new NotFoundException("", "", "");
+            throw new NotFoundException("vls-07", "visitedLocation", "Животное не имеет такой точки: " + visitedLocation.getId());
         }
     }
 

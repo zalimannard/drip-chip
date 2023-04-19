@@ -33,8 +33,8 @@ public class AnimalMapperImpl implements AnimalMapper {
                 .height(dto.getHeight())
                 .gender(animalGenderFromString(dto.getGender()))
                 .lifeStatus(AnimalLifeStatus.ALIVE)
-                .chipper(chipper)
-                .chippingLocation(chippingLocation)
+                .chipper(chipper.toBuilder().build())
+                .chippingLocation(chippingLocation.toBuilder().build())
                 .build();
     }
 
@@ -48,8 +48,8 @@ public class AnimalMapperImpl implements AnimalMapper {
                 .height(dto.getHeight())
                 .gender(animalGenderFromString(dto.getGender()))
                 .lifeStatus(animalLifeStatusFromString(dto.getLifeStatus()))
-                .chipper(chipper)
-                .chippingLocation(chippingLocation)
+                .chipper(chipper.toBuilder().build())
+                .chippingLocation(chippingLocation.toBuilder().build())
                 .build();
     }
 

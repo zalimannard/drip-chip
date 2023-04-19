@@ -1,7 +1,7 @@
 package ru.zalimannard.dripchip.schema.animal.visitedlocation;
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.*;
 import org.hibernate.Hibernate;
 import ru.zalimannard.dripchip.schema.animal.Animal;
 import ru.zalimannard.dripchip.schema.location.Location;
@@ -11,7 +11,11 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "visitedLocations")
-@Data
+@Getter
+@Setter
+@Builder(toBuilder = true)
+@RequiredArgsConstructor
+@AllArgsConstructor
 public class VisitedLocation {
 
     @Id
