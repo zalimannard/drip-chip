@@ -440,8 +440,41 @@ class AnimalPutBadRequestTests {
             "ADMIN",
             "CHIPPER",
     })
-    void chippingPointEqualsToFirstVisitedLocation(AccountRole requesterRole) {
-        assertThat(true).isFalse();
+    void chippingPointEqualsToFirstVisitedLocation(String requesterRole) {
+        AccountRequestDto requesterRequest = AccountFactory.createAccountRequest(requesterRole);
+        AccountSteps.post(requesterRequest, defaultAuth.adminAuth());
+        String auth = accountToAuthConverter.convert(requesterRequest);
+
+        AnimalTypeRequestDto animalTypeRequest = AnimalTypeFactory.createAnimalTypeRequest();
+        AnimalTypeResponseDto animalTypeResponse = AnimalTypeSteps.post(animalTypeRequest, defaultAuth.adminAuth());
+
+        AccountRequestDto chipperRequest = AccountFactory.createAccountRequest(AccountRole.CHIPPER.toString());
+        AccountResponseDto chipperResponse = AccountSteps.post(chipperRequest, defaultAuth.adminAuth());
+
+        LocationRequestDto chippingLocationRequest = LocationFactory.createLocationRequest();
+        LocationResponseDto chippingLocationResponse = LocationSteps.post(chippingLocationRequest, defaultAuth.adminAuth());
+
+        AnimalPostRequestDto requestAnimal = AnimalFactory.createAnimalPostRequest(
+                Set.of(animalTypeResponse.getId()),
+                chipperResponse.getId(),
+                chippingLocationResponse.getId());
+        AnimalResponseDto responseAnimal = AnimalSteps.post(requestAnimal, defaultAuth.adminAuth());
+
+
+        AccountRequestDto chipperRequest2 = AccountFactory.createAccountRequest(AccountRole.CHIPPER.toString());
+        AccountResponseDto chipperResponse2 = AccountSteps.post(chipperRequest2, defaultAuth.adminAuth());
+
+        LocationRequestDto chippingLocationRequest2 = LocationFactory.createLocationRequest();
+        LocationResponseDto chippingLocationResponse2 = LocationSteps.post(chippingLocationRequest2, defaultAuth.adminAuth());
+
+        AnimalPutRequestDto request = AnimalFactory.createAnimalPutRequest(chipperResponse2.getId(), chippingLocationResponse2.getId()).toBuilder()
+                .lifeStatus(AnimalLifeStatus.DEAD.toString())
+                .build();
+        AnimalResponseDto response = AnimalSteps.put(responseAnimal.getId(), request, auth);
+        assertThat(response.getDeathDateTime()).isNotNull();
+
+        AnimalPutRequestDto requestFromDeadToAlive = AnimalFactory.createAnimalPutRequest(chipperResponse2.getId(), chippingLocationResponse2.getId());
+        AnimalSteps.putExpectedBadRequest(responseAnimal.getId(), requestFromDeadToAlive, auth);
     }
 
 }

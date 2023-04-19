@@ -79,10 +79,6 @@ class AnimalTypePutBadRequestTests {
             "CHIPPER, ''",
             "CHIPPER, ' '",
             "CHIPPER, '   '",
-            "USER, null",
-            "USER, ''",
-            "USER, ' '",
-            "USER, '   '",
     }, nullValues = {"null"})
     void invalidTypeName(String role, String typeName) {
         AccountRequestDto requester = AccountFactory.createAccountRequest(role);

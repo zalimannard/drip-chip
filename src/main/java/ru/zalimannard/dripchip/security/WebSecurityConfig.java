@@ -56,7 +56,7 @@ public class WebSecurityConfig {
                                                 || accountRequestsItself(authentication, object)))
                         .requestMatchers(HttpMethod.GET, accountsPath + searchPath).hasAuthority(
                                 AccountRole.ADMIN.toString())
-                        .requestMatchers(HttpMethod.POST, accountsPath + "/{accountId}").hasAuthority(
+                        .requestMatchers(HttpMethod.POST, accountsPath).hasAuthority(
                                 AccountRole.ADMIN.toString())
                         .requestMatchers(HttpMethod.PUT, accountsPath + "/{accountId}").access(
                                 (authentication, object) -> new AuthorizationDecision(

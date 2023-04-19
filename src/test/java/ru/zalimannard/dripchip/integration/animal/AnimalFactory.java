@@ -13,8 +13,8 @@ import java.util.Set;
 public class AnimalFactory {
 
     public static AnimalPostRequestDto createAnimalPostRequest(Set<Long> animalTypeIds,
-                                                               int chipperId,
-                                                               long chippingLocationId) {
+                                                               Integer chipperId,
+                                                               Long chippingLocationId) {
         return AnimalPostRequestDto.builder()
                 .animalTypeIds(animalTypeIds != null
                         ? new HashSet<>(animalTypeIds)
@@ -28,8 +28,8 @@ public class AnimalFactory {
                 .build();
     }
 
-    public static AnimalPutRequestDto createAnimalPutRequest(int chipperId,
-                                                             long chippingLocationId) {
+    public static AnimalPutRequestDto createAnimalPutRequest(Integer chipperId,
+                                                             Long chippingLocationId) {
         return AnimalPutRequestDto.builder()
                 .weight(new Random().nextFloat())
                 .length(new Random().nextFloat())
@@ -45,7 +45,7 @@ public class AnimalFactory {
                                                                  AnimalResponseDto response) {
         return AnimalResponseDto.builder()
                 .id(response.getId())
-                .animalTypeIds(new HashSet<>(request.getAnimalTypeIds()))
+                .animalTypeIds(request.getAnimalTypeIds())
                 .weight(request.getWeight())
                 .length(request.getLength())
                 .height(request.getHeight())
@@ -63,7 +63,7 @@ public class AnimalFactory {
                                                                  AnimalResponseDto response) {
         return AnimalResponseDto.builder()
                 .id(response.getId())
-                .animalTypeIds(new HashSet<>(response.getAnimalTypeIds()))
+                .animalTypeIds(response.getAnimalTypeIds())
                 .weight(request.getWeight())
                 .length(request.getLength())
                 .height(request.getHeight())

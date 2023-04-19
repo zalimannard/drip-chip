@@ -27,6 +27,7 @@ import ru.zalimannard.dripchip.schema.animal.AnimalController;
 import ru.zalimannard.dripchip.schema.animal.dto.AnimalPostRequestDto;
 import ru.zalimannard.dripchip.schema.animal.dto.AnimalPutRequestDto;
 import ru.zalimannard.dripchip.schema.animal.dto.AnimalResponseDto;
+import ru.zalimannard.dripchip.schema.animal.lifestatus.AnimalLifeStatus;
 import ru.zalimannard.dripchip.schema.animal.ownedtype.type.AnimalTypeController;
 import ru.zalimannard.dripchip.schema.animal.ownedtype.type.dto.AnimalTypeRequestDto;
 import ru.zalimannard.dripchip.schema.animal.ownedtype.type.dto.AnimalTypeResponseDto;
@@ -107,13 +108,43 @@ class AnimalPutOkTests {
     }
 
     @ParameterizedTest
-    @DisplayName("Позитивный тест. Запрос успешно выполнен")
+    @DisplayName("Позитивный тест. Животное умерло")
     @CsvSource(value = {
             "ADMIN",
             "CHIPPER",
     })
-    void changeAliveToDead(AccountRole requesterRole) {
-        assertThat(true).isFalse();
+    void changeAliveToDead(String requesterRole) {
+        AccountRequestDto requesterRequest = AccountFactory.createAccountRequest(requesterRole);
+        AccountSteps.post(requesterRequest, defaultAuth.adminAuth());
+        String auth = accountToAuthConverter.convert(requesterRequest);
+
+        AnimalTypeRequestDto animalTypeRequest = AnimalTypeFactory.createAnimalTypeRequest();
+        AnimalTypeResponseDto animalTypeResponse = AnimalTypeSteps.post(animalTypeRequest, defaultAuth.adminAuth());
+
+        AccountRequestDto chipperRequest = AccountFactory.createAccountRequest(AccountRole.CHIPPER.toString());
+        AccountResponseDto chipperResponse = AccountSteps.post(chipperRequest, defaultAuth.adminAuth());
+
+        LocationRequestDto chippingLocationRequest = LocationFactory.createLocationRequest();
+        LocationResponseDto chippingLocationResponse = LocationSteps.post(chippingLocationRequest, defaultAuth.adminAuth());
+
+        AnimalPostRequestDto requestAnimal = AnimalFactory.createAnimalPostRequest(
+                Set.of(animalTypeResponse.getId()),
+                chipperResponse.getId(),
+                chippingLocationResponse.getId());
+        AnimalResponseDto responseAnimal = AnimalSteps.post(requestAnimal, defaultAuth.adminAuth());
+
+
+        AccountRequestDto chipperRequest2 = AccountFactory.createAccountRequest(AccountRole.CHIPPER.toString());
+        AccountResponseDto chipperResponse2 = AccountSteps.post(chipperRequest2, defaultAuth.adminAuth());
+
+        LocationRequestDto chippingLocationRequest2 = LocationFactory.createLocationRequest();
+        LocationResponseDto chippingLocationResponse2 = LocationSteps.post(chippingLocationRequest2, defaultAuth.adminAuth());
+
+        AnimalPutRequestDto request = AnimalFactory.createAnimalPutRequest(chipperResponse2.getId(), chippingLocationResponse2.getId()).toBuilder()
+                .lifeStatus(AnimalLifeStatus.DEAD.toString())
+                .build();
+        AnimalResponseDto response = AnimalSteps.put(responseAnimal.getId(), request, auth);
+        assertThat(response.getDeathDateTime()).isNotNull();
     }
 
 }

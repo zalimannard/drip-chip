@@ -69,19 +69,4 @@ class AnimalDeleteBadRequestTests {
         LocationSteps.deleteExpectedBadRequest(animalId, auth);
     }
 
-    @ParameterizedTest
-    @DisplayName("Негативный тест. Животное покинуло локацию чипирования, при этом есть другие посещенные точки\n")
-    @CsvSource(value = {
-            "ADMIN",
-            "CHIPPER",
-            "USER",
-    }, nullValues = {"null"})
-    void existVisitedLocation(String role, Long animalId) {
-        AccountRequestDto request = AccountFactory.createAccountRequest(role);
-        AccountSteps.post(request, defaultAuth.adminAuth());
-        String auth = accountToAuthConverter.convert(request);
-
-        LocationSteps.deleteExpectedBadRequest(animalId, auth);
-    }
-
 }

@@ -54,6 +54,8 @@ public class AccountMapperImpl implements AccountMapper {
             return AccountRole.valueOf(role);
         } catch (IllegalArgumentException e) {
             throw new BadRequestException("rol-01", "role", role);
+        } catch (NullPointerException e) {
+            throw new BadRequestException("rol-02", "role", role);
         }
     }
 

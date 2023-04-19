@@ -85,6 +85,8 @@ public class AnimalMapperImpl implements AnimalMapper {
             return AnimalGender.valueOf(gender);
         } catch (IllegalArgumentException e) {
             throw new BadRequestException("anm-01", "gender", gender);
+        } catch (NullPointerException e) {
+            throw new BadRequestException("anm-04", "gender", gender);
         }
     }
 
@@ -93,6 +95,8 @@ public class AnimalMapperImpl implements AnimalMapper {
             return AnimalLifeStatus.valueOf(lifeStatus);
         } catch (IllegalArgumentException e) {
             throw new BadRequestException("anm-02", "lifeStatus", lifeStatus);
+        } catch (NullPointerException e) {
+            throw new BadRequestException("anm-03", "lifeStatus", lifeStatus);
         }
     }
 

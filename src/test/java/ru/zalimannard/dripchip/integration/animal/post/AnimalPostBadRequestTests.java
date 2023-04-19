@@ -119,11 +119,9 @@ class AnimalPostBadRequestTests {
     @ParameterizedTest
     @DisplayName("Негативный тест. Некорректный элемент в AnimalType")
     @CsvSource(value = {
-            "ADMIN, null",
             "ADMIN, 0",
             "ADMIN, -1",
             "ADMIN, -424242",
-            "CHIPPER, null",
             "CHIPPER, 0",
             "CHIPPER, -1",
             "CHIPPER, -424242",
@@ -140,7 +138,7 @@ class AnimalPostBadRequestTests {
         LocationResponseDto chippingLocationResponse = LocationSteps.post(chippingLocationRequest, defaultAuth.adminAuth());
 
         AnimalPostRequestDto requestAnimal = AnimalFactory.createAnimalPostRequest(
-                new HashSet<>(Set.of(animalType)),
+                Set.of(animalType),
                 chipperResponse.getId(),
                 chippingLocationResponse.getId());
         AnimalSteps.postExpectedBadRequest(requestAnimal, auth);

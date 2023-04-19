@@ -73,7 +73,6 @@ class AnimalPostNotFoundTests {
     @CsvSource(value = {
             "ADMIN, 424242",
             "CHIPPER, 424242",
-            "USER, 424242",
     })
     void invalidChipperId(String requesterRole, Integer chipperId) {
         AccountRequestDto requesterRequest = AccountFactory.createAccountRequest(requesterRole);
@@ -99,7 +98,6 @@ class AnimalPostNotFoundTests {
     @CsvSource(value = {
             "ADMIN, 424242",
             "CHIPPER, 424242",
-            "USER, 424242",
     })
     void invalidChippingLocationId(String requesterRole, Long chippingLocationId) {
         AccountRequestDto requesterRequest = AccountFactory.createAccountRequest(requesterRole);

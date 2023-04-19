@@ -102,7 +102,7 @@ class AnimalPutForbiddenTests {
         LocationResponseDto chippingLocationResponse2 = LocationSteps.post(chippingLocationRequest2, defaultAuth.adminAuth());
 
         AnimalPutRequestDto request = AnimalFactory.createAnimalPutRequest(chipperResponse2.getId(), chippingLocationResponse2.getId());
-        AnimalSteps.putExpectedUnauthorized(responseAnimal.getId(), request, auth);
+        AnimalSteps.putExpectedForbidden(responseAnimal.getId(), request, auth);
     }
 
 }

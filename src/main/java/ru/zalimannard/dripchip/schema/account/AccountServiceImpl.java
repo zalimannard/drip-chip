@@ -90,7 +90,11 @@ public class AccountServiceImpl implements AccountService {
                 .id(id)
                 .password(password)
                 .build();
-        return repository.save(accountToSave);
+        try {
+            return repository.save(accountToSave);
+        } catch (DataIntegrityViolationException e) {
+            throw new ConflictException("acc-06", "account", e.getLocalizedMessage());
+        }
     }
 
     @Override
