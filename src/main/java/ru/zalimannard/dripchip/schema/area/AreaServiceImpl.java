@@ -2,7 +2,6 @@ package ru.zalimannard.dripchip.schema.area;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
@@ -22,7 +21,6 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 @Validated
-@Slf4j
 public class AreaServiceImpl implements AreaService {
 
     private final AreaMapper mapper;
@@ -84,8 +82,6 @@ public class AreaServiceImpl implements AreaService {
         area.setPoints(points);
         List<Area> existedAreas = readAllEntities();
 
-        log.error(existedAreas.toString());
-        log.error(area.toString());
         checkAvailability(existedAreas, area);
 
         Area createdArea;

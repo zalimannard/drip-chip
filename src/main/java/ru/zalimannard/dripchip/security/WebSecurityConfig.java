@@ -41,6 +41,8 @@ public class WebSecurityConfig {
     private String locationsPath;
     @Value("${application.endpoint.areas}")
     private String areasPath;
+    @Value("${application.endpoint.analytics}")
+    private String analyticsPath;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -123,7 +125,9 @@ public class WebSecurityConfig {
                         .requestMatchers(HttpMethod.DELETE, areasPath + "/{areaId}").hasAuthority(
                                 AccountRole.ADMIN.toString())
 
-                        .anyRequest().authenticated()
+                        .requestMatchers(HttpMethod.GET, areasPath + "/{areaId}" + analyticsPath).authenticated()
+
+                        .anyRequest().denyAll()
                 )
                 .httpBasic(Customizer.withDefaults())
                 .sessionManagement().disable();

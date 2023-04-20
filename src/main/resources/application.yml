@@ -18,6 +18,7 @@ application:
     animals: /animals
     locations: /locations
     areas: /areas
+    analytics: /analytics
   init:
     accounts:
       admin:
