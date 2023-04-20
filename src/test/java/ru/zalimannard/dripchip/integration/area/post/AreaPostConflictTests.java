@@ -156,9 +156,9 @@ class AreaPostConflictTests {
         AreaSteps.post(area, defaultAuth.adminAuth());
 
         List<PointRequestDto> points2 = List.of(
-                PointRequestDto.builder().longitude(11.0).latitude(11.0).build(),
-                PointRequestDto.builder().longitude(12.0).latitude(11.0).build(),
-                PointRequestDto.builder().longitude(11.0).latitude(12.0).build()
+                PointRequestDto.builder().longitude(151.0).latitude(61.0).build(),
+                PointRequestDto.builder().longitude(152.0).latitude(61.0).build(),
+                PointRequestDto.builder().longitude(151.0).latitude(62.0).build()
         );
         AreaRequestDto area2 = AreaRequestDto.builder()
                 .name(area.getName())

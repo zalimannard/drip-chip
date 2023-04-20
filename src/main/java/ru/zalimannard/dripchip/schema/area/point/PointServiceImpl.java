@@ -31,7 +31,11 @@ public class PointServiceImpl implements PointService {
     @Transactional
     @Override
     public void deleteAll(Area area) {
-        pointRepository.deleteAllByArea(area);
+        try {
+            pointRepository.deleteAllByArea(area);
+        } catch (DataIntegrityViolationException e) {
+            throw new BadRequestException("pos-02", "points", null);
+        }
     }
 
 }

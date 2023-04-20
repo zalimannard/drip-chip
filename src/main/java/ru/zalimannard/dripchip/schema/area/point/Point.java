@@ -12,7 +12,6 @@ import java.util.Objects;
 @Getter
 @Setter
 @Builder(toBuilder = true)
-@ToString
 @RequiredArgsConstructor
 @AllArgsConstructor
 public class Point {
@@ -46,5 +45,13 @@ public class Point {
     @Override
     public int hashCode() {
         return getClass().hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return "Point{" +
+                "longitude=" + longitude +
+                ", latitude=" + latitude +
+                '}';
     }
 }

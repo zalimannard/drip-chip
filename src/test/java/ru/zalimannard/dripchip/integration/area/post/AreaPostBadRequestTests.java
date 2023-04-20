@@ -256,10 +256,10 @@ class AreaPostBadRequestTests {
     @DisplayName("Негативный тест. Внутри другой зоны")
     void insideOther() {
         List<PointRequestDto> points = List.of(
-                PointRequestDto.builder().longitude(1.0).latitude(100.0).build(),
-                PointRequestDto.builder().longitude(1.0).latitude(104.0).build(),
-                PointRequestDto.builder().longitude(5.0).latitude(104.0).build(),
-                PointRequestDto.builder().longitude(5.0).latitude(100.0).build()
+                PointRequestDto.builder().longitude(1.0).latitude(80.0).build(),
+                PointRequestDto.builder().longitude(1.0).latitude(84.0).build(),
+                PointRequestDto.builder().longitude(5.0).latitude(84.0).build(),
+                PointRequestDto.builder().longitude(5.0).latitude(80.0).build()
         );
         AreaRequestDto area = AreaRequestDto.builder()
                 .name(Faker.instance().name().title())
@@ -268,10 +268,10 @@ class AreaPostBadRequestTests {
         AreaSteps.post(area, defaultAuth.adminAuth());
 
         List<PointRequestDto> points2 = List.of(
-                PointRequestDto.builder().longitude(2.0).latitude(101.0).build(),
-                PointRequestDto.builder().longitude(2.0).latitude(103.0).build(),
-                PointRequestDto.builder().longitude(4.0).latitude(103.0).build(),
-                PointRequestDto.builder().longitude(4.0).latitude(101.0).build()
+                PointRequestDto.builder().longitude(2.0).latitude(81.0).build(),
+                PointRequestDto.builder().longitude(2.0).latitude(83.0).build(),
+                PointRequestDto.builder().longitude(4.0).latitude(83.0).build(),
+                PointRequestDto.builder().longitude(4.0).latitude(81.0).build()
         );
         AreaRequestDto area2 = AreaRequestDto.builder()
                 .name(Faker.instance().name().title())
