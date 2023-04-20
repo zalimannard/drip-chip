@@ -1,5 +1,6 @@
 package ru.zalimannard.dripchip.schema.location;
 
+import ch.hsr.geohash.GeoHash;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
@@ -87,6 +88,11 @@ public class LocationServiceImpl implements LocationService {
             }
         }
         throw new NotFoundException("loc-06", "longitude-latitude", longitude + " " + latitude);
+    }
+
+    @Override
+    public String special2(Double longitude, Double latitude) {
+        return GeoHash.withCharacterPrecision(latitude, longitude, 12).toBase32();
     }
 
 }

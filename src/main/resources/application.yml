@@ -19,6 +19,7 @@ application:
     locations: /locations
     areas: /areas
     analytics: /analytics
+    geohash: /geohash
   init:
     accounts:
       admin:
