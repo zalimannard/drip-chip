@@ -29,15 +29,6 @@ public class AreaServiceImpl implements AreaService {
     private final PointService pointService;
     private final PointMapper pointMapper;
 
-    private static boolean pointOnSegment(Point p1, Point p2, Point point) {
-        if (point.getLongitude() <= Math.max(p1.getLongitude(), p2.getLongitude()) && point.getLongitude() >= Math.min(p1.getLongitude(), p2.getLongitude()) &&
-                point.getLatitude() <= Math.max(p1.getLatitude(), p2.getLatitude()) && point.getLatitude() >= Math.min(p1.getLatitude(), p2.getLatitude())) {
-            double crossProduct = (point.getLatitude() - p1.getLatitude()) * (p2.getLongitude() - p1.getLongitude()) - (point.getLongitude() - p1.getLongitude()) * (p2.getLatitude() - p1.getLatitude());
-            return crossProduct == 0;
-        }
-        return false;
-    }
-
     @Override
     public AreaResponseDto create(AreaRequestDto areaRequestDto) {
         Area areaRequest = mapper.toEntity(areaRequestDto);
@@ -163,6 +154,15 @@ public class AreaServiceImpl implements AreaService {
         }
 
         return inside;
+    }
+
+    private boolean pointOnSegment(Point p1, Point p2, Point point) {
+        if (point.getLongitude() <= Math.max(p1.getLongitude(), p2.getLongitude()) && point.getLongitude() >= Math.min(p1.getLongitude(), p2.getLongitude()) &&
+                point.getLatitude() <= Math.max(p1.getLatitude(), p2.getLatitude()) && point.getLatitude() >= Math.min(p1.getLatitude(), p2.getLatitude())) {
+            double crossProduct = (point.getLatitude() - p1.getLatitude()) * (p2.getLongitude() - p1.getLongitude()) - (point.getLongitude() - p1.getLongitude()) * (p2.getLatitude() - p1.getLatitude());
+            return crossProduct == 0;
+        }
+        return false;
     }
 
     private void checkAvailability(List<Area> existedAreas, Area targetArea) {
