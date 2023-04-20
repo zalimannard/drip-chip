@@ -18,6 +18,12 @@ public class LocationController {
         return locationService.read(id);
     }
 
+    @GetMapping
+    public Long get(@RequestParam Double longitude,
+                    @RequestParam Double latitude) {
+        return locationService.special1(longitude, latitude);
+    }
+
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public LocationResponseDto post(@RequestBody LocationRequestDto locationRequestDto) {

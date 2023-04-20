@@ -70,6 +70,7 @@ public class WebSecurityConfig {
                                                 || accountRequestsItself(authentication, object)))
 
                         .requestMatchers(HttpMethod.GET, locationsPath + "/{pointId}").authenticated()
+                        .requestMatchers(HttpMethod.GET, locationsPath).authenticated()
                         .requestMatchers(HttpMethod.POST, locationsPath).hasAnyAuthority(
                                 AccountRole.ADMIN.toString(), AccountRole.CHIPPER.toString())
                         .requestMatchers(HttpMethod.PUT, locationsPath + "/{pointId}").hasAnyAuthority(
@@ -127,7 +128,7 @@ public class WebSecurityConfig {
 
                         .requestMatchers(HttpMethod.GET, areasPath + "/{areaId}" + analyticsPath).authenticated()
 
-                        .anyRequest().denyAll()
+                        .anyRequest().authenticated()
                 )
                 .httpBasic(Customizer.withDefaults())
                 .sessionManagement().disable();

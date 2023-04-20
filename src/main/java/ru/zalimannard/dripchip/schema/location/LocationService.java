@@ -1,6 +1,9 @@
 package ru.zalimannard.dripchip.schema.location;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import org.springframework.validation.annotation.Validated;
 import ru.zalimannard.dripchip.schema.location.dto.LocationRequestDto;
@@ -25,5 +28,7 @@ public interface LocationService {
 
 
     void delete(@Positive long id);
+
+    Long special1(@NotNull @Min(-180) @Max(180) Double longitude, @NotNull @Min(-90) @Max(90) Double latitude);
 
 }

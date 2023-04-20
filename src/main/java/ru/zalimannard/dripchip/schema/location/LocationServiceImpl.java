@@ -9,6 +9,8 @@ import ru.zalimannard.dripchip.exception.NotFoundException;
 import ru.zalimannard.dripchip.schema.location.dto.LocationRequestDto;
 import ru.zalimannard.dripchip.schema.location.dto.LocationResponseDto;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class LocationServiceImpl implements LocationService {
@@ -74,6 +76,17 @@ public class LocationServiceImpl implements LocationService {
         } catch (DataIntegrityViolationException e) {
             throw new BadRequestException("loc-04", "id", String.valueOf(id));
         }
+    }
+
+    @Override
+    public Long special1(Double longitude, Double latitude) {
+        List<Location> allLocation = repository.findAll();
+        for (Location location : allLocation) {
+            if ((location.getLongitude().equals(longitude)) && (location.getLatitude().equals(latitude))) {
+                return location.getId();
+            }
+        }
+        throw new NotFoundException("loc-06", "longitude-latitude", longitude + " " + latitude);
     }
 
 }
