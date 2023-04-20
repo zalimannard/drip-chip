@@ -1,6 +1,7 @@
 package ru.zalimannard.dripchip.schema.animal.ownedtype;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import org.springframework.validation.annotation.Validated;
 import ru.zalimannard.dripchip.schema.animal.Animal;
@@ -10,16 +11,16 @@ import ru.zalimannard.dripchip.schema.animal.ownedtype.type.dto.AnimalOwnedTypeU
 @Validated
 public interface AnimalOwnedTypeService {
 
-    AnimalResponseDto create(@Positive long animalId, @Positive long typeId);
+    AnimalResponseDto create(@Positive @NotNull Long animalId, @Positive @NotNull Long typeId);
 
-    Animal createEntity(@Positive long animalId, @Positive long typeId);
-
-
-    AnimalResponseDto update(@Positive long animalId, @Valid AnimalOwnedTypeUpdateDto animalOwnedTypeUpdateDto);
-
-    Animal updateEntity(@Positive long animalId, @Positive long oldTypeId, @Positive long newTypeId);
+    Animal createEntity(@Positive @NotNull Long animalId, @Positive @NotNull Long typeId);
 
 
-    void delete(@Positive long animalId, @Positive long typeId);
+    AnimalResponseDto update(@Positive @NotNull Long animalId, @Valid AnimalOwnedTypeUpdateDto animalOwnedTypeUpdateDto);
+
+    Animal updateEntity(@Positive @NotNull Long animalId, @Positive @NotNull Long oldTypeId, @Positive @NotNull Long newTypeId);
+
+
+    void delete(@Positive @NotNull Long animalId, @Positive @NotNull Long typeId);
 
 }

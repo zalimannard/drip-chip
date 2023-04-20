@@ -11,8 +11,8 @@ import ru.zalimannard.dripchip.page.OffsetBasedPage;
 import ru.zalimannard.dripchip.schema.animal.Animal;
 import ru.zalimannard.dripchip.schema.animal.AnimalService;
 import ru.zalimannard.dripchip.schema.animal.lifestatus.AnimalLifeStatus;
+import ru.zalimannard.dripchip.schema.animal.visitedlocation.dto.VisitedLocationRequestUpdateDto;
 import ru.zalimannard.dripchip.schema.animal.visitedlocation.dto.VisitedLocationResponseDto;
-import ru.zalimannard.dripchip.schema.animal.visitedlocation.dto.VisitedLocationUpdateDto;
 import ru.zalimannard.dripchip.schema.location.Location;
 import ru.zalimannard.dripchip.schema.location.LocationService;
 
@@ -32,14 +32,14 @@ public class VisitedLocationServiceImpl implements VisitedLocationService {
     private final LocationService locationService;
 
     @Override
-    public VisitedLocationResponseDto create(long animalId, long locationId) {
+    public VisitedLocationResponseDto create(Long animalId, Long locationId) {
         VisitedLocation visitedLocationResponse = createEntity(animalId, locationId);
 
         return mapper.toDto(visitedLocationResponse);
     }
 
     @Override
-    public VisitedLocation createEntity(long animalId, long locationId) {
+    public VisitedLocation createEntity(Long animalId, Long locationId) {
         Animal animal = animalService.readEntity(animalId);
         Location location = locationService.readEntity(locationId);
         VisitedLocation newVisitedLocation = new VisitedLocation();
@@ -62,25 +62,25 @@ public class VisitedLocationServiceImpl implements VisitedLocationService {
     }
 
     @Override
-    public VisitedLocationResponseDto read(long id) {
+    public VisitedLocationResponseDto read(Long id) {
         VisitedLocation visitedLocationResponse = readEntity(id);
         return mapper.toDto(visitedLocationResponse);
     }
 
     @Override
-    public VisitedLocation readEntity(long id) {
+    public VisitedLocation readEntity(Long id) {
         return repository.findById(id)
                 .orElseThrow(() -> new NotFoundException("vls-03", "id", String.valueOf(id)));
     }
 
     @Override
-    public List<VisitedLocationResponseDto> search(long animalId, Date start, Date end, int from, int size) {
+    public List<VisitedLocationResponseDto> search(Long animalId, Date start, Date end, int from, int size) {
         List<VisitedLocation> visitedLocations = searchEntities(animalId, start, end, from, size);
         return mapper.toDtoList(visitedLocations);
     }
 
     @Override
-    public List<VisitedLocation> searchEntities(long animalId, Date start, Date end, int from, int size) {
+    public List<VisitedLocation> searchEntities(Long animalId, Date start, Date end, int from, int size) {
         Animal animal = animalService.readEntity(animalId);
         Pageable pageable = new OffsetBasedPage(from, size);
         return repository.search(
@@ -92,15 +92,15 @@ public class VisitedLocationServiceImpl implements VisitedLocationService {
     }
 
     @Override
-    public VisitedLocationResponseDto update(long animalId, VisitedLocationUpdateDto visitedLocationUpdateDto) {
+    public VisitedLocationResponseDto update(Long animalId, VisitedLocationRequestUpdateDto visitedLocationRequestUpdateDto) {
         VisitedLocation visitedLocationResponse = updateEntity(animalId,
-                visitedLocationUpdateDto.getVisitedLocationPointId(), visitedLocationUpdateDto.getLocationPointId());
+                visitedLocationRequestUpdateDto.getVisitedLocationPointId(), visitedLocationRequestUpdateDto.getLocationPointId());
 
         return mapper.toDto(visitedLocationResponse);
     }
 
     @Override
-    public VisitedLocation updateEntity(long animalId, long visitedLocationPointId, long locationPointId) {
+    public VisitedLocation updateEntity(Long animalId, Long visitedLocationPointId, Long locationPointId) {
         Animal animal = animalService.readEntity(animalId);
         VisitedLocation visitedLocation = readEntity(visitedLocationPointId);
         Location location = locationService.readEntity(locationPointId);
@@ -125,7 +125,7 @@ public class VisitedLocationServiceImpl implements VisitedLocationService {
     }
 
     @Override
-    public void delete(long animalId, long visitedLocationId) {
+    public void delete(Long animalId, Long visitedLocationId) {
         Animal animal = animalService.readEntity(animalId);
         VisitedLocation visitedLocation = readEntity(visitedLocationId);
 

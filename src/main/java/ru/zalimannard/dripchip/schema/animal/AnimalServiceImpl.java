@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.validation.annotation.Validated;
 import ru.zalimannard.dripchip.exception.BadRequestException;
 import ru.zalimannard.dripchip.exception.ConflictException;
 import ru.zalimannard.dripchip.exception.NotFoundException;
@@ -28,7 +27,6 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-@Validated
 public class AnimalServiceImpl implements AnimalService {
 
     private final AnimalMapper mapper;
@@ -64,14 +62,14 @@ public class AnimalServiceImpl implements AnimalService {
     }
 
     @Override
-    public AnimalResponseDto read(long id) {
+    public AnimalResponseDto read(Long id) {
         Animal animalResponse = readEntity(id);
 
         return mapper.toDto(animalResponse);
     }
 
     @Override
-    public Animal readEntity(long id) {
+    public Animal readEntity(Long id) {
         Optional<Animal> responseOptional = repository.findById(id);
         if (responseOptional.isPresent()) {
             return responseOptional.get();
@@ -81,13 +79,13 @@ public class AnimalServiceImpl implements AnimalService {
     }
 
     @Override
-    public List<AnimalResponseDto> search(Date startDateTime, Date endDateTime, Integer chipperId, Integer chippingLocationId, String lifeStatus, String gender, int from, int size) {
+    public List<AnimalResponseDto> search(Date startDateTime, Date endDateTime, Integer chipperId, Long chippingLocationId, String lifeStatus, String gender, int from, int size) {
         List<Animal> animals = searchEntities(startDateTime, endDateTime, chipperId, chippingLocationId, lifeStatus, gender, from, size);
         return mapper.toDtoList(animals);
     }
 
     @Override
-    public List<Animal> searchEntities(Date start, Date end, Integer chipperId, Integer chippingLocationId, String lifeStatus, String gender, int from, int size) {
+    public List<Animal> searchEntities(Date start, Date end, Integer chipperId, Long chippingLocationId, String lifeStatus, String gender, int from, int size) {
         Pageable pageable = new OffsetBasedPage(from, size);
         Account chipper = null;
         Location chippingLocation = null;
@@ -125,7 +123,7 @@ public class AnimalServiceImpl implements AnimalService {
     }
 
     @Override
-    public AnimalResponseDto update(long id, AnimalPutRequestDto animalPutRequestDto) {
+    public AnimalResponseDto update(Long id, AnimalPutRequestDto animalPutRequestDto) {
         Account chipper = accountService.readEntity(animalPutRequestDto.getChipperId());
         Location chippingLocation = locationService.readEntity(animalPutRequestDto.getChippingLocationId());
         Animal animalRequest = mapper.toEntity(animalPutRequestDto,
@@ -137,7 +135,7 @@ public class AnimalServiceImpl implements AnimalService {
     }
 
     @Override
-    public Animal updateEntity(long id, Animal animal) {
+    public Animal updateEntity(Long id, Animal animal) {
         Animal existedAnimal = readEntity(id);
         Animal animalToUpdate = animal.toBuilder()
                 .id(id)
@@ -172,7 +170,7 @@ public class AnimalServiceImpl implements AnimalService {
     }
 
     @Override
-    public void delete(long id) {
+    public void delete(Long id) {
         try {
             Animal animal = readEntity(id);
             repository.delete(animal);

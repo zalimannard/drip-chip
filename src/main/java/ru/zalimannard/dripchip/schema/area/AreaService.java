@@ -1,6 +1,7 @@
 package ru.zalimannard.dripchip.schema.area;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import ru.zalimannard.dripchip.schema.area.dto.AreaRequestDto;
 import ru.zalimannard.dripchip.schema.area.dto.AreaResponseDto;
@@ -12,21 +13,21 @@ public interface AreaService {
 
     AreaResponseDto create(@Valid AreaRequestDto areaRequestDto);
 
-    Area createEntity(@Valid Area area, List<Point> points);
+    Area createEntity(Area area, List<Point> points);
 
 
-    AreaResponseDto read(@Positive long id);
+    AreaResponseDto read(@Positive @NotNull Long id);
 
-    Area readEntity(@Positive long id);
+    Area readEntity(@Positive @NotNull Long id);
 
     List<Area> readAllEntities();
 
 
-    AreaResponseDto update(@Positive long id, @Valid AreaRequestDto areaRequestDto);
+    AreaResponseDto update(@Positive @NotNull Long id, @Valid AreaRequestDto areaRequestDto);
 
-    Area updateEntity(@Positive long id, @Valid Area area, List<Point> points);
+    Area updateEntity(@Positive @NotNull Long id, Area area, List<Point> points);
 
 
-    void delete(@Positive long id);
+    void delete(@Positive @NotNull Long id);
 
 }

@@ -5,7 +5,6 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.validation.annotation.Validated;
 import ru.zalimannard.dripchip.exception.BadRequestException;
 import ru.zalimannard.dripchip.exception.ConflictException;
 import ru.zalimannard.dripchip.exception.NotFoundException;
@@ -17,7 +16,6 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-@Validated
 public class AccountServiceImpl implements AccountService {
 
     private final AccountMapper mapper;
@@ -45,25 +43,25 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public AccountResponseDto read(int id) {
+    public AccountResponseDto read(Integer id) {
         Account readAccount = readEntity(id);
         return mapper.toDto(readAccount);
     }
 
     @Override
-    public Account readEntity(int id) {
+    public Account readEntity(Integer id) {
         return repository.findById(id)
                 .orElseThrow(() -> new NotFoundException("acc-02", "id", String.valueOf(id)));
     }
 
     @Override
-    public List<AccountResponseDto> search(String firstName, String lastName, String email, int from, int size) {
+    public List<AccountResponseDto> search(String firstName, String lastName, String email, Integer from, Integer size) {
         List<Account> accounts = searchEntities(firstName, lastName, email, from, size);
         return mapper.toDtoList(accounts);
     }
 
     @Override
-    public List<Account> searchEntities(String firstName, String lastName, String email, int from, int size) {
+    public List<Account> searchEntities(String firstName, String lastName, String email, Integer from, Integer size) {
         Pageable pageable = new OffsetBasedPage(from, size);
         return repository.search(
                 firstName,
@@ -74,14 +72,14 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public AccountResponseDto update(int id, AccountRequestDto accountRequestDto) {
+    public AccountResponseDto update(Integer id, AccountRequestDto accountRequestDto) {
         Account account = mapper.toEntity(accountRequestDto);
         Account updatedAccount = updateEntity(id, account);
         return mapper.toDto(updatedAccount);
     }
 
     @Override
-    public Account updateEntity(int id, Account account) {
+    public Account updateEntity(Integer id, Account account) {
         repository.findById(id)
                 .orElseThrow(() -> new NotFoundException("acc-04", "id", String.valueOf(id)));
 
@@ -98,7 +96,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public void delete(int id) {
+    public void delete(Integer id) {
         try {
             Account account = readEntity(id);
             repository.delete(account);

@@ -47,11 +47,4 @@ public class Point {
         return getClass().hashCode();
     }
 
-    @Override
-    public String toString() {
-        return "Point{" +
-                "longitude=" + longitude +
-                ", latitude=" + latitude +
-                '}';
-    }
 }

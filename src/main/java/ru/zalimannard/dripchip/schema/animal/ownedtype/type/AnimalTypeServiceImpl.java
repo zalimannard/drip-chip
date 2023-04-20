@@ -1,6 +1,5 @@
 package ru.zalimannard.dripchip.schema.animal.ownedtype.type;
 
-import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
@@ -37,19 +36,19 @@ public class AnimalTypeServiceImpl implements AnimalTypeService {
     }
 
     @Override
-    public AnimalTypeResponseDto read(long id) {
+    public AnimalTypeResponseDto read(Long id) {
         AnimalType animalTypeResponse = readEntity(id);
         return mapper.toDto(animalTypeResponse);
     }
 
     @Override
-    public AnimalType readEntity(long id) {
+    public AnimalType readEntity(Long id) {
         return repository.findById(id)
                 .orElseThrow(() -> new NotFoundException("ant-02", "id", String.valueOf(id)));
     }
 
     @Override
-    public List<AnimalType> readAllEntitiesById(Set<@Positive Long> ids) {
+    public List<AnimalType> readAllEntitiesById(Set<Long> ids) {
         List<AnimalType> animalTypes = repository.findAllById(ids);
         if (ids.size() != animalTypes.size()) {
             throw new NotFoundException("ant-03", "animalType", "some of the list: " + ids);
@@ -58,14 +57,14 @@ public class AnimalTypeServiceImpl implements AnimalTypeService {
     }
 
     @Override
-    public AnimalTypeResponseDto update(long id, AnimalTypeRequestDto animalTypeRequestDto) {
+    public AnimalTypeResponseDto update(Long id, AnimalTypeRequestDto animalTypeRequestDto) {
         AnimalType animalTypeRequest = mapper.toEntity(animalTypeRequestDto);
         AnimalType animalTypeResponse = updateEntity(id, animalTypeRequest);
         return mapper.toDto(animalTypeResponse);
     }
 
     @Override
-    public AnimalType updateEntity(long id, AnimalType animalType) {
+    public AnimalType updateEntity(Long id, AnimalType animalType) {
         repository.findById(id)
                 .orElseThrow(() -> new NotFoundException("ant-04", "id", String.valueOf(id)));
         AnimalType animalTypeToSave = animalType.toBuilder()
@@ -80,7 +79,7 @@ public class AnimalTypeServiceImpl implements AnimalTypeService {
     }
 
     @Override
-    public void delete(long id) {
+    public void delete(Long id) {
         try {
             AnimalType animalType = readEntity(id);
             repository.delete(animalType);

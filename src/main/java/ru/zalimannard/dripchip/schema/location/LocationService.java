@@ -14,20 +14,21 @@ public interface LocationService {
 
     LocationResponseDto create(@Valid LocationRequestDto locationRequestDto);
 
-    Location createEntity(@Valid Location location);
+    Location createEntity(Location location);
 
 
-    LocationResponseDto read(@Positive long id);
+    LocationResponseDto read(@Positive @NotNull Long id);
 
-    Location readEntity(@Positive long id);
-
-
-    LocationResponseDto update(@Positive long id, @Valid LocationRequestDto locationRequestDto);
-
-    Location updateEntity(@Positive long id, @Valid Location location);
+    Location readEntity(@Positive @NotNull Long id);
 
 
-    void delete(@Positive long id);
+    LocationResponseDto update(@Positive @NotNull Long id, @Valid LocationRequestDto locationRequestDto);
+
+    Location updateEntity(@Positive @NotNull Long id, Location location);
+
+
+    void delete(@Positive @NotNull Long id);
+
 
     Long special1(@NotNull @Min(-180) @Max(180) Double longitude, @NotNull @Min(-90) @Max(90) Double latitude);
 

@@ -14,7 +14,7 @@ public class LocationController {
     private final LocationService locationService;
 
     @GetMapping("{id}")
-    public LocationResponseDto get(@PathVariable long id) {
+    public LocationResponseDto get(@PathVariable Long id) {
         return locationService.read(id);
     }
 
@@ -25,14 +25,14 @@ public class LocationController {
     }
 
     @PutMapping("{id}")
-    public LocationResponseDto put(@PathVariable long id,
+    public LocationResponseDto put(@PathVariable Long id,
                                    @RequestBody LocationRequestDto locationRequestDto) {
         return locationService.update(id, locationRequestDto);
     }
 
     @DeleteMapping("{id}")
     @ResponseStatus(HttpStatus.OK)
-    public void delete(@PathVariable long id) {
+    public void delete(@PathVariable Long id) {
         locationService.delete(id);
     }
 

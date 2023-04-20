@@ -2,7 +2,6 @@ package ru.zalimannard.dripchip.schema.area.analytics;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.validation.annotation.Validated;
 import ru.zalimannard.dripchip.exception.BadRequestException;
 import ru.zalimannard.dripchip.schema.area.analytics.dto.AnalyticsDto;
 
@@ -10,7 +9,6 @@ import java.util.Date;
 
 @Service
 @RequiredArgsConstructor
-@Validated
 public class AnalyticsServiceImpl implements AnalyticsService {
 
     @Override

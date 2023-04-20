@@ -16,7 +16,7 @@ public class AnimalPostRequestDto {
     @JsonProperty("animalTypes")
     @NotNull
     @NotEmpty
-    Set<@Positive Long> animalTypeIds;
+    Set<@Positive @NotNull Long> animalTypeIds;
 
     @JsonProperty("weight")
     @NotNull

@@ -15,7 +15,7 @@ public class AnalyticsController {
     private final AnalyticsService analyticsService;
 
     @GetMapping("${application.endpoint.analytics}")
-    public AnalyticsDto get(@PathVariable long areaId,
+    public AnalyticsDto get(@PathVariable Long areaId,
                             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date startDate,
                             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date endDate) {
         return analyticsService.read(areaId, startDate, endDate);

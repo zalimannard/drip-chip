@@ -8,7 +8,7 @@ import lombok.Value;
 
 @Value
 @Builder(toBuilder = true)
-public class VisitedLocationUpdateDto {
+public class VisitedLocationRequestUpdateDto {
 
     @JsonProperty("visitedLocationPointId")
     @NotNull

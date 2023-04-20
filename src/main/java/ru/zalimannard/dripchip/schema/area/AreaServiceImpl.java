@@ -29,34 +29,6 @@ public class AreaServiceImpl implements AreaService {
     private final PointService pointService;
     private final PointMapper pointMapper;
 
-    public static boolean haveInside(Area polygon, Point point) {
-        int n = polygon.getPoints().size();
-        boolean inside = false;
-
-        Point p1 = polygon.getPoints().get(0);
-        for (int i = 1; i <= n; i++) {
-            Point p2 = polygon.getPoints().get(i % n);
-
-            if (pointOnSegment(p1, p2, point)) {
-                return false;
-            }
-
-            if (point.getLatitude() > Math.min(p1.getLatitude(), p2.getLatitude()) && point.getLatitude() <= Math.max(p1.getLatitude(), p2.getLatitude())) {
-                if (point.getLongitude() <= Math.max(p1.getLongitude(), p2.getLongitude())) {
-                    if (!p1.getLatitude().equals(p2.getLatitude())) {
-                        double xIntersection = (point.getLatitude() - p1.getLatitude()) * (p2.getLongitude() - p1.getLongitude()) / (p2.getLatitude() - p1.getLatitude()) + p1.getLongitude();
-                        if (p1.getLongitude().equals(p2.getLongitude()) || point.getLongitude() <= xIntersection) {
-                            inside = !inside;
-                        }
-                    }
-                }
-            }
-            p1 = p2;
-        }
-
-        return inside;
-    }
-
     private static boolean pointOnSegment(Point p1, Point p2, Point point) {
         if (point.getLongitude() <= Math.max(p1.getLongitude(), p2.getLongitude()) && point.getLongitude() >= Math.min(p1.getLongitude(), p2.getLongitude()) &&
                 point.getLatitude() <= Math.max(p1.getLatitude(), p2.getLatitude()) && point.getLatitude() >= Math.min(p1.getLatitude(), p2.getLatitude())) {
@@ -97,13 +69,13 @@ public class AreaServiceImpl implements AreaService {
     }
 
     @Override
-    public AreaResponseDto read(long id) {
+    public AreaResponseDto read(Long id) {
         Area areaResponse = readEntity(id);
         return mapper.toDto(areaResponse);
     }
 
     @Override
-    public Area readEntity(long id) {
+    public Area readEntity(Long id) {
         return repository.findById(id)
                 .orElseThrow(() -> new NotFoundException("ars-05", "id", String.valueOf(id)));
     }
@@ -114,7 +86,7 @@ public class AreaServiceImpl implements AreaService {
     }
 
     @Override
-    public AreaResponseDto update(long id, AreaRequestDto areaRequestDto) {
+    public AreaResponseDto update(Long id, AreaRequestDto areaRequestDto) {
         Area areaRequest = mapper.toEntity(areaRequestDto);
         List<Point> points = pointMapper.toEntityList(areaRequestDto.getPoints(), areaRequest);
 
@@ -125,10 +97,7 @@ public class AreaServiceImpl implements AreaService {
 
     @Override
     @Transactional
-    public Area updateEntity(long id, Area area, List<Point> points) {
-        repository.findById(id)
-                .orElseThrow(() -> new NotFoundException("ant-06", "id", String.valueOf(id)));
-
+    public Area updateEntity(Long id, Area area, List<Point> points) {
         Area existedArea = readEntity(id);
         List<Area> existedAreas = readAllEntities();
         for (int i = 0; i < points.size(); ++i) {
@@ -158,7 +127,7 @@ public class AreaServiceImpl implements AreaService {
 
     @Override
     @Transactional
-    public void delete(long id) {
+    public void delete(Long id) {
         try {
             Area area = readEntity(id);
             pointService.deleteAll(area);
@@ -166,6 +135,34 @@ public class AreaServiceImpl implements AreaService {
         } catch (DataIntegrityViolationException e) {
             throw new BadRequestException("ars-08", "id", String.valueOf(id));
         }
+    }
+
+    private boolean haveInside(Area polygon, Point point) {
+        int n = polygon.getPoints().size();
+        boolean inside = false;
+
+        Point p1 = polygon.getPoints().get(0);
+        for (int i = 1; i <= n; i++) {
+            Point p2 = polygon.getPoints().get(i % n);
+
+            if (pointOnSegment(p1, p2, point)) {
+                return false;
+            }
+
+            if (point.getLatitude() > Math.min(p1.getLatitude(), p2.getLatitude()) && point.getLatitude() <= Math.max(p1.getLatitude(), p2.getLatitude())) {
+                if (point.getLongitude() <= Math.max(p1.getLongitude(), p2.getLongitude())) {
+                    if (!p1.getLatitude().equals(p2.getLatitude())) {
+                        double xIntersection = (point.getLatitude() - p1.getLatitude()) * (p2.getLongitude() - p1.getLongitude()) / (p2.getLatitude() - p1.getLatitude()) + p1.getLongitude();
+                        if (p1.getLongitude().equals(p2.getLongitude()) || point.getLongitude() <= xIntersection) {
+                            inside = !inside;
+                        }
+                    }
+                }
+            }
+            p1 = p2;
+        }
+
+        return inside;
     }
 
     private void checkAvailability(List<Area> existedAreas, Area targetArea) {
@@ -185,16 +182,20 @@ public class AreaServiceImpl implements AreaService {
             }
 
             // Существующая содержит точки новой
-            for (Point targetAreaPoint : targetArea.getPoints()) {
-                if (haveInside(existedArea, targetAreaPoint)) {
-                    throw new BadRequestException("ars-10", "poins", "Точки новой области находятся внутри другой");
+            if (targetArea.getPoints() != null) {
+                for (Point targetAreaPoint : targetArea.getPoints()) {
+                    if (haveInside(existedArea, targetAreaPoint)) {
+                        throw new BadRequestException("ars-10", "poins", "Точки новой области находятся внутри другой");
+                    }
                 }
             }
 
             // Новая содержит точки существующей
-            for (Point existedAreaPoint : existedArea.getPoints()) {
-                if (haveInside(targetArea, existedAreaPoint)) {
-                    throw new BadRequestException("ars-11", "poins", "Точки существующей области находятся внутри новой");
+            if (existedArea.getPoints() != null) {
+                for (Point existedAreaPoint : existedArea.getPoints()) {
+                    if (haveInside(targetArea, existedAreaPoint)) {
+                        throw new BadRequestException("ars-11", "poins", "Точки существующей области находятся внутри новой");
+                    }
                 }
             }
         }
@@ -279,7 +280,7 @@ public class AreaServiceImpl implements AreaService {
     }
 
 
-    public double calcArea(Area area) {
+    private double calcArea(Area area) {
         double value1 = 0;
         double value2 = 0;
         List<Point> pointList = area.getPoints();
@@ -294,7 +295,7 @@ public class AreaServiceImpl implements AreaService {
         return value1 - value2;
     }
 
-    public boolean haveIdenticallyPoints(Area a, Area b) {
+    private boolean haveIdenticallyPoints(Area a, Area b) {
         if (a.getPoints().size() != b.getPoints().size()) {
             return false;
         }

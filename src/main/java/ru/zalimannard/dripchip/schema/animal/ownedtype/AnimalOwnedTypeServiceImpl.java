@@ -24,13 +24,13 @@ public class AnimalOwnedTypeServiceImpl implements AnimalOwnedTypeService {
     private final AnimalTypeService animalTypeService;
 
     @Override
-    public AnimalResponseDto create(long animalId, long typeId) {
+    public AnimalResponseDto create(Long animalId, Long typeId) {
         Animal animalResponse = createEntity(animalId, typeId);
         return animalMapper.toDto(animalResponse);
     }
 
     @Override
-    public Animal createEntity(long animalId, long typeId) {
+    public Animal createEntity(Long animalId, Long typeId) {
         Animal animal = animalService.readEntity(animalId);
         AnimalType animalType = animalTypeService.readEntity(typeId);
         animal.addType(animalType);
@@ -42,7 +42,7 @@ public class AnimalOwnedTypeServiceImpl implements AnimalOwnedTypeService {
     }
 
     @Override
-    public AnimalResponseDto update(long animalId, AnimalOwnedTypeUpdateDto animalOwnedTypeUpdateDto) {
+    public AnimalResponseDto update(Long animalId, AnimalOwnedTypeUpdateDto animalOwnedTypeUpdateDto) {
         Animal animalResponse = updateEntity(animalId,
                 animalOwnedTypeUpdateDto.getOldTypeId(), animalOwnedTypeUpdateDto.getNewTypeId());
 
@@ -50,7 +50,7 @@ public class AnimalOwnedTypeServiceImpl implements AnimalOwnedTypeService {
     }
 
     @Override
-    public Animal updateEntity(long animalId, long oldTypeId, long newTypeId) {
+    public Animal updateEntity(Long animalId, Long oldTypeId, Long newTypeId) {
         Animal animal = animalService.readEntity(animalId);
         AnimalType oldType = animalTypeService.readEntity(oldTypeId);
         AnimalType newType = animalTypeService.readEntity(newTypeId);
@@ -72,7 +72,7 @@ public class AnimalOwnedTypeServiceImpl implements AnimalOwnedTypeService {
     }
 
     @Override
-    public void delete(long animalId, long typeId) {
+    public void delete(Long animalId, Long typeId) {
         Animal animal = animalService.readEntity(animalId);
         AnimalType animalType = animalTypeService.readEntity(typeId);
 

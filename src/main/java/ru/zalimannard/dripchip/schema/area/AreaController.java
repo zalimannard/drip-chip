@@ -14,7 +14,7 @@ public class AreaController {
     private final AreaService areaService;
 
     @GetMapping("{id}")
-    public AreaResponseDto get(@PathVariable long id) {
+    public AreaResponseDto get(@PathVariable Long id) {
         return areaService.read(id);
     }
 
@@ -25,13 +25,13 @@ public class AreaController {
     }
 
     @PutMapping("{id}")
-    public AreaResponseDto put(@PathVariable long id,
+    public AreaResponseDto put(@PathVariable Long id,
                                @RequestBody AreaRequestDto accountDto) {
         return areaService.update(id, accountDto);
     }
 
     @DeleteMapping("{id}")
-    public void delete(@PathVariable long id) {
+    public void delete(@PathVariable Long id) {
         areaService.delete(id);
     }
 

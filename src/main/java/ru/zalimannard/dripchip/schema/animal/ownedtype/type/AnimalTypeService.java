@@ -1,6 +1,7 @@
 package ru.zalimannard.dripchip.schema.animal.ownedtype.type;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import org.springframework.validation.annotation.Validated;
 import ru.zalimannard.dripchip.schema.animal.ownedtype.type.dto.AnimalTypeRequestDto;
@@ -14,21 +15,21 @@ public interface AnimalTypeService {
 
     AnimalTypeResponseDto create(@Valid AnimalTypeRequestDto animalTypeRequestDto);
 
-    AnimalType createEntity(@Valid AnimalType animalType);
+    AnimalType createEntity(AnimalType animalType);
 
 
-    AnimalTypeResponseDto read(@Positive long id);
+    AnimalTypeResponseDto read(@Positive @NotNull Long id);
 
-    AnimalType readEntity(@Positive long id);
+    AnimalType readEntity(@Positive @NotNull Long id);
 
-    List<AnimalType> readAllEntitiesById(Set<@Positive Long> ids);
-
-
-    AnimalTypeResponseDto update(@Positive long id, @Valid AnimalTypeRequestDto animalTypeRequestDto);
-
-    AnimalType updateEntity(@Positive long id, @Valid AnimalType animalType);
+    List<AnimalType> readAllEntitiesById(Set<@Positive @NotNull Long> ids);
 
 
-    void delete(@Positive long id);
+    AnimalTypeResponseDto update(@Positive @NotNull Long id, @Valid AnimalTypeRequestDto animalTypeRequestDto);
+
+    AnimalType updateEntity(@Positive @NotNull Long id, AnimalType animalType);
+
+
+    void delete(@Positive @NotNull Long id);
 
 }

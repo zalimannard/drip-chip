@@ -4,8 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import ru.zalimannard.dripchip.schema.animal.visitedlocation.dto.VisitedLocationRequestUpdateDto;
 import ru.zalimannard.dripchip.schema.animal.visitedlocation.dto.VisitedLocationResponseDto;
-import ru.zalimannard.dripchip.schema.animal.visitedlocation.dto.VisitedLocationUpdateDto;
 
 import java.util.Date;
 import java.util.List;
@@ -18,7 +18,7 @@ public class VisitedLocationController {
     private final VisitedLocationService visitedLocationService;
 
     @GetMapping("${application.endpoint.locations}")
-    public List<VisitedLocationResponseDto> getAll(@PathVariable long animalId,
+    public List<VisitedLocationResponseDto> getAll(@PathVariable Long animalId,
                                                    @RequestParam(required = false) @DateTimeFormat(iso =
                                                            DateTimeFormat.ISO.DATE_TIME) Date startDateTime,
                                                    @RequestParam(required = false) @DateTimeFormat(iso =
@@ -30,20 +30,20 @@ public class VisitedLocationController {
 
     @PostMapping("${application.endpoint.locations}/{locationId}")
     @ResponseStatus(HttpStatus.CREATED)
-    public VisitedLocationResponseDto post(@PathVariable long animalId,
-                                           @PathVariable long locationId) {
+    public VisitedLocationResponseDto post(@PathVariable Long animalId,
+                                           @PathVariable Long locationId) {
         return visitedLocationService.create(animalId, locationId);
     }
 
     @PutMapping("${application.endpoint.locations}")
-    public VisitedLocationResponseDto put(@PathVariable long animalId,
-                                          @RequestBody VisitedLocationUpdateDto visitedLocationUpdateDto) {
-        return visitedLocationService.update(animalId, visitedLocationUpdateDto);
+    public VisitedLocationResponseDto put(@PathVariable Long animalId,
+                                          @RequestBody VisitedLocationRequestUpdateDto visitedLocationRequestUpdateDto) {
+        return visitedLocationService.update(animalId, visitedLocationRequestUpdateDto);
     }
 
     @DeleteMapping("${application.endpoint.locations}/{visitedLocationId}")
-    public void delete(@PathVariable long animalId,
-                       @PathVariable long visitedLocationId) {
+    public void delete(@PathVariable Long animalId,
+                       @PathVariable Long visitedLocationId) {
         visitedLocationService.delete(animalId, visitedLocationId);
     }
 

@@ -19,7 +19,7 @@ public class AnimalController {
     private final AnimalService animalService;
 
     @GetMapping("{id}")
-    public AnimalResponseDto get(@PathVariable long id) {
+    public AnimalResponseDto get(@PathVariable Long id) {
         return animalService.read(id);
     }
 
@@ -27,7 +27,7 @@ public class AnimalController {
     public List<AnimalResponseDto> search(@RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date startDateTime,
                                           @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date endDateTime,
                                           @RequestParam(required = false) Integer chipperId,
-                                          @RequestParam(required = false) Integer chippingLocationId,
+                                          @RequestParam(required = false) Long chippingLocationId,
                                           @RequestParam(required = false) String lifeStatus,
                                           @RequestParam(required = false) String gender,
                                           @RequestParam(defaultValue = "0") int from,
@@ -42,13 +42,13 @@ public class AnimalController {
     }
 
     @PutMapping("{id}")
-    public AnimalResponseDto put(@PathVariable long id,
+    public AnimalResponseDto put(@PathVariable Long id,
                                  @RequestBody AnimalPutRequestDto animalPutRequestDto) {
         return animalService.update(id, animalPutRequestDto);
     }
 
     @DeleteMapping("{id}")
-    public void delete(@PathVariable long id) {
+    public void delete(@PathVariable Long id) {
         animalService.delete(id);
     }
 

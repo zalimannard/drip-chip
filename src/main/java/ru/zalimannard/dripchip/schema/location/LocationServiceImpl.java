@@ -37,26 +37,26 @@ public class LocationServiceImpl implements LocationService {
     }
 
     @Override
-    public LocationResponseDto read(long id) {
+    public LocationResponseDto read(Long id) {
         Location locationResponse = readEntity(id);
         return mapper.toDto(locationResponse);
     }
 
     @Override
-    public Location readEntity(long id) {
+    public Location readEntity(Long id) {
         return repository.findById(id)
                 .orElseThrow(() -> new NotFoundException("loc-02", "id", String.valueOf(id)));
     }
 
     @Override
-    public LocationResponseDto update(long id, LocationRequestDto locationRequestDto) {
+    public LocationResponseDto update(Long id, LocationRequestDto locationRequestDto) {
         Location locationRequest = mapper.toEntity(locationRequestDto);
         Location locationResponse = updateEntity(id, locationRequest);
         return mapper.toDto(locationResponse);
     }
 
     @Override
-    public Location updateEntity(long id, Location location) {
+    public Location updateEntity(Long id, Location location) {
         repository.findById(id)
                 .orElseThrow(() -> new NotFoundException("loc-03", "id", String.valueOf(id)));
         Location locationToSave = location.toBuilder()
@@ -71,7 +71,7 @@ public class LocationServiceImpl implements LocationService {
     }
 
     @Override
-    public void delete(long id) {
+    public void delete(Long id) {
         try {
             Location location = readEntity(id);
             repository.delete(location);

@@ -43,6 +43,8 @@ public class WebSecurityConfig {
     private String areasPath;
     @Value("${application.endpoint.analytics}")
     private String analyticsPath;
+    @Value("${application.endpoint.geohash}")
+    private String geohashPath;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -71,6 +73,7 @@ public class WebSecurityConfig {
 
                         .requestMatchers(HttpMethod.GET, locationsPath + "/{pointId}").authenticated()
                         .requestMatchers(HttpMethod.GET, locationsPath).authenticated()
+                        .requestMatchers(HttpMethod.GET, locationsPath + geohashPath + "**").authenticated()
                         .requestMatchers(HttpMethod.POST, locationsPath).hasAnyAuthority(
                                 AccountRole.ADMIN.toString(), AccountRole.CHIPPER.toString())
                         .requestMatchers(HttpMethod.PUT, locationsPath + "/{pointId}").hasAnyAuthority(

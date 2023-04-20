@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.validation.annotation.Validated;
 import ru.zalimannard.dripchip.exception.ConflictException;
 import ru.zalimannard.dripchip.schema.account.Account;
 import ru.zalimannard.dripchip.schema.account.AccountMapper;
@@ -14,7 +13,6 @@ import ru.zalimannard.dripchip.schema.account.role.AccountRole;
 
 @Service
 @RequiredArgsConstructor
-@Validated
 public class AuthenticationServiceImpl implements AuthenticationService {
 
     private final AccountMapper mapper;

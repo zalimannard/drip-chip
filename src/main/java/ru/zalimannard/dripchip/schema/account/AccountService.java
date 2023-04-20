@@ -1,6 +1,7 @@
 package ru.zalimannard.dripchip.schema.account;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
 import org.springframework.validation.annotation.Validated;
@@ -17,29 +18,29 @@ public interface AccountService {
     Account createEntity(Account account);
 
 
-    AccountResponseDto read(@Positive int id);
+    AccountResponseDto read(@Positive @NotNull Integer id);
 
-    Account readEntity(int id);
+    Account readEntity(@Positive @NotNull Integer id);
 
 
     List<AccountResponseDto> search(String firstName,
                                     String lastName,
                                     String email,
-                                    @PositiveOrZero int from,
-                                    @Positive int size);
+                                    @PositiveOrZero @NotNull Integer from,
+                                    @Positive @NotNull Integer size);
 
     List<Account> searchEntities(String firstName,
                                  String lastName,
                                  String email,
-                                 int from,
-                                 int size);
+                                 @PositiveOrZero @NotNull Integer from,
+                                 @Positive @NotNull Integer size);
 
 
-    AccountResponseDto update(@Positive int id, @Valid AccountRequestDto accountRequestDto);
+    AccountResponseDto update(@Positive @NotNull Integer id, @Valid AccountRequestDto accountRequestDto);
 
-    Account updateEntity(int id, Account account);
+    Account updateEntity(@Positive @NotNull Integer id, Account account);
 
 
-    void delete(@Positive int id);
+    void delete(@Positive @NotNull Integer id);
 
 }

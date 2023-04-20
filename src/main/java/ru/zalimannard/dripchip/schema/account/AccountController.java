@@ -1,8 +1,5 @@
 package ru.zalimannard.dripchip.schema.account;
 
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
@@ -21,7 +18,7 @@ public class AccountController {
     private final AccountService accountService;
 
     @GetMapping("{id}")
-    public AccountResponseDto get(@PathVariable @Positive @NotNull int id) {
+    public AccountResponseDto get(@PathVariable Integer id) {
         return accountService.read(id);
     }
 
@@ -36,18 +33,18 @@ public class AccountController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public AccountResponseDto post(@RequestBody @Valid AccountRequestDto accountRequestDto) {
+    public AccountResponseDto post(@RequestBody AccountRequestDto accountRequestDto) {
         return accountService.create(accountRequestDto);
     }
 
     @PutMapping("{id}")
-    public AccountResponseDto put(@PathVariable @Positive @NotNull int id,
-                                  @RequestBody @Valid AccountRequestDto accountRequestDto) {
+    public AccountResponseDto put(@PathVariable Integer id,
+                                  @RequestBody AccountRequestDto accountRequestDto) {
         return accountService.update(id, accountRequestDto);
     }
 
     @DeleteMapping("{id}")
-    public void delete(@PathVariable @Positive @NotNull int id) {
+    public void delete(@PathVariable Integer id) {
         accountService.delete(id);
     }
 
