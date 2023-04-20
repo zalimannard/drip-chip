@@ -33,4 +33,6 @@ public interface LocationService {
 
     String special2(@NotNull @Min(-180) @Max(180) Double longitude, @NotNull @Min(-90) @Max(90) Double latitude);
 
+    String special3(@NotNull @Min(-180) @Max(180) Double longitude, @NotNull @Min(-90) @Max(90) Double latitude);
+
 }

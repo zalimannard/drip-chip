@@ -38,14 +38,20 @@ public class LocationController {
 
     @GetMapping
     public Long getSpecial1(@RequestParam Double longitude,
-                    @RequestParam Double latitude) {
+                            @RequestParam Double latitude) {
         return locationService.special1(longitude, latitude);
     }
 
     @GetMapping("${application.endpoint.geohash}")
     public String getSpecial2(@RequestParam Double longitude,
-                    @RequestParam Double latitude) {
+                              @RequestParam Double latitude) {
         return locationService.special2(longitude, latitude);
+    }
+
+    @GetMapping("${application.endpoint.geohash}v2")
+    public String getSpecial3(@RequestParam Double longitude,
+                              @RequestParam Double latitude) {
+        return locationService.special3(longitude, latitude);
     }
 
 }

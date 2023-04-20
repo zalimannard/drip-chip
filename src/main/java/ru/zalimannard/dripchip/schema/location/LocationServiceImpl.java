@@ -10,6 +10,7 @@ import ru.zalimannard.dripchip.exception.NotFoundException;
 import ru.zalimannard.dripchip.schema.location.dto.LocationRequestDto;
 import ru.zalimannard.dripchip.schema.location.dto.LocationResponseDto;
 
+import java.util.Base64;
 import java.util.List;
 
 @Service
@@ -93,6 +94,12 @@ public class LocationServiceImpl implements LocationService {
     @Override
     public String special2(Double longitude, Double latitude) {
         return GeoHash.withCharacterPrecision(latitude, longitude, 12).toBase32();
+    }
+
+    @Override
+    public String special3(Double longitude, Double latitude) {
+        String coordinatesAsGeohash = special2(longitude, latitude);
+        return Base64.getEncoder().encodeToString(coordinatesAsGeohash.getBytes());
     }
 
 }
